@@ -1,22 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   minishell.h                                        :+:      :+:    :+:   */
+/*   ft_lstnew_bonus.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/02 16:40:35 by jkim3            ###   ########.fr       */
+/*   Created: 2022/07/22 17:28:34 by heson             #+#    #+#             */
+/*   Updated: 2022/07/27 16:19:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 
-typedef struct s_cmd {
-    int     ac;
-    char    **av;
-    char    *rd_in; // <
-    char    *rd_out; // >
-    char    *rd_heredoc; // <<
-    char    *rd_append; // >>
-}   t_cmd;
+t_list	*ft_lstnew(void *content)
+{
+	t_list	*new_node;
 
+	new_node = (t_list *)malloc(sizeof(t_list));
+	if (!new_node)
+		return (NULL);
+	new_node->content = content;
+	new_node->next = NULL;
+	return (new_node);
+}
