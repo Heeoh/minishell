@@ -117,15 +117,53 @@ void	exe_a_cmd(t_cmd *cmd, char *env[])
 	execve(path, cmd->av, env);
 }
 
-void    execute(int lstsize, t_list *cmds, char *env[])
+void    execute(int cmd_cnt, t_list *cmds, char *env[])
 {
-	if (lstsize <= 0)
+	int	i;
+	int fds[2][2];
+	int pid;
+	t_cmt *cmd_p;
+
+	i = 0;
+	fds[0][0] = -1;
+	fds[0][1] = -1;
+	fds[1][0] = -1;
+	fds[1][1] = -1;
+	cmd_p = cmds;
+	if (cmd_cnt <= 0)
 		return ;
-	if (lstsize == 1)
+	if (cmd_cnt == 1)
 		exe_a_cmd((t_cmd *)cmds->content, env);
 	else // pipe
 	{
-		
+		while (++i < cmd_cnt)
+		{
+			if (pipe(fds[i % 2]) == -1)
+				printf("error in pipe\n");
+			pid = fork();
+			if (pid < 0) // error
+				printf("error in fork\n");
+			else if (pid == 0) // child
+			{
+				// stdin -> fds[another][0]
+				// stdout -> fds[cur][1]
+				// exe
+				// close fds[another][0], fds[cur][1]
+				// return
+				dup2(fds[(i+1) % 2][0], STDIN_FILENO);
+				dup2(fds[i % 2][1], STDOUT_FILENO);
+				exe_a_cmd(cmd_p, env);
+				close(fds[(i+1) % 2][0]);
+				close(fds[i % 2][1]);
+				return;
+			}
+			else if (pid > 0) // parent
+			{
+				if (waitpid(pid, NULL, WNOHANG) == -1)
+					printf("error in waitpid\n");
+			} 
+
+		}	
 	}
 }
 
@@ -134,8 +172,17 @@ int main(int ac, char *av[], char *env[]) {
 	t_list *new;
 	t_cmd   cmd;
 
-	cmd.ac = ac - 1;
-	cmd.av = av + 1;
+	cmd.ac = 1;
+	cmd.av = ft_split("ls");
+	cmd.rd_in = 0; //ft_strdup("infile.txt");
+	cmd.rd_out = 0; // ft_strdup("outfile.txt");
+	cmd.rd_heredoc = 0; //ft_strdup("end");
+	cmd.rd_append = 0; //ft_strdup("outfile.txt");
+	new = ft_lstnew(&cmd);
+	ft_lstadd_front(&cmd_lst, new);
+
+	cmd.ac = 1;
+	cmd.av = ft_split("cat");
 	cmd.rd_in = 0; //ft_strdup("infile.txt");
 	cmd.rd_out = 0; // ft_strdup("outfile.txt");
 	cmd.rd_heredoc = 0; //ft_strdup("end");
