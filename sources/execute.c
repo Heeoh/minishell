@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/06 19:17:23 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/09 17:20:02 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,10 @@ void	exe_a_cmd(t_cmd *cmd, char *env[])
 {
 	int	fd;
 
+	// for (char **p = cmd->av; p && *p; p++) {
+	// 	ft_putstr_fd(*p, 2);
+	// }
+	// printf("\n");
 	char *path = find_path(cmd->av[0], env);
 	if (access(path, F_OK) != 0)
 		print_error_n_exit("no such file");
@@ -122,7 +126,7 @@ void    execute(int cmd_cnt, t_list *cmds, char *env[])
 	int	i;
 	int fds[2][2];
 	int pid;
-	t_cmt *cmd_p;
+	t_list *cmd_p;
 
 	i = 0;
 	fds[0][0] = -1;
@@ -136,70 +140,81 @@ void    execute(int cmd_cnt, t_list *cmds, char *env[])
 		exe_a_cmd((t_cmd *)cmds->content, env);
 	else // pipe
 	{
-		while (++i < cmd_cnt)
+		while (i < cmd_cnt)
 		{
 			if (pipe(fds[i % 2]) == -1)
-				printf("error in pipe\n");
+			printf("pipe failure\n");
 			pid = fork();
-			if (pid < 0) // error
-				printf("error in fork\n");
-			else if (pid == 0) // child
+			if (pid == -1)
+				printf("fork failure\n");
+			else if (!pid)
 			{
-				// stdin -> fds[another][0]
-				// stdout -> fds[cur][1]
-				// exe
-				// close fds[another][0], fds[cur][1]
-				// return
-				dup2(fds[(i+1) % 2][0], STDIN_FILENO);
-				dup2(fds[i % 2][1], STDOUT_FILENO);
-				exe_a_cmd(cmd_p, env);
-				close(fds[(i+1) % 2][0]);
-				close(fds[i % 2][1]);
-				return;
+				if (i == 0)
+				{
+					// printf("child 1\n");
+					close(fds[(i + 1) % 2][0]);
+					close(fds[(i + 1) % 2][1]);
+					close(fds[i % 2][0]);
+					dup2(fds[i % 2][1], STDOUT_FILENO);
+					close(fds[i % 2][1]);
+				}
+				else if (i != cmd_cnt - 1)
+				{
+					// printf("child %d\n", i+1);
+					close(fds[(i + 1) % 2][1]); // close write end of first pipe
+					dup2(fds[(i + 1) % 2][0], STDIN_FILENO);
+					close(fds[(i + 1) % 2][0]); // close original read end of first pipe
+					close(fds[i % 2][0]); // close read end of second pipe
+					dup2(fds[i % 2][1], STDOUT_FILENO);
+					close(fds[i % 2][1]); // close original write end of second pipe
+				}
+				else {
+					// printf("child %d\n", i+1);
+					close(fds[(i + 1) % 2][1]); // close write end of first pipe
+					dup2(fds[(i + 1) % 2][0], STDIN_FILENO);
+					close(fds[(i + 1) % 2][0]); // close original read end of first pipe
+					close(fds[i % 2][0]); // close read end of second pipe
+					close(fds[i % 2][1]); // close original write end of second pipe
+				}
+				// write(2, "d\n", 2);
+				exe_a_cmd((t_cmd *)cmd_p->content, env);
+				// return (0);
 			}
-			else if (pid > 0) // parent
+			else if (pid)
 			{
 				if (waitpid(pid, NULL, WNOHANG) == -1)
-					printf("error in waitpid\n");
-			} 
-
-		}	
+					printf("child process error\n");
+			}
+			i++;
+			cmd_p = cmd_p->next;
+		}
 	}
 }
 
+t_cmd *create_cmd(char *str){
+	t_cmd   *cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	cmd->av = ft_split(str, ' ');
+	cmd->ac = 0;
+	for (char **p = cmd->av; p && *p; p++) {
+		cmd->ac++;
+	}
+	cmd->rd_in = 0; //ft_strdup("infile.txt");
+	cmd->rd_out = 0; // ft_strdup("outfile.txt");
+	cmd->rd_heredoc = 0; //ft_strdup("end");
+	cmd->rd_append = 0; //ft_strdup("outfile.txt");
+	return (cmd);
+}
+
 int main(int ac, char *av[], char *env[]) {
-	t_list *cmd_lst;
-	t_list *new;
-	t_cmd   cmd;
+	t_list *cmd_lst = NULL;
 
-	cmd.ac = 1;
-	cmd.av = ft_split("ls");
-	cmd.rd_in = 0; //ft_strdup("infile.txt");
-	cmd.rd_out = 0; // ft_strdup("outfile.txt");
-	cmd.rd_heredoc = 0; //ft_strdup("end");
-	cmd.rd_append = 0; //ft_strdup("outfile.txt");
-	new = ft_lstnew(&cmd);
-	ft_lstadd_front(&cmd_lst, new);
+	ac = 0;
+	av = 0;
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls")));
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat")));
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
 
-	cmd.ac = 1;
-	cmd.av = ft_split("cat");
-	cmd.rd_in = 0; //ft_strdup("infile.txt");
-	cmd.rd_out = 0; // ft_strdup("outfile.txt");
-	cmd.rd_heredoc = 0; //ft_strdup("end");
-	cmd.rd_append = 0; //ft_strdup("outfile.txt");
-	new = ft_lstnew(&cmd);
-	ft_lstadd_front(&cmd_lst, new);
-
-	execute(1, cmd_lst, env);
+	execute(3, cmd_lst, env);
 
 }
 
-
-/*
-parsing!! 
-- t_cmd의 av[ac] = 0 -> 마지막임을 알려줘야 함
-- execve 에서 커멘드를 문자열 배열 형태로 받기 때문에 av도 동일한 형식이어야 함
-
-- redirection을 하나의 커멘드로 볼것인가..! 그건 아닌 거 같은데
-
-*/
