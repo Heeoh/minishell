@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/13 18:44:06 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/13 20:41:03 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -117,9 +117,9 @@ void	exe_a_cmd(t_cmd *cmd, char *env[])
 	execve(path, cmd->av, env);
 }
 
-void	child_process(int cmd_i, int cmd_cnt, int pipes[][2])
+void	child_process(int cmd_i, int cmd_cnt, int pipes[][2], char is_heredoc)
 {
-	if (cmd_i != 0)
+	if (cmd_i != 0 && !is_heredoc)
 		dup2(pipes[(cmd_i + 1) % PIPE_N][0], STDIN_FILENO);
 	if (cmd_i != cmd_cnt - 1)
 		dup2(pipes[cmd_i % PIPE_N][1], STDOUT_FILENO);
@@ -166,7 +166,7 @@ void	multiple_pipes(int cmd_cnt, t_list *cmd_p, char *env[], int pipes[][2])
 			print_error_n_exit("fork error");
 		else if (!pid) // child process
 		{
-			child_process(cmd_i, cmd_cnt, pipes);
+			child_process(cmd_i, cmd_cnt, pipes, ((t_cmd *)cmd_p->content)->rd_heredoc != 0);
 			exe_a_cmd((t_cmd *)cmd_p->content, env);
 		}
 		else if (pid) // parent process
@@ -197,49 +197,47 @@ void    execute(int cmd_cnt, t_list *cmds, char *env[])
 		multiple_pipes(cmd_cnt, cmds, env, pipes);
 }
 
-t_cmd *create_cmd(char *str){
+t_cmd *create_cmd(char *str, char *in,  char *out,  char *heredoc,  char *append){
 	t_cmd   *cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	cmd->av = ft_split(str, ' ');
 	cmd->ac = 0;
 	for (char **p = cmd->av; p && *p; p++) {
 		cmd->ac++;
 	}
-	cmd->rd_in = 0; //ft_strdup("infile.txt");
-	cmd->rd_out = 0; // ft_strdup("outfile.txt");
-	cmd->rd_heredoc = 0; //ft_strdup("end");
-	cmd->rd_append = 0; //ft_strdup("outfile.txt");
+	cmd->rd_in = (in) ? ft_strdup(in) : 0;
+	cmd->rd_out = (out) ? ft_strdup(out) : 0; // ft_strdup("outfile.txt");
+	cmd->rd_heredoc = (heredoc) ? ft_strdup(heredoc) : 0; //ft_strdup("end");
+	cmd->rd_append = (append) ? ft_strdup(append) : 0; //ft_strdup("outfile.txt");
 	return (cmd);
 }
 
 int main(int ac, char *av[], char *env[]) {
 	t_list *cmd_lst = NULL;
-	char * line;
+	// char * line;
 	
 	ac = 0;
 	av = 0;
 	
-	char is_done = 0;
-	// setting_signal();
-	while (1) {
-		line = readline("minishell> ");
+	// char is_done = 0;
+	// // setting_signal();
+	// while (1) {
+	// 	line = readline("minishell> ");
 
-		// ac = 0;
-		// av = 0;
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
-		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 		
-		if (!is_done) {
+		// if (!is_done) {
 			execute(ft_lstsize(cmd_lst), cmd_lst, env);
-			is_done = 1;
-		}
-	}
+	// 		is_done = 1;
+	// 	}
+	// }
 
 }
 

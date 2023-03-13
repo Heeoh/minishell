@@ -1,2 +1,11 @@
-wowowowo
-wowowowo
+Makefile
+README.md
+exe
+headers
+heredoc_tmp.txt
+infile.txt
+library
+minishell
+objects
+outfile.txt
+sources
