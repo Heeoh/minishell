@@ -7,3 +7,11 @@
     + 그에 맞게 makefile 수정
 + single command 실행 처리
 + redirection 처리
+
+### 03.09
++ multiple pipes
+    + child processing, parent processing
+
+### 03.13
++ multiple pipe error handling
++ redirection with multiple pipes
