@@ -6,12 +6,14 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/06 16:38:17 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/13 14:31:48 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
+
+# define PIPE_N 2
 
 typedef struct s_cmd {
     int     ac;
