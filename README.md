@@ -8,10 +8,12 @@
 + single command 실행 처리
 + redirection 처리
 
-### 03.09
+#### 03.09
 + multiple pipes
     + child processing, parent processing
 
-### 03.13
+#### 03.13
 + multiple pipe error handling
 + redirection with multiple pipes
++ built in
+    + pwd, env, echo
