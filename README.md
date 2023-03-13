@@ -1,4 +1,4 @@
-# minishell
+# minishell - exe
 
 #### 03.02
 + open prompt
@@ -14,3 +14,11 @@
     + 그에 맞게 makefile 수정
 + single command 실행 처리
 + redirection 처리
+
+### 03.09 (exe)
++ multiple pipes
+    + child processing, parent processing
+
+### 03.13 (exe)
++ multiple pipe error handling
++ redirection with multiple pipes
