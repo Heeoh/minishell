@@ -24,4 +24,4 @@
 + redirection with multiple pipes
 + built in
     + pwd, env, echo
-~~ (not yot) heredoc tmp file delete ~~
++ ~~(not yot) delete heredoc tmp file~~
