@@ -22,3 +22,6 @@
 #### 03.13 (exe)
 + multiple pipe error handling
 + redirection with multiple pipes
++ built in
+    + pwd, env, echo
++ ~~(not yot) delete heredoc tmp file~~
