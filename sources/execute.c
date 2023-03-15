@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/13 20:41:03 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/14 13:26:34 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ char	*create_heredoc_file(char *limiter)
 	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	while (1)
 	{
+		write(STDOUT_FILENO, "> ", 2);
 		str = get_next_line(0);
 		if (ft_strncmp(str, limiter, ft_strlen(limiter)) == 0)
 			break ;
@@ -114,6 +115,8 @@ void	exe_a_cmd(t_cmd *cmd, char *env[])
 		do_redirection_out(cmd->rd_out, &fd, 0);
 	else if (cmd->rd_append)
 		do_redirection_out(cmd->rd_append, &fd, 1);
+	// if (unlink(path) == -1)
+	// 	ft_putendl_fd("unlink error", 2);
 	execve(path, cmd->av, env);
 }
 
@@ -217,15 +220,27 @@ int main(int ac, char *av[], char *env[]) {
 	
 	ac = 0;
 	av = 0;
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+	
+
+	execute(ft_lstsize(cmd_lst), cmd_lst, env);
 	
 	// char is_done = 0;
 	// // setting_signal();
 	// while (1) {
 	// 	line = readline("minishell> ");
 
-		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
-		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
-		ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+		// // ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
@@ -234,7 +249,7 @@ int main(int ac, char *av[], char *env[]) {
 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 		
 		// if (!is_done) {
-			execute(ft_lstsize(cmd_lst), cmd_lst, env);
+			// execute(ft_lstsize(cmd_lst), cmd_lst, env);
 	// 		is_done = 1;
 	// 	}
 	// }

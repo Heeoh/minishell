@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/13 14:31:48 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/15 17:05:15 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,5 +23,7 @@ typedef struct s_cmd {
     char    *rd_heredoc; // <<
     char    *rd_append; // >>
 }   t_cmd;
+
+
 
 #endif
