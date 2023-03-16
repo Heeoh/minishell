@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/15 21:51:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/16 15:13:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,13 +33,11 @@
 	- 없다면 새로 추가
 */
 
-#include "../../library/libft/libft.h"
-#include <stdio.h>
-typedef struct s_env_var {
-    char    *key;
-    char    *value;
-	char	is_tmp;
-}   t_env_var;
+
+// $_ 처리 
+
+#include "../../headers/mini_env.h"
+
 
 // int check_right_var_key(char *key)
 // {
@@ -73,120 +71,49 @@ typedef struct s_env_var {
 // 	ft_lstadd_back(env_lst, ft_lstnew(new_var));
 // }
 
-t_list	*sort_env_lst(t_list *org_lst)
-{
-	t_list	*sorted
-}
-
-void	print_env_lst(t_list *env_lst)
-{
-	t_list	*p;
-
-	p = env_lst;
-	while(p)
-	{
-		printf("%s=%s\n", ((t_env_var *)p->content)->key, ((t_env_var *)p->content)->value);
-		p = p->next;
-	}
-}
-
-int ft_export(t_cmd *cmd, t_list **env_lst) {
-	char	*p;
-
-	p = cmd->av + 1;
-	if (cmd->ac == 1) // 전체 출력
-	{
-		// 오름차순 정렬 
-		// 출력
-	}
-	else // 추가
-	{
-		// 알맞은 형태인지 체크
-		// 리스트에 추가
-		while (p && *p)
-			add_an_env_var(env_lst, *p);
-	}
-}
 
 
-void	free_env_var(t_env_var	*arg)
-{
-	if (arg->key)
-		free(arg->key);
-	if (arg->value)
-		free(arg->value);
-	free(arg);
-}
+// int ft_export(t_cmd *cmd, t_list **env_lst) {
+// 	char	*p;
 
-t_env_var	*create_env_var_struct(char *key, char *val, char is_tmp)
-{
-	t_env_var	*ret;
-
-	ret = (t_env_var *)malloc(sizeof(t_env_var *));
-	if (!ret)
-		return (NULL);
-	ret->is_tmp = is_tmp;
-	ret->key = key;
-	ret->value = val;
-	return (ret);
-}
-
-t_env_var	*create_env_var(char *arg)
-{
-	char		*eq_pos;
-	char		*key;
-	char		*val;
-	int			key_len;
-	int			val_len;
-
-	eq_pos = ft_strchr(arg, '=');
-	if (!eq_pos)
-	{
-		key_len = ft_strlen(arg);
-		val_len = 0;
-	}
-	else
-	{
-		key_len = ft_strlen(eq_pos - arg);
-		val_len = ft_strlen(arg) - (eq_pos - arg) - 1;
-	}
-	key = (char *)malloc(key_len + 1);
-	val = (char *)malloc(val_len + 1);
-	ft_strlcpy(key, arg, key_len + 1);
-	*val = '\0';
-	if (eq_pos)
-		ft_strlcpy(val, eq_pos + 1, val_len + 1);
-	return (create_env_var_struct(key, val, !eq_pos));
-}
-
-// t_list	*init_env(char *org_env[])
-// {
-// 	t_list	*mini_env;
-
-// 	mini_env = NULL;
-// 	while (org_env && *org_env)
-// 		// ft_lstadd_back(&mini_env, *org_env++);
-// 		// ft_lstadd_back(&mini_env, ft_lstnew((void *)create_env_var(*org_env++)));
-// 		// ft_lstadd_back(&mini_env, *org_env++));
-
-// 	return (mini_env);
+// 	p = cmd->av + 1;
+// 	if (cmd->ac == 1) // 전체 출력
+// 	{
+// 		// 오름차순 정렬 
+// 		// 출력
+// 	}
+// 	else // 추가
+// 	{
+// 		// 알맞은 형태인지 체크
+// 		// 리스트에 추가
+// 		while (p && *p)
+// 			add_an_env_var(env_lst, *p);
+// 	}
 // }
+
+
+
+t_list	*init_env(char *org_env[])
+{
+	t_list	*mini_env;
+
+	mini_env = NULL;
+	while (org_env && *org_env)
+		ft_lstadd_back(&mini_env, ft_lstnew((void *)create_env_var(*org_env++)));
+	return (mini_env);
+}
 
 int main(int ac, char *av[], char *env[]){
 
 	t_list	*mini_env;
+	t_list	*sorted;
 
-	t_env_var *a = create_env_var("");
-	a ? printf("%s, %s\n", a->key, a->value) : printf("(null)\n");
-	// mini_env = init_env(env);
-	// t_list	*p = mini_env;
-	// while (p)
-	// {
-	// 	printf("key: %s, name: %s\n", ((t_env_var*)p->content)->key, ((t_env_var*)p->content)->value);
-	// 	p = p->next;
-	// }
-
-
+	mini_env = init_env(env);
+	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
+	sort_env_lst(&sorted);
+	print_env_lst(sorted);
+	print_env_lst(mini_env);
+	
 	// printf("%s\n", getenv("water"));
 	// ft_export("water=삼다수");
 	// printf("%s\n", getenv("water"));
