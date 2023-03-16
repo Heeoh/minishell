@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "get_next_line.h": "c",
+<<<<<<< HEAD
         "typeinfo": "c",
         "__node_handle": "c",
         "__bit_reference": "c",
@@ -22,5 +23,8 @@
         "type_traits": "c",
         "vector": "c",
         "__locale": "c"
+=======
+        "sstream": "c"
+>>>>>>> 09015615e90c243530797d0b019b763ba6e3bbb4
     }
 }
