@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/16 21:19:53 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/16 21:27:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,5 +51,7 @@ void	ft_listadd_back(t_list **lst, t_list *new);
 void	ft_listclear(t_list **lst, void (*del)(void*));
 void	ft_listdelone(t_list *lst, void (*del)(void*));
 t_list	*ft_listlast(t_list *lst);
+
+
 
 #endif

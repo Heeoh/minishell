@@ -1,6 +1,30 @@
 {
     "files.associations": {
         "get_next_line.h": "c",
+<<<<<<< HEAD
+        "typeinfo": "c",
+        "__node_handle": "c",
+        "__bit_reference": "c",
+        "__functional_base": "c",
+        "algorithm": "c",
+        "atomic": "c",
+        "bitset": "c",
+        "chrono": "c",
+        "__memory": "c",
+        "functional": "c",
+        "iterator": "c",
+        "limits": "c",
+        "locale": "c",
+        "memory": "c",
+        "optional": "c",
+        "ratio": "c",
+        "system_error": "c",
+        "tuple": "c",
+        "type_traits": "c",
+        "vector": "c",
+        "__locale": "c"
+=======
         "sstream": "c"
+>>>>>>> 09015615e90c243530797d0b019b763ba6e3bbb4
     }
 }
