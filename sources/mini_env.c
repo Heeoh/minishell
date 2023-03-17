@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/17 16:09:08 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 21:17:11 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,14 +25,14 @@ void	free_env_var(void	*arg)
 	free(env_var);
 }
 
-t_env_var	*create_env_var_struct(char *key, char *val, char is_tmp)
+t_env_var	*create_env_var_struct(char *key, char *val, char is_my_tmp)
 {
 	t_env_var	*ret;
 
-	ret = (t_env_var *)malloc(sizeof(t_env_var *));
+	ret = (t_env_var *)malloc(sizeof(t_env_var));
 	if (!ret)
 		return (NULL);
-	ret->is_tmp = is_tmp;
+	ret->is_tmp = is_my_tmp;
 	ret->key = key;
 	ret->value = val;
 	return (ret);
@@ -191,6 +191,7 @@ char	*replace_env(t_list *env_lst, char *data)
 	char	*env_val;
 	int		new_data_len;
 	char	*new_data;
+	int		env_val_len;
 
 	env_sp = ft_strchr(data, '$') - data;
 	env_ep = env_sp + 1;
@@ -206,12 +207,17 @@ char	*replace_env(t_list *env_lst, char *data)
 	// null
 	ft_strlcpy(env_key, &data[env_sp + 1], env_ep - env_sp);
 	env_val = ft_getenv(env_lst, env_key);
-	new_data_len = ft_strlen(data) - (env_ep - env_sp - 1) + ft_strlen(env_val);
+	if (!env_val)
+		env_val_len = 0;
+	else
+		env_val_len = ft_strlen(env_val);
+	new_data_len = ft_strlen(data) - (env_ep - env_sp - 1) + env_val_len;
 	new_data = (char *)malloc(sizeof(char) * new_data_len + 1);
 	// null
-	ft_strlcpy(new_data, data, env_sp);
-	ft_strlcpy(new_data + env_sp, env_val, ft_strlen(env_val) + 1);
-	ft_strlcpy(new_data + env_sp + ft_strlen(env_val), data + env_ep, ft_strlen(data) - env_ep);
+	ft_strlcpy(new_data, data, env_sp + 1);
+	if (env_val)
+		ft_strlcpy(new_data + env_sp, env_val, env_val_len + 1);
+	ft_strlcpy(new_data + env_sp + env_val_len, data + env_ep, ft_strlen(data) - env_ep + 1);
 	free(env_key);
 	// free(data);
 	return (new_data);
@@ -233,7 +239,7 @@ t_list	*init_env(char *org_env[])
 // 	t_list	*sorted;
 
 // 	mini_env = init_env(env);
-// 	printf("%s\n", replace_env(mini_env, "$path"));
+// 	printf("%s\n", replace_env(mini_env, "'$path'"));
 // 	// print_env_lst(mini_env);
 	
 // 	// printf("%s\n", getenv("water"));
