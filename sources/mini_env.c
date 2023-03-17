@@ -6,10 +6,11 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/16 15:23:10 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 16:09:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "../headers/minishell.h"
 #include "../headers/mini_env.h"
 
 void	free_env_var(void	*arg)
@@ -82,6 +83,7 @@ char	*ft_getenv(t_list *env_lst, char *key)
 	{
 		if (ft_strncmp(key, ((t_env_var *)p->content)->key, 1000) == 0)
 			return (((t_env_var *)p->content)->value);
+		p = p->next;
 	}
 	return (NULL);
 }
@@ -173,3 +175,68 @@ void	print_env_lst(t_list *env_lst)
 		p = p->next;
 	}
 }
+
+int	is_var_char(char ch)
+{
+	if (!ft_isalnum(ch) && ch != '_')
+		return (0);
+	return (1);
+}
+
+char	*replace_env(t_list *env_lst, char *data)
+{
+	int	env_sp;
+	int	env_ep;
+	char	*env_key;
+	char	*env_val;
+	int		new_data_len;
+	char	*new_data;
+
+	env_sp = ft_strchr(data, '$') - data;
+	env_ep = env_sp + 1;
+	if (is_var_char(data[env_ep]) && !ft_isdigit(data[env_ep]))
+	{
+		while (++env_ep)
+		{
+			if (!is_var_char(data[env_ep]))
+				break ;
+		}
+	}
+	env_key = (char *)malloc(sizeof(char *) * (env_ep - env_sp));
+	// null
+	ft_strlcpy(env_key, &data[env_sp + 1], env_ep - env_sp);
+	env_val = ft_getenv(env_lst, env_key);
+	new_data_len = ft_strlen(data) - (env_ep - env_sp - 1) + ft_strlen(env_val);
+	new_data = (char *)malloc(sizeof(char) * new_data_len + 1);
+	// null
+	ft_strlcpy(new_data, data, env_sp);
+	ft_strlcpy(new_data + env_sp, env_val, ft_strlen(env_val) + 1);
+	ft_strlcpy(new_data + env_sp + ft_strlen(env_val), data + env_ep, ft_strlen(data) - env_ep);
+	free(env_key);
+	// free(data);
+	return (new_data);
+}
+
+t_list	*init_env(char *org_env[])
+{
+	t_list	*mini_env;
+
+	mini_env = NULL;
+	while (org_env && *org_env)
+		ft_lstadd_back(&mini_env, ft_lstnew((void *)create_env_var(*org_env++)));
+	return (mini_env);
+}
+
+// int main(int ac, char *av[], char *env[]){
+
+// 	t_list	*mini_env;
+// 	t_list	*sorted;
+
+// 	mini_env = init_env(env);
+// 	printf("%s\n", replace_env(mini_env, "$path"));
+// 	// print_env_lst(mini_env);
+	
+// 	// printf("%s\n", getenv("water"));
+// 	// ft_export("water=삼다수");
+// 	// printf("%s\n", getenv("water"));
+// }

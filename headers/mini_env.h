@@ -6,14 +6,14 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/03/16 15:23:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/16 22:01:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINI_ENV_H
 # define MINI_ENV_H
 
-# include "../../library/libft/libft.h"
+# include "../library/libft/libft.h"
 # include <stdio.h>
 
 typedef struct s_env_var {

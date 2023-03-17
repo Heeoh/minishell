@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/16 15:13:47 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 14:29:06 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,18 +103,18 @@ t_list	*init_env(char *org_env[])
 	return (mini_env);
 }
 
-int main(int ac, char *av[], char *env[]){
+// int main(int ac, char *av[], char *env[]){
 
-	t_list	*mini_env;
-	t_list	*sorted;
+// 	t_list	*mini_env;
+// 	t_list	*sorted;
 
-	mini_env = init_env(env);
-	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
-	sort_env_lst(&sorted);
-	print_env_lst(sorted);
-	print_env_lst(mini_env);
+// 	mini_env = init_env(env);
+// 	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
+// 	sort_env_lst(&sorted);
+// 	print_env_lst(sorted);
+// 	print_env_lst(mini_env);
 	
-	// printf("%s\n", getenv("water"));
-	// ft_export("water=삼다수");
-	// printf("%s\n", getenv("water"));
-}
+// 	// printf("%s\n", getenv("water"));
+// 	// ft_export("water=삼다수");
+// 	// printf("%s\n", getenv("water"));
+// }
