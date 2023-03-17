@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/14 13:26:34 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 14:38:25 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -214,45 +214,45 @@ t_cmd *create_cmd(char *str, char *in,  char *out,  char *heredoc,  char *append
 	return (cmd);
 }
 
-int main(int ac, char *av[], char *env[]) {
-	t_list *cmd_lst = NULL;
-	// char * line;
+// int main(int ac, char *av[], char *env[]) {
+// 	t_list *cmd_lst = NULL;
+// 	// char * line;
 	
-	ac = 0;
-	av = 0;
-	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
-	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
-	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+// 	ac = 0;
+// 	av = 0;
+// 	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+// 	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 	
 
-	execute(ft_lstsize(cmd_lst), cmd_lst, env);
+// 	execute(ft_lstsize(cmd_lst), cmd_lst, env);
 	
-	// char is_done = 0;
-	// // setting_signal();
-	// while (1) {
-	// 	line = readline("minishell> ");
+// 	// char is_done = 0;
+// 	// // setting_signal();
+// 	// while (1) {
+// 	// 	line = readline("minishell> ");
 
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
-		// // ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
-		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+// 		// // ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 		
-		// if (!is_done) {
-			// execute(ft_lstsize(cmd_lst), cmd_lst, env);
-	// 		is_done = 1;
-	// 	}
-	// }
+// 		// if (!is_done) {
+// 			// execute(ft_lstsize(cmd_lst), cmd_lst, env);
+// 	// 		is_done = 1;
+// 	// 	}
+// 	// }
 
-}
+// }
 
