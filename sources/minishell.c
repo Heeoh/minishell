@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/17 14:40:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 21:03:38 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,18 +31,24 @@ void setting_signal()
 int	main(int ac, char *av[], char *env[])
 {
 	char	*line;
-	t_cmd	*cmd;
+	t_list	*cmd;
+	t_list	*env_lst;
 	
 	setting_signal();
+	ac = 0;
 	(void)av;
-	(void)env;
+	// (void)e	nv;
 	// printf("%d, %s\n", ac, av[0]);
 	// for (int i=0; env[i]; i++) {
 	// 	printf("%s\n", env[i]);
 	// }
 	// using_history()
-	cmd = ft_listnew(ac);
+	env_lst = init_env(env);
+	// print_env_lst(env_lst);
+	// cmd = ft_listnew(ac);
+	
 	while (1) {
+		cmd = NULL;
 		line = readline("minishell> ");
 		if (line == NULL) {
 			printf("exit\n"); // CTRL + D
@@ -52,7 +58,7 @@ int	main(int ac, char *av[], char *env[])
 				free(line);
 				continue; 
 		}
-		parsing(line, &cmd);
+		parsing(line, &cmd, env_lst);
 		add_history(line);
 	}
 

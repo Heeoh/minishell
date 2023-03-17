@@ -6,13 +6,19 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/17 16:09:51 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 21:54:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-//토크나이징한거 struct에 넣기
-//환경변수 변환, cannot found
+//토크나이징한거 struct에 넣기 - done
+//norm
+//built in func
+//built in 이랑 실행부 연결
+//signal 실행부
+//awk
+//momory leak
+
 
 int	is_quote(char q, int quote)
 {
@@ -37,17 +43,6 @@ int	is_quote(char q, int quote)
 	return (quote);
 }
 
-t_tk	*create_token(char *data, int is_env)
-{
-	t_tk	*ret;
-
-	ret = (t_tk *)malloc(sizeof(t_tk));
-	// null
-	ret->data = data;
-	ret->is_env = is_env;
-	return (ret);
-}
-
 int	tokenizing_quote(char *line, int start_p, int quote)
 {
 	int n;
@@ -64,72 +59,58 @@ int	tokenizing_quote(char *line, int start_p, int quote)
 	return (n);
 }
 
-char	*strnjoin(char *s1, int s1_size, char *s2, int s2_size)
+char	*strjoin_n_free(char *s1, char *s2)
 {
 	char	*ret;
-	int		is_s1_free;
-	int		is_s2_free;
 
-	is_s1_free = 0;
-	is_s2_free = 0;
-	if (!s1)
-		s1_size = 0;
-	if (!s2)
-		s2_size = 0;
-	if (s1_size < 0)
+	if (s1 && s2)
 	{
-		s1_size = ft_strlen(s1);
-		is_s1_free = 1;
-	}
-	if (s2_size < 0)
-	{
-		s2_size = ft_strlen(s2);
-		is_s2_free = 1;
-	}
-	ret = (char *)malloc(s1_size + s2_size + 1);
-	// null
-	if (s1)
-		ft_strlcpy(ret, s1, s1_size + 1);
-	if (s2)
-		ft_strlcpy(ret + s1_size, s2, s2_size + 1);
-	if (s1 && is_s1_free)
+		ret = ft_strjoin(s1, s2);
+		if (!ret)
+			return (NULL);
 		free(s1);
-	if (s2 && is_s2_free)
 		free(s2);
+	}
+	if (!s1)
+		ret = ft_strdup(s2);
+	if (!s2)
+		ret = ft_strdup(s1);
 	return (ret);
 }
 
-// char	*strjoin_n_free(char *s1, char *s2)
-// {
-// 	char	*ret;
+char	*ft_strndup(const char *str, size_t size)
+{
+	char			*ret;
+	char			*strp;
+	unsigned int	i;
 
-// 	ret = ft_strjoin(s1, s2);
-// 	if (!ret)
-// 		return (NULL);
-// 	free(s1);
-// 	free(s2);
-// 	return (ret);
-// }
+	ret = (char *)malloc(size + 1);
+	if (!ret)
+		return (NULL);
+	i = 0;
+	strp = (char *)str;
+	while (strp && *strp && i < size)
+		ret[i++] = *strp++;
+	ret[i] = '\0';
+	return (ret);
+}
 
-int	tokenizing(t_list **tk_lst, char *line)
+int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {
 	int quote;
 	int	i;
 	int	start_p;
 	char	*token;
 	int		token_size;
-	// int		tmp_i;
-	int		is_env;
+	char	*tmp;
 
 	i = 0;
 	start_p = 0;
 	quote = 0;
-	is_env = 0;
 	token = NULL;
 	token_size = 0;
 	while(1)
 	{
-		is_env = 0;
 		quote = is_quote(line[i], quote);
 		if (quote == 0)// "" '' 닫혀있을때
 		{
@@ -141,22 +122,14 @@ int	tokenizing(t_list **tk_lst, char *line)
 			if (line[i] == ' ' || line[i] == '|' ||
 				line[i] == '<' || line[i] == '>' || line[i] == '\0')
 			{
-				// if (start_p < i)
-				// {
-				// 	token = (char *)malloc(sizeof(char) * (i - start_p + 1));
-				// 	// null guard
-				// 	ft_strlcpy(token, &line[start_p], i - start_p + 1);
-				// 	if (ft_strchr(token, '$'))
-				// 		is_env = 1;
-				// 	ft_lstadd_back(tk_lst, ft_lstnew(create_token(token, is_env)));
-				// }
 				if (token_size || start_p < i)
 				{
-					token = strnjoin(token, -1, line + start_p, i - start_p);
+					tmp = ft_strndup(line + start_p, i - start_p);
+					if (ft_strchr(tmp, '$') && quote != 1)
+						tmp = replace_env(env_lst, tmp);
+					token = strjoin_n_free(token, tmp);
 					// null guard
-					if (ft_strchr(token, '$'))
-						is_env = 1;
-					ft_lstadd_back(tk_lst, ft_lstnew(create_token(token, is_env)));
+					ft_lstadd_back(tk_lst, ft_lstnew(token));
 				}
 				if (!line[i])
 					break;
@@ -168,43 +141,29 @@ int	tokenizing(t_list **tk_lst, char *line)
 						token_size++;
 					token = (char *)malloc(sizeof(char) * token_size + 1);
 					ft_strlcpy(token, &line[i], token_size + 1);
-					// if (ft_strchr(token, '$'))
-					// 	is_env = 1;
-					ft_lstadd_back(tk_lst, ft_lstnew(create_token(token, is_env)));
+					ft_lstadd_back(tk_lst, ft_lstnew(token));
 				}
 				i += token_size;
 				start_p = i;
 				token = NULL;
 				token_size = 0;
 			}
-			else //char
+			else // char
 				i++;
 		}
 		else// "" '' 안닫혀있음
 		{
-			// tmp_i = i;
-			// i = tokenizing_quote(line, i, quote);
-			// if (start_p == tmp_i)
-			// 	token = (char *)malloc(sizeof(char) * (i - start_p));
-			// else
-			// 	token = (char *)malloc(sizeof(char) * (i - start_p + 1));
-			// // null guard
-			// if (start_p != tmp_i)
-			// 	ft_strlcpy(token, &line[start_p], tmp_i - start_p + 1);
-			// ft_strlcpy(token + (tmp_i - start_p), &line[tmp_i + 1], i - tmp_i);
-			// if (ft_strchr(token, '$') && quote != 1)
-			// 		is_env = 1;
-			// ft_lstadd_back(tk_lst, ft_lstnew(create_token(token, is_env)));
-			token = strnjoin(token, -1, line + start_p, i - start_p);
-			token_size += ft_strlen(token);
+			tmp = ft_strndup(line + start_p, i - start_p);
+			token = strjoin_n_free(token, tmp);
 			start_p = i;
 			i = tokenizing_quote(line, i, quote);
 			if (i < 0)
 				return (ERROR);
-			token = strnjoin(token, -1, line + start_p + 1, i - start_p - 1);
-			token_size += ft_strlen(token);
-			if (ft_strchr(token, '$') && quote != 1)
-				is_env = 1;
+			tmp = ft_strndup(line + start_p + 1, i - start_p - 1);
+			if (ft_strchr(tmp, '$') && quote != 1)
+				tmp = replace_env(env_lst, tmp);
+			token = strjoin_n_free(token, tmp);
+			token_size = ft_strlen(token);
 			i++;
 			start_p = i;
 			quote = 0;
@@ -213,26 +172,121 @@ int	tokenizing(t_list **tk_lst, char *line)
 	return (0);
 }
 
-int	parsing(char *line, t_cmd **cmd)
+int	init_cmd_av(t_list *tk_lst, char **av[], int ac)
+{
+	t_list	*tk_p;
+	int		i;
+
+	*av = (char **)malloc(sizeof(char *) * (ac + 1));
+	if (!*av)
+		return (ERROR);
+	i = 0;
+	tk_p = tk_lst;
+	while (i < ac)
+	{
+		if (ft_strncmp(tk_p->content, "<", 5) == 0
+			|| ft_strncmp(tk_p->content, ">", 5) == 0
+			|| ft_strncmp(tk_p->content, "<<", 5) == 0
+			|| ft_strncmp(tk_p->content, ">>", 5) == 0)
+		{
+			tk_p = tk_p->next;
+			if (tk_p)
+				tk_p = tk_p->next;
+		}
+		else
+		{
+			(*av)[i] = ft_strdup((char *)tk_p->content);
+			if (!(*av)[i])
+				return (ERROR);
+			i++;
+			tk_p = tk_p->next;
+		}
+	}
+	return (0);
+}
+
+t_list	*init_cmd_val(t_list *tk_lst, t_cmd **cmd)
+{
+	t_list	*tk_p;
+
+	*cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	(*cmd)->ac = 0;
+	(*cmd)->av = 0;
+	(*cmd)->rd_in = 0;
+	(*cmd)->rd_out = 0;
+	(*cmd)->rd_heredoc = 0;
+	(*cmd)->rd_append = 0;
+	tk_p = tk_lst;
+	while (1)
+	{
+		if (!tk_p || ft_strncmp(tk_p->content, "|", 5) == 0)
+		{
+			init_cmd_av(tk_lst, &(*cmd)->av, (*cmd)->ac);
+			return (tk_p);
+		}
+		if (ft_strncmp(tk_p->content, "<", 5) == 0 && tk_p->next)
+		{
+			(*cmd)->rd_in = ft_strdup((char *)tk_p->next->content);
+			tk_p = tk_p->next;
+		}
+		else if (ft_strncmp(tk_p->content, ">", 5) == 0 && tk_p->next)
+		{
+			(*cmd)->rd_out = ft_strdup((char *)tk_p->next->content);
+			tk_p = tk_p->next;
+		}
+		else if (ft_strncmp(tk_p->content, "<<", 5) == 0 && tk_p->next)
+		{
+			(*cmd)->rd_heredoc = ft_strdup((char *)tk_p->next->content);
+			tk_p = tk_p->next;
+		}
+		else if (ft_strncmp(tk_p->content, ">>", 5) == 0 && tk_p->next)
+		{
+			(*cmd)->rd_append = ft_strdup((char *)tk_p->next->content);
+			tk_p = tk_p->next;
+		}
+		else
+			(*cmd)->ac++;
+		if (tk_p)
+			tk_p = tk_p->next;
+	}
+}
+
+int	init_cmd_lst(t_list **cmd, t_list *tk_lst)
+{
+	t_list	*tk_p;
+	t_cmd	*new_cmd;
+	
+	tk_p = tk_lst;
+	new_cmd = NULL;
+	while (tk_p)
+	{
+		tk_p = init_cmd_val(tk_lst, &new_cmd);
+		ft_lstadd_back(cmd, ft_lstnew(new_cmd));
+		if (tk_p)
+			tk_p = tk_p->next;
+	}
+	return (0);
+}
+
+int	parsing(char *line, t_list **cmd, t_list *env_lst)
 {
 	t_list	*tk_lst;
 
-	cmd = 0;
 	tk_lst = NULL;
-	if (tokenizing(&tk_lst, line) < 0)
+	if (tokenizing(&tk_lst, line, env_lst) < 0)
 		return (ERROR);
-	// tokenizing(&tk_lst, line);
-	for (t_list *p = tk_lst; p; p = p->next) {
-		printf("%d, %s\n", ((t_tk*)p->content)->is_env, ((t_tk*)p->content)->data);
-	}
+	init_cmd_lst(cmd, tk_lst);
 	
 	return (0);
 }
 
-// int main()
+// int main(int ac, char *av[], char *env[])
 // {
-// 	t_cmd	*cmds;
+// 	t_list	*cmds;
 
-// 	parsing("echo \'\"$USER\'", &cmds);
+// 	ac = 0;
+// 	av = 0;
+// 	t_list *envlst = init_env(env);
+// 	cmds = NULL;
+// 	parsing("$USER", &cmds, envlst);
 // }
-	

@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/16 21:27:54 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/17 21:53:18 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@
 #include <readline/history.h>
 #include <signal.h>
 #include <unistd.h>
+#include "../headers/mini_env.h"
 
 typedef struct s_cmd {
 	int		ac;
@@ -37,21 +38,11 @@ typedef struct s_cmd {
 	char	*rd_append; // >>
 }	t_cmd;
 
-typedef struct s_tk {
-	int		is_env;
-	char	*data;
-}	t_tk;
 
-int		parsing(char *line, t_cmd **cmd);
+int		parsing(char *line, t_list **cmds, t_list *env_lst);
 int		is_quote(char q, int quote);
-char	*crt_pipe(t_cmd *cmd, char *line, int i, int j);
-t_cmd	*ft_listnew(int content);
-void	ft_listadd_front(t_list **lst, t_list *new);
-void	ft_listadd_back(t_list **lst, t_list *new);
-void	ft_listclear(t_list **lst, void (*del)(void*));
-void	ft_listdelone(t_list *lst, void (*del)(void*));
-t_list	*ft_listlast(t_list *lst);
-
-
+int		init_cmd_av(t_list *tk_lst, char **av[], int ac);
+t_list	*init_cmd_val(t_list *tk_lst, t_cmd **cmd);
+int	init_cmd_lst(t_list **cmd, t_list *tk_lst);
 
 #endif
