@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/17 21:08:24 by heson            ###   ########.fr        #
+#    Updated: 2023/03/18 16:23:52 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,10 @@ GNL_DIR		= library/get_next_line/
 HDRS_DIR	= headers/
 SRCS_DIR	= sources/
 OBJS_DIR	= objects/
-READ_DIR 	= ${HOME}/.brew/opt/readline/lib
-READ_HDRS	= ${HOME}/.brew/opt/readline/include
+READ_DIR 	= ${HOME}/local/opt/readline/lib
+READ_HDRS 	= ${HOME}/local/opt/readline/include
+# READ_DIR 	= ${HOME}/.brew/opt/readline/lib
+# READ_HDRS	= ${HOME}/.brew/opt/readline/include
 
 # ---------------------------------- FILES ----------------------------------- #
 
@@ -33,8 +35,11 @@ OBJS += $(addprefix $(OBJS_DIR), $(notdir $(SRCS:.c=.o)))
 
 # -------------------------------- COMPILATE --------------------------------- #
 
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-RLFLAGS = -lreadline -lhistory -L${READ_DIR}
+CFLAGS = -Wall -Wextra -Werror 
+#-g -fsanitize=address
+RLFLAGS = -lreadline 
+# -lhistory 
+# -L${READ_DIR}
 RM		= rm -rf
 MD		= mkdir -p 
 #AR		= ar -rcs

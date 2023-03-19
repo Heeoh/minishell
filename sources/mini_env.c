@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/17 21:17:11 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/18 17:33:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -183,53 +183,62 @@ int	is_var_char(char ch)
 	return (1);
 }
 
-char	*replace_env(t_list *env_lst, char *data)
+int	get_env_key(char *sp, char	**env_key)
 {
-	int	env_sp;
-	int	env_ep;
-	char	*env_key;
-	char	*env_val;
-	int		new_data_len;
-	char	*new_data;
-	int		env_val_len;
+	char	*ep;
+	int		key_len;
 
-	env_sp = ft_strchr(data, '$') - data;
-	env_ep = env_sp + 1;
-	if (is_var_char(data[env_ep]) && !ft_isdigit(data[env_ep]))
+	ep = sp + 1;
+	if (!*ep)
 	{
-		while (++env_ep)
+		*env_key = (char *)malloc(sizeof(char));
+		**env_key = '\0';
+		return (0);
+	}
+	if (is_var_char(*ep) && !ft_isdigit(*ep))
+	{
+		while (++ep)
 		{
-			if (!is_var_char(data[env_ep]))
+			if (!is_var_char(*ep))
 				break ;
 		}
+		ep--;
 	}
-	env_key = (char *)malloc(sizeof(char *) * (env_ep - env_sp));
+	key_len = ep - sp;
+	*env_key = (char *)malloc(sizeof(char *) * (key_len + 1));
 	// null
-	ft_strlcpy(env_key, &data[env_sp + 1], env_ep - env_sp);
-	env_val = ft_getenv(env_lst, env_key);
-	if (!env_val)
-		env_val_len = 0;
-	else
-		env_val_len = ft_strlen(env_val);
-	new_data_len = ft_strlen(data) - (env_ep - env_sp - 1) + env_val_len;
-	new_data = (char *)malloc(sizeof(char) * new_data_len + 1);
-	// null
-	ft_strlcpy(new_data, data, env_sp + 1);
-	if (env_val)
-		ft_strlcpy(new_data + env_sp, env_val, env_val_len + 1);
-	ft_strlcpy(new_data + env_sp + env_val_len, data + env_ep, ft_strlen(data) - env_ep + 1);
-	free(env_key);
-	// free(data);
-	return (new_data);
+	ft_strlcpy(*env_key, sp + 1, key_len + 1);
+	return (key_len);
+}
+
+char	*replace_env(t_list *env_lst, char *data)
+{
+	int			env_sp;
+	int			env_ep;
+	char		*front;
+	char		*back;
+	t_env_var	target_env;
+
+	env_sp = ft_strchr(data, '$') - data;
+	env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
+	front = ft_strndup(data, env_sp);
+	back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
+	target_env.value = ft_getenv(env_lst, target_env.key);
+	return (strjoin_n_free(strjoin_n_free(front, target_env.value), back));
+	// return (new_data);
 }
 
 t_list	*init_env(char *org_env[])
 {
 	t_list	*mini_env;
+	t_list	*new_env_node;
 
 	mini_env = NULL;
 	while (org_env && *org_env)
-		ft_lstadd_back(&mini_env, ft_lstnew((void *)create_env_var(*org_env++)));
+	{
+		new_env_node = ft_lstnew((void *)create_env_var(*org_env++));
+		ft_lstadd_back(&mini_env, new_env_node);
+	}
 	return (mini_env);
 }
 
@@ -241,7 +250,6 @@ t_list	*init_env(char *org_env[])
 // 	mini_env = init_env(env);
 // 	printf("%s\n", replace_env(mini_env, "'$path'"));
 // 	// print_env_lst(mini_env);
-	
 // 	// printf("%s\n", getenv("water"));
 // 	// ft_export("water=삼다수");
 // 	// printf("%s\n", getenv("water"));

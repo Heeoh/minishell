@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/17 21:53:18 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/18 17:38:23 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,14 @@ typedef struct s_cmd {
 
 
 int		parsing(char *line, t_list **cmds, t_list *env_lst);
-int		is_quote(char q, int quote);
 int		init_cmd_av(t_list *tk_lst, char **av[], int ac);
 t_list	*init_cmd_val(t_list *tk_lst, t_cmd **cmd);
 int	init_cmd_lst(t_list **cmd, t_list *tk_lst);
+
+char	*ft_strndup(const char *str, size_t size);
+char	*strjoin_n_free(char *s1, char *s2);
+
+// parsing
+int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst);
 
 #endif
