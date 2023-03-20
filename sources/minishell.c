@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/19 02:34:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 19:24:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,12 +70,13 @@ int	main(int ac, char *av[], char *env[])
 				continue; 
 		}
 		parsing(line, &cmd_lst, env_lst);
-		for (t_list *p = cmd_lst; p; p=p->next) {
-			for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
-				printf("%s, ", ((t_cmd *)p->content)->av[i]);
-			}
-			printf("\n");
-		}
+		// for (t_list *p = cmd_lst; p; p=p->next) {
+		// 	for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
+		// 		printf("%s, ", ((t_cmd *)p->content)->av[i]);
+		// 	}
+		// 	printf("\n");
+		// 	printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
+		// }
 		add_history(line);
 		// exe
 		ft_lstclear(&cmd_lst, free_cmd_struct);

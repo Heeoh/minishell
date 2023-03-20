@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/19 03:04:56 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 19:34:00 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,99 +35,126 @@ int	is_quote(char q, int quote)
 	return (quote);
 }
 
-char	*get_token(char	*sp, char *ep, int quote, t_list *env_lst, char *tk)
+char	*get_token(t_list *env_lst, t_tokenizer *tokenizer)
 {
 	char	*tmp;
 	char	*new_token;
+	char	*sp;
+	char	*ep;
 
+	sp = tokenizer->sp;
+	ep = tokenizer->line;
 	new_token = NULL;
 	tmp = ft_strndup(sp, ep - sp);
-	if (ft_strchr(tmp, '$') && quote != 1)
+	if (ft_strchr(tmp, '$') && tokenizer->quote != 1)
 		tmp = replace_env(env_lst, tmp);
-	new_token = strjoin_n_free(tk, tmp);
+	new_token = strjoin_n_free(tokenizer->tk_content, tmp);
 	return (new_token);
 }
 
-int	tokenizing_quote(char *line, int start_p, int quote)
+int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 {
-	int	n;
+	t_tokenizer	*tk_p;
 
-	n = start_p + 1;
-	while (is_quote(line[n], quote))
+	tk_p = *tokenizer;
+	tk_p->tk_content = get_token(env_lst, tk_p);
+	tk_p->sp = tk_p->line;
+	tk_p->line = tk_p->sp + 1;
+	while (is_quote(*tk_p->line, tk_p->quote))
 	{
-		if (!line[n])
+		if (!tk_p->line)
 		{
 			printf("quote error : not closed quote\n");
 			return (ERROR);
 		}
-		n++;
+		tk_p->line++;
 	}
-	return (n);
+	tk_p->tk_content = get_token(env_lst, tk_p);
+	tk_p->tk_size = ft_strlen(tk_p->tk_content);
+	tk_p->line++;
+	tk_p->sp = tk_p->line;
+	tk_p->quote = 0;
+	*tokenizer = tk_p;
+	return (0);
+}
+
+int	is_token_separator(char c)
+{
+	if (c == ' ' || c == '|' || c == '<' || c == '>' || c == '\0')
+		return (1);
+	return (0);
+}
+
+int	ch_exc(char c)
+{
+	printf("'%c': not a valid character\n", c);
+	return (-1);
+}
+
+t_tokenizer	*init_tokenizer(char *line)
+{
+	t_tokenizer	*tokenizer;
+
+	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
+	tokenizer->line = line;
+	tokenizer->sp = line;
+	tokenizer->quote = 0;
+	tokenizer->tk_content = NULL;
+	tokenizer->tk_size = 0;
+	return (tokenizer);
+}
+
+void	push_token_back(t_list *env_lst, t_list **tk_lst,
+							t_tokenizer *tokenizer)
+{
+	char	*ep;
+
+	ep = tokenizer->line;
+	if (tokenizer->tk_size || tokenizer->sp < ep)
+	{
+		tokenizer->tk_content = get_token(env_lst, tokenizer);
+		ft_lstadd_back(tk_lst, ft_lstnew(tokenizer->tk_content));
+	}
+	if (!*ep)
+		return ;
+	tokenizer->tk_size = 1;
+	if (*ep != ' ')
+	{
+		if ((*ep == '<' || *ep == '>') && *ep == *(ep + 1))
+			tokenizer->tk_size++;
+		tokenizer->tk_content = ft_strndup(ep, tokenizer->tk_size);
+		ft_lstadd_back(tk_lst, ft_lstnew(tokenizer->tk_content));
+	}
+	tokenizer->line = ep + tokenizer->tk_size;
+	tokenizer->sp = tokenizer->line;
+	tokenizer->tk_content = NULL;
+	tokenizer->tk_size = 0;
 }
 
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {
-	int		quote;
-	int		i;
-	int		start_p;
-	char	*token;
-	int		token_size;
+	t_tokenizer	*tokenizer;
 
-	i = 0;
-	start_p = 0;
-	quote = 0;
-	token = NULL;
-	token_size = 0;
+	tokenizer = init_tokenizer(line);
 	while (1)
 	{
-		quote = is_quote(line[i], quote);
-		if (quote == 0) // "" '' 닫혀있을때
+		tokenizer->quote = is_quote(*line, tokenizer->quote);
+		if (tokenizer->quote == 0)
 		{
-			if (line[i] == ';' || line[i] == '\\')
+			if (*tokenizer->line == ';' || *tokenizer->line == '\\')
+				return (ch_exc(*tokenizer->line));
+			if (is_token_separator(*tokenizer->line))
 			{
-				printf("'%c': not a valid character\n", line[i]);
-				return (ERROR);
-			}
-			if (line[i] == ' ' || line[i] == '|'
-				|| line[i] == '<' || line[i] == '>' || line[i] == '\0')
-			{
-				if (token_size || start_p < i)
-				{
-					token = get_token(line + start_p, &line[i], quote, env_lst, token);
-					ft_lstadd_back(tk_lst, ft_lstnew(token));
-				}
-				if (!line[i])
+				push_token_back(env_lst, tk_lst, tokenizer);
+				if (!*tokenizer->line)
 					break ;
-				token_size = 1;
-				if (line[i] != ' ')
-				{
-					if ((line[i] == '<' || line[i] == '>')
-						&& line[i] == line[i + 1])
-						token_size++;
-					token = ft_strndup(line + i, token_size);
-					ft_lstadd_back(tk_lst, ft_lstnew(token));
-				}
-				i += token_size;
-				start_p = i;
-				token = NULL;
-				token_size = 0;
 			}
-			else // char
-				i++;
+			else
+				tokenizer->line++;
 		}
-		else// "" '' 안닫혀있음
-		{
-			token = get_token(line + start_p, &line[i], quote, env_lst, token);
-			start_p = i;
-			i = tokenizing_quote(line, i, quote);
-			if (i < 0)
-				return (ERROR);
-			token = get_token(line + start_p + 1, &line[i - 1], quote, env_lst, token);
-			token_size = ft_strlen(token);
-			i++;
-			start_p = i;
-			quote = 0;
-		}
+		else if (tokenizing_quote(env_lst, &tokenizer) == ERROR)
+			return (ERROR);
 	}
+	free(tokenizer);
 	return (0);
 }

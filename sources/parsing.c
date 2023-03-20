@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/19 03:06:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 19:34:31 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ void	set_cmd_redirection(char *type, char *val, t_cmd **cmd)
 {
 	if (ft_strncmp(type, "<", 5) == 0)
 		(*cmd)->rd_in = ft_strdup(val);
-	else if (ft_strncmp(type, "<", 5) == 0)
+	else if (ft_strncmp(type, ">", 5) == 0)
 		(*cmd)->rd_out = ft_strdup(val);
 	else if (ft_strncmp(type, "<<", 5) == 0)
 		(*cmd)->rd_heredoc = ft_strdup(val);
