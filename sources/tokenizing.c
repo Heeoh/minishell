@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/19 03:04:56 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 18:15:42 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,84 +48,91 @@ char	*get_token(char	*sp, char *ep, int quote, t_list *env_lst, char *tk)
 	return (new_token);
 }
 
-int	tokenizing_quote(char *line, int start_p, int quote)
+char	*tokenizing_quote(char *start_p, int quote)
 {
-	int	n;
+	char	*p;
 
-	n = start_p + 1;
-	while (is_quote(line[n], quote))
+	p = start_p + 1;
+	while (is_quote(*p, quote))
 	{
-		if (!line[n])
+		if (!*p)
 		{
 			printf("quote error : not closed quote\n");
-			return (ERROR);
+			return (NULL);
 		}
-		n++;
+		p++;
 	}
-	return (n);
+	return (p);
+}
+
+int	is_token_separator(char c)
+{
+	if (c == ' ' || c == '|' || c == '<' || c == '>' || c == '\0')
+		return (1);
+	return (0);
+}
+
+int	ch_exc(char c)
+{
+	printf("'%c': not a valid character\n", c);
+	return (-1);
 }
 
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {
 	int		quote;
-	int		i;
-	int		start_p;
+	char	*start_p;
 	char	*token;
 	int		token_size;
 
-	i = 0;
-	start_p = 0;
+	// i = 0;
+	start_p = line;
 	quote = 0;
 	token = NULL;
 	token_size = 0;
 	while (1)
 	{
-		quote = is_quote(line[i], quote);
+		quote = is_quote(*line, quote);
 		if (quote == 0) // "" '' 닫혀있을때
 		{
-			if (line[i] == ';' || line[i] == '\\')
+			if (*line == ';' || *line == '\\')
+				return (ch_exc(*line));
+			if (is_token_separator(*line))
 			{
-				printf("'%c': not a valid character\n", line[i]);
-				return (ERROR);
-			}
-			if (line[i] == ' ' || line[i] == '|'
-				|| line[i] == '<' || line[i] == '>' || line[i] == '\0')
-			{
-				if (token_size || start_p < i)
+				if (token_size || start_p < line)
 				{
-					token = get_token(line + start_p, &line[i], quote, env_lst, token);
+					token = get_token(start_p, line, quote, env_lst, token);
 					ft_lstadd_back(tk_lst, ft_lstnew(token));
 				}
-				if (!line[i])
+				if (!*line)
 					break ;
 				token_size = 1;
-				if (line[i] != ' ')
+				if (*line != ' ')
 				{
-					if ((line[i] == '<' || line[i] == '>')
-						&& line[i] == line[i + 1])
+					if ((*line == '<' || *line == '>')
+						&& *line == *(line + 1))
 						token_size++;
-					token = ft_strndup(line + i, token_size);
+					token = ft_strndup(line, token_size);
 					ft_lstadd_back(tk_lst, ft_lstnew(token));
 				}
-				i += token_size;
-				start_p = i;
+				line += token_size;
+				start_p = line;
 				token = NULL;
 				token_size = 0;
 			}
 			else // char
-				i++;
+				line++;
 		}
 		else// "" '' 안닫혀있음
 		{
-			token = get_token(line + start_p, &line[i], quote, env_lst, token);
-			start_p = i;
-			i = tokenizing_quote(line, i, quote);
-			if (i < 0)
+			token = get_token(start_p, line, quote, env_lst, token);
+			start_p = line;
+			line = tokenizing_quote(line, quote);
+			if (!line)
 				return (ERROR);
-			token = get_token(line + start_p + 1, &line[i - 1], quote, env_lst, token);
+			token = get_token(start_p + 1, line - 1, quote, env_lst, token);
 			token_size = ft_strlen(token);
-			i++;
-			start_p = i;
+			start_p = line;
 			quote = 0;
 		}
 	}
