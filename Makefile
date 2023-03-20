@@ -6,7 +6,7 @@
 #    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/20 19:32:28 by heson            ###   ########.fr        #
+#    Updated: 2023/03/20 21:27:37 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,8 @@ OBJS += $(addprefix $(OBJS_DIR), $(notdir $(SRCS:.c=.o)))
 
 # -------------------------------- COMPILATE --------------------------------- #
 
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror 
+# -g -fsanitize=address
 RLFLAGS = -lreadline 
 # -lhistory 
 # -L${READ_DIR}
@@ -61,7 +62,7 @@ $(NAME) :	$(OBJS)
 clean   :	
 			make clean -C $(LIBFT_DIR)
 			make clean -C $(GNL_DIR)
-			$(RM) $(OBJS)
+			$(RM) $(OBJS_DIR)
 
 fclean  :	clean
 			$(RM) $(LIBS) $(NAME) 

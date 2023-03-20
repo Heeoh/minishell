@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/17 14:29:06 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 21:25:44 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@
 
 // $_ 처리 
 
-#include "../../headers/mini_env.h"
+#include "../../headers/minishell.h"
 
 
 // int check_right_var_key(char *key)
@@ -73,48 +73,43 @@
 
 
 
-// int ft_export(t_cmd *cmd, t_list **env_lst) {
-// 	char	*p;
-
-// 	p = cmd->av + 1;
-// 	if (cmd->ac == 1) // 전체 출력
-// 	{
-// 		// 오름차순 정렬 
-// 		// 출력
-// 	}
-// 	else // 추가
-// 	{
-// 		// 알맞은 형태인지 체크
-// 		// 리스트에 추가
-// 		while (p && *p)
-// 			add_an_env_var(env_lst, *p);
-// 	}
-// }
-
-
-
-t_list	*init_env(char *org_env[])
+int ft_export(t_cmd *cmd, t_list **env_lst)
 {
-	t_list	*mini_env;
-
-	mini_env = NULL;
-	while (org_env && *org_env)
-		ft_lstadd_back(&mini_env, ft_lstnew((void *)create_env_var(*org_env++)));
-	return (mini_env);
+	// char	*p;
+	t_list	*sorted;
+	
+	if (cmd->ac == 1) // 전체 출력
+	{
+		sorted = ft_lstmap(*env_lst, copy_env_var, free_env_var);
+		sort_env_lst(&sorted);
+		print_env_lst(sorted);
+		ft_lstclear(&sorted, free_env_var);
+	}
+	else // 추가
+	{
+		// 알맞은 형태인지 체크
+		// 리스트에 추가
+		// while (p && *p)
+		// 	add_an_env_var(env_lst, *p);
+	}
+	return (0);
 }
 
-// int main(int ac, char *av[], char *env[]){
+int main(int ac, char *av[], char *env[]){
 
-// 	t_list	*mini_env;
-// 	t_list	*sorted;
+	t_list	*mini_env;
+	t_cmd	*cmd;
 
-// 	mini_env = init_env(env);
-// 	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
-// 	sort_env_lst(&sorted);
-// 	print_env_lst(sorted);
-// 	print_env_lst(mini_env);
+	cmd = create_cmd_struct();
+	cmd->ac = 1;
+	cmd->av = (char **)malloc(sizeof(char *) * 2);
+	cmd->av[0] = ft_strdup("export");
+	cmd->av[1] = 0;
+
+	mini_env = init_env(env);
+	ft_export(cmd, &mini_env);
 	
-// 	// printf("%s\n", getenv("water"));
-// 	// ft_export("water=삼다수");
-// 	// printf("%s\n", getenv("water"));
-// }
+	// printf("%s\n", getenv("water"));
+	// ft_export("water=삼다수");
+	// printf("%s\n", getenv("water"));
+}

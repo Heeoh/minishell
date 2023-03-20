@@ -6,12 +6,11 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/14 12:54:36 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 21:05:46 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../library/libft/libft.h"
-
 
 void	ft_echo(char *str, char option_n)
 {
