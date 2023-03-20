@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/18 17:38:23 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 18:42:55 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,14 @@ typedef struct s_cmd {
 	char	*rd_heredoc; // <<
 	char	*rd_append; // >>
 }	t_cmd;
+
+typedef struct s_tokenizer {
+	char	*line;
+	int		quote;
+	char	*sp;
+	char	*tk_content;
+	int		tk_size;
+}	t_tokenizer;
 
 
 int		parsing(char *line, t_list **cmds, t_list *env_lst);
