@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/17 14:38:25 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 21:05:16 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -138,10 +138,10 @@ void	parent_process(int cmd_i, int pipes[][2])
 }
 
 // 이럴 경우 예외 케이스가 없을까??
-void wait_processes(int child_cnt)
+void	wait_processes(int child_cnt)
 {
-	int count;
-	int status;
+	int	count;
+	int	status;
 
 	count = 0;
 	while (count < child_cnt)
@@ -169,7 +169,8 @@ void	multiple_pipes(int cmd_cnt, t_list *cmd_p, char *env[], int pipes[][2])
 			print_error_n_exit("fork error");
 		else if (!pid) // child process
 		{
-			child_process(cmd_i, cmd_cnt, pipes, ((t_cmd *)cmd_p->content)->rd_heredoc != 0);
+			child_process(cmd_i, cmd_cnt, pipes,
+				((t_cmd *)cmd_p->content)->rd_heredoc != 0);
 			exe_a_cmd((t_cmd *)cmd_p->content, env);
 		}
 		else if (pid) // parent process
@@ -180,10 +181,10 @@ void	multiple_pipes(int cmd_cnt, t_list *cmd_p, char *env[], int pipes[][2])
 	wait_processes(cmd_cnt);
 }
 
-void    execute(int cmd_cnt, t_list *cmds, char *env[])
+void	execute(int cmd_cnt, t_list *cmds, char *env[])
 {
-	int		i;
-	int		pipes[PIPE_N][2];
+	int	i;
+	int	pipes[PIPE_N][2];
 
 	i = 0;
 	while (i < PIPE_N)
@@ -196,63 +197,49 @@ void    execute(int cmd_cnt, t_list *cmds, char *env[])
 		return ;
 	if (cmd_cnt == 1)
 		exe_a_cmd((t_cmd *)cmds->content, env);
-	else // pipe
+	else
 		multiple_pipes(cmd_cnt, cmds, env, pipes);
 }
 
-t_cmd *create_cmd(char *str, char *in,  char *out,  char *heredoc,  char *append){
-	t_cmd   *cmd = (t_cmd *)malloc(sizeof(t_cmd));
-	cmd->av = ft_split(str, ' ');
-	cmd->ac = 0;
-	for (char **p = cmd->av; p && *p; p++) {
-		cmd->ac++;
-	}
-	cmd->rd_in = (in) ? ft_strdup(in) : 0;
-	cmd->rd_out = (out) ? ft_strdup(out) : 0; // ft_strdup("outfile.txt");
-	cmd->rd_heredoc = (heredoc) ? ft_strdup(heredoc) : 0; //ft_strdup("end");
-	cmd->rd_append = (append) ? ft_strdup(append) : 0; //ft_strdup("outfile.txt");
-	return (cmd);
-}
-
-// int main(int ac, char *av[], char *env[]) {
-// 	t_list *cmd_lst = NULL;
-// 	// char * line;
-	
-// 	ac = 0;
-// 	av = 0;
-// 	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
-// 	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
-// 	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+/*
+int main(int ac, char *av[], char *env[])
+{
+	t_list *cmd_lst = NULL;
+	// char * line;
+	ac = 0;
+	av = 0;
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+	ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+	// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 	
 
-// 	execute(ft_lstsize(cmd_lst), cmd_lst, env);
+	execute(ft_lstsize(cmd_lst), cmd_lst, env);
 	
-// 	// char is_done = 0;
-// 	// // setting_signal();
-// 	// while (1) {
-// 	// 	line = readline("minishell> ");
+	// char is_done = 0;
+	// // setting_signal();
+	// while (1) {
+	// 	line = readline("minishell> ");
 
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
-// 		// // ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
-// 		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("ls", 0, 0, 0, 0)));
+		// // ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("cat", 0, 0, "end", "out.txt")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l", 0, 0, 0, 0)));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("wc -l")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 3")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
+		// ft_lstadd_back(&cmd_lst, ft_lstnew(create_cmd("sleep 5")));
 		
-// 		// if (!is_done) {
-// 			// execute(ft_lstsize(cmd_lst), cmd_lst, env);
-// 	// 		is_done = 1;
-// 	// 	}
-// 	// }
+		// if (!is_done) {
+			// execute(ft_lstsize(cmd_lst), cmd_lst, env);
+	// 		is_done = 1;
+	// 	}
+	// }
 
-// }
-
+}*/

@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/20 19:24:47 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 21:00:24 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,9 +15,8 @@
 void sigint_handler(int sig) {
 	if (sig != SIGINT)
 		exit(0) ;
-	write(1, "\n", 1);
+	ft_putstr_fd("\nminishell> ", STDOUT_FILENO);
 	rl_on_new_line();
-	// rl_replace_line("", 0);
 	rl_redisplay();
 	return ;
 }

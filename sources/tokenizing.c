@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/20 19:34:00 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 20:53:00 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 
 	tk_p = *tokenizer;
 	tk_p->tk_content = get_token(env_lst, tk_p);
+	tk_p->line++;
 	tk_p->sp = tk_p->line;
-	tk_p->line = tk_p->sp + 1;
 	while (is_quote(*tk_p->line, tk_p->quote))
 	{
 		if (!tk_p->line)
@@ -138,7 +138,7 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 	tokenizer = init_tokenizer(line);
 	while (1)
 	{
-		tokenizer->quote = is_quote(*line, tokenizer->quote);
+		tokenizer->quote = is_quote(*tokenizer->line, tokenizer->quote);
 		if (tokenizer->quote == 0)
 		{
 			if (*tokenizer->line == ';' || *tokenizer->line == '\\')

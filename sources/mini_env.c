@@ -3,15 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/18 17:33:33 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/20 21:25:35 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-#include "../headers/mini_env.h"
 
 void	free_env_var(void	*arg)
 {
@@ -171,7 +170,8 @@ void	print_env_lst(t_list *env_lst)
 	while (p)
 	{
 		var = (t_env_var *)p->content;
-		printf("%s=%s\n", var->key, var->value);
+		if (ft_strncmp(var->key, "_", 5) != 0)
+			printf("%s=%s\n", var->key, var->value);
 		p = p->next;
 	}
 }
