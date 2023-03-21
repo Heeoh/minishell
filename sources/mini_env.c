@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 21:11:40 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 22:22:59 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,29 @@ void	*copy_env_var(void *arg)
 	return (create_env_var_struct(var->key, var->value, var->is_tmp));
 }
 
+int	is_var_char(char ch)
+{
+	if (!ft_isalnum(ch) && ch != '_')
+		return (0);
+	return (1);
+}
+
+int	is_valid_key(char *key)
+{
+	char	*p;
+
+	p = key;
+	if (is_var_char(*p) && !ft_isdigit(*p))
+	{
+		while (++p && *p)
+		{
+			if (!is_var_char(*p))
+				return (0);
+		}
+	}
+	return (1);
+}
+
 char	*ft_getenv(t_list *env_lst, char *key)
 {
 	t_list	*p;
@@ -96,6 +119,8 @@ void	ft_putenv(t_list *env_lst, char *arg)
 
 	new_env = create_env_var(arg);
 	if (!new_env)
+		return ;
+	if (!is_valid_key(new_env->key))
 		return ;
 	p = env_lst;
 	while (p)
@@ -201,20 +226,19 @@ void	print_env_lst(t_list *env_lst, int env_flag)
 		var = (t_env_var *)p->content;
 		if (env_flag)
 		{
-			if (ft_strncmp(var->key, "_", 5) != 0 && !var->is_tmp)
+			if (!var->is_tmp)
 				printf("%s=%s\n", var->key, var->value);
 		}
 		else
-			printf("%s=%s\n", var->key, var->value);
+		{
+			if (var->is_tmp)
+				printf("declare -x %s\n", var->key);
+			else if (ft_strncmp(var->key, "_", 5) != 0)
+				printf("declare -x %s=\"%s\"\n", var->key, var->value);
+			
+		}
 		p = p->next;
 	}
-}
-
-int	is_var_char(char ch)
-{
-	if (!ft_isalnum(ch) && ch != '_')
-		return (0);
-	return (1);
 }
 
 int	get_env_key(char *sp, char	**env_key)
@@ -276,18 +300,18 @@ t_list	*init_env(char *org_env[])
 	return (mini_env);
 }
 
-int main(int ac, char *av[], char *env[]){
+// int main(int ac, char *av[], char *env[]){
 
-	t_list	*mini_env;
-	t_list	*sorted;
+// 	t_list	*mini_env;
+// 	t_list	*sorted;
 
-	mini_env = init_env(env);
-	ft_putenv(mini_env, "kkk=kkkk");
-	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
-	sort_env_lst(&sorted);
-	print_env_lst(sorted, 1);
-	// print_env_lst(mini_env);
-	// printf("%s\n", getenv("water"));
-	// ft_export("water=삼다수");
-	// printf("%s\n", getenv("water"));
-}
+// 	mini_env = init_env(env);
+// 	ft_putenv(mini_env, "kkk=kkkk");
+// 	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
+// 	sort_env_lst(&sorted);
+// 	print_env_lst(sorted, 1);
+// 	// print_env_lst(mini_env);
+// 	// printf("%s\n", getenv("water"));
+// 	// ft_export("water=삼다수");
+// 	// printf("%s\n", getenv("water"));
+// }
