@@ -3,19 +3,26 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/20 21:00:24 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 17:24:40 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
 
+void	init_rl_catch_signals(void)
+{
+	extern int	rl_catch_signals;
+
+	rl_catch_signals = 0;
+}
+
 void sigint_handler(int sig) {
 	if (sig != SIGINT)
 		exit(0) ;
-	ft_putstr_fd("\nminishell> ", STDOUT_FILENO);
+	ft_putstr_fd("\n", STDOUT_FILENO);	
 	rl_on_new_line();
 	rl_redisplay();
 	return ;
@@ -54,6 +61,7 @@ int	main(int ac, char *av[], char *env[])
 	
 	ac = 0;
 	av = 0;
+	init_rl_catch_signals();
 	setting_signal();
 	env_lst = init_env(env);
 	// using_history()

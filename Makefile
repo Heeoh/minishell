@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/20 21:27:37 by heson            ###   ########.fr        #
+#    Updated: 2023/03/21 17:23:42 by jkim3            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,10 +21,8 @@ GNL_DIR		= library/get_next_line/
 HDRS_DIR	= headers/
 SRCS_DIR	= sources/
 OBJS_DIR	= objects/
-READ_DIR 	= ${HOME}/local/opt/readline/lib
-READ_HDRS 	= ${HOME}/local/opt/readline/include
-# READ_DIR 	= ${HOME}/.brew/opt/readline/lib
-# READ_HDRS	= ${HOME}/.brew/opt/readline/include
+READ_DIR 	= ${HOME}/.brew/opt/readline/lib
+READ_HDRS	= ${HOME}/.brew/opt/readline/include
 
 # ---------------------------------- FILES ----------------------------------- #
 
@@ -37,9 +35,7 @@ OBJS += $(addprefix $(OBJS_DIR), $(notdir $(SRCS:.c=.o)))
 
 CFLAGS = -Wall -Wextra -Werror 
 # -g -fsanitize=address
-RLFLAGS = -lreadline 
-# -lhistory 
-# -L${READ_DIR}
+RLFLAGS = -lreadline -lhistory -L${READ_DIR}
 RM		= rm -rf
 MD		= mkdir -p 
 #AR		= ar -rcs

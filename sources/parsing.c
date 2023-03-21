@@ -3,20 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/20 21:00:34 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 17:30:09 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-//토크나이징한거 struct에 넣기 - done
-//norm
+//unset(환경변수 지우기)
+//exit
+
 //built in func
 //built in 이랑 실행부 연결
-//signal 실행부 + ctrl + C 제대로 실행 안되는 것 같음
 //awk
+//export
 //momory leak
 
 char	*strjoin_n_free(char *s1, char *s2)
