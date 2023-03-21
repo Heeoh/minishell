@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/20 21:25:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 21:11:40 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,36 @@ char	*ft_getenv(t_list *env_lst, char *key)
 	return (NULL);
 }
 
-// ft_putenv
+void	ft_putenv(t_list *env_lst, char *arg)
+{
+	t_env_var	*new_env;
+	t_list		*new_node;
+	t_list		*p;
+	char		*val;
+
+	new_env = create_env_var(arg);
+	if (!new_env)
+		return ;
+	p = env_lst;
+	while (p)
+	{
+		if (ft_strncmp(new_env->key, ((t_env_var *)p->content)->key, 1000) == 0)
+		{
+			if (((t_env_var *)p->content)->value)
+				ft_free_str(&((t_env_var *)p->content)->value);
+			((t_env_var *)p->content)->value = new_env->value;
+			((t_env_var *)p->content)->is_tmp = 0;
+			break ;
+		}
+		if (!p->next->next)
+			break ;
+		p = p->next;
+	}
+	printf("%s\n", ((t_env_var *)p->content)->key);
+	new_node =  ft_lstnew(new_env);
+	ft_lstadd_front(&(p->next), new_node);
+	p->next = new_node;
+}
 
 void	split_lst(t_list *source, t_list **front, t_list **back)
 {
@@ -161,7 +190,7 @@ void	sort_env_lst(t_list **env_lst)
 	*env_lst = merge(a, b);
 }
 
-void	print_env_lst(t_list *env_lst)
+void	print_env_lst(t_list *env_lst, int env_flag)
 {
 	t_list		*p;
 	t_env_var	*var;
@@ -170,7 +199,12 @@ void	print_env_lst(t_list *env_lst)
 	while (p)
 	{
 		var = (t_env_var *)p->content;
-		if (ft_strncmp(var->key, "_", 5) != 0)
+		if (env_flag)
+		{
+			if (ft_strncmp(var->key, "_", 5) != 0 && !var->is_tmp)
+				printf("%s=%s\n", var->key, var->value);
+		}
+		else
 			printf("%s=%s\n", var->key, var->value);
 		p = p->next;
 	}
@@ -223,7 +257,7 @@ char	*replace_env(t_list *env_lst, char *data)
 	env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
 	front = ft_strndup(data, env_sp);
 	back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
-	target_env.value = ft_getenv(env_lst, target_env.key);
+	target_env.value = ft_strdup(ft_getenv(env_lst, target_env.key));
 	return (strjoin_n_free(strjoin_n_free(front, target_env.value), back));
 	// return (new_data);
 }
@@ -242,15 +276,18 @@ t_list	*init_env(char *org_env[])
 	return (mini_env);
 }
 
-// int main(int ac, char *av[], char *env[]){
+int main(int ac, char *av[], char *env[]){
 
-// 	t_list	*mini_env;
-// 	t_list	*sorted;
+	t_list	*mini_env;
+	t_list	*sorted;
 
-// 	mini_env = init_env(env);
-// 	printf("%s\n", replace_env(mini_env, "'$path'"));
-// 	// print_env_lst(mini_env);
-// 	// printf("%s\n", getenv("water"));
-// 	// ft_export("water=삼다수");
-// 	// printf("%s\n", getenv("water"));
-// }
+	mini_env = init_env(env);
+	ft_putenv(mini_env, "kkk=kkkk");
+	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
+	sort_env_lst(&sorted);
+	print_env_lst(sorted, 1);
+	// print_env_lst(mini_env);
+	// printf("%s\n", getenv("water"));
+	// ft_export("water=삼다수");
+	// printf("%s\n", getenv("water"));
+}
