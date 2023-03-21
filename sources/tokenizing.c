@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/20 20:53:00 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 19:48:31 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,9 +85,9 @@ int	is_token_separator(char c)
 	return (0);
 }
 
-int	ch_exc(char c)
+int	perror_n_return(char *err_msg)
 {
-	printf("'%c': not a valid character\n", c);
+	printf("%s\n", err_msg);
 	return (-1);
 }
 
@@ -142,7 +142,7 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 		if (tokenizer->quote == 0)
 		{
 			if (*tokenizer->line == ';' || *tokenizer->line == '\\')
-				return (ch_exc(*tokenizer->line));
+				return (perror_n_return("not a valid character"));
 			if (is_token_separator(*tokenizer->line))
 			{
 				push_token_back(env_lst, tk_lst, tokenizer);

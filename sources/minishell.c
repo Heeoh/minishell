@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/21 17:24:40 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/21 18:37:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ void	init_rl_catch_signals(void)
 
 void sigint_handler(int sig) {
 	if (sig != SIGINT)
-		exit(0) ;
+		exit(0);
 	ft_putstr_fd("\n", STDOUT_FILENO);	
 	rl_on_new_line();
 	rl_redisplay();
@@ -77,13 +77,13 @@ int	main(int ac, char *av[], char *env[])
 				continue; 
 		}
 		parsing(line, &cmd_lst, env_lst);
-		// for (t_list *p = cmd_lst; p; p=p->next) {
-		// 	for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
-		// 		printf("%s, ", ((t_cmd *)p->content)->av[i]);
-		// 	}
-		// 	printf("\n");
-		// 	printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
-		// }
+		for (t_list *p = cmd_lst; p; p=p->next) {
+			for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
+				printf("%s, ", ((t_cmd *)p->content)->av[i]);
+			}
+			printf("\n");
+			printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
+		}
 		add_history(line);
 		// exe
 		ft_lstclear(&cmd_lst, free_cmd_struct);

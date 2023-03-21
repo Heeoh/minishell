@@ -3,39 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/21 17:30:09 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/21 20:26:55 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
 //unset(환경변수 지우기)
 //exit
-
+// >< 
 //built in func
 //built in 이랑 실행부 연결
 //awk
 //export
 //momory leak
 
+void	ft_free_str(char **arg)
+{
+	if (arg && *arg)
+		free(*arg);
+	*arg = NULL;
+}
+
 char	*strjoin_n_free(char *s1, char *s2)
 {
 	char	*ret;
 
 	ret = NULL;
+	if (!s1 && !s2)
+		return (ret);
 	if (s1 && s2)
 	{
 		ret = ft_strjoin(s1, s2);
 		if (!ret)
 			return (NULL);
-		free(s1);
-		free(s2);
+		ft_free_str(&s1);
+		ft_free_str(&s2);
 	}
-	if (!s1)
+	else if (!s1)
 		ret = ft_strdup(s2);
-	if (!s2)
+	else if (!s2)
 		ret = ft_strdup(s1);
 	return (ret);
 }
@@ -57,39 +66,39 @@ char	*ft_strndup(const char *str, size_t size)
 	return (ret);
 }
 
-void	ft_free_str(char **arg)
+int	is_redirection(char *arg)
 {
-	if (arg && *arg)
-		free(*arg);
-	*arg = NULL;
+	if (ft_strncmp(arg, "<", 5) == 0
+		|| ft_strncmp(arg, ">", 5) == 0
+		|| ft_strncmp(arg, "<<", 5) == 0
+		|| ft_strncmp(arg, ">>", 5) == 0)
+		return (1);
+	return (0);
 }
 
-int	init_cmd_av(t_list *tk_p, char **av[], int ac)
+t_list	*init_cmd_av(t_list *tk_p, char **av[], int ac)
 {
 	int	i;
 
-	*av = (char **)malloc(sizeof(char *) * (ac + 1));
+	*av = (char **)ft_calloc((ac + 1), sizeof(char *));
 	if (!*av)
-		return (ERROR);
+		return (NULL);
 	i = 0;
 	while (i < ac && tk_p)
 	{
-		if (ft_strncmp(tk_p->content, "<", 5) == 0
-			|| ft_strncmp(tk_p->content, ">", 5) == 0
-			|| ft_strncmp(tk_p->content, "<<", 5) == 0
-			|| ft_strncmp(tk_p->content, ">>", 5) == 0)
+		if (is_redirection((char *)tk_p->content))
 			tk_p = tk_p->next;
 		else
 		{
 			(*av)[i] = ft_strdup((char *)tk_p->content);
 			if (!(*av)[i])
-				return (ERROR);
+				return (NULL);
 			i++;
 		}
 		if (tk_p)
 			tk_p = tk_p->next;
 	}
-	return (0);
+	return (tk_p);
 }
 
 t_cmd	*create_cmd_struct(void)
@@ -132,26 +141,32 @@ void	set_cmd_redirection(char *type, char *val, t_cmd **cmd)
 	}
 }
 
-t_list	*init_cmd_val(t_list *tk_lst, t_cmd **cmd)
+int	init_cmd_val(t_list **tk_lst, t_cmd **cmd)
 {
 	t_list	*tk_p;
 
 	*cmd = create_cmd_struct();
-	tk_p = tk_lst;
+	tk_p = *tk_lst;
 	while (1)
 	{
 		if (!tk_p || ft_strncmp(tk_p->content, "|", 5) == 0)
 		{
-			init_cmd_av(tk_lst, &(*cmd)->av, (*cmd)->ac);
-			return (tk_p);
+			init_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac);
+			*tk_lst = tk_p;
+			return (0);
 		}
-		else if ((ft_strncmp(tk_p->content, "<", 5) == 0
-				|| ft_strncmp(tk_p->content, ">", 5) == 0
-				|| ft_strncmp(tk_p->content, "<<", 5) == 0
-				|| ft_strncmp(tk_p->content, ">>", 5) == 0) && tk_p->next)
+		else if (is_redirection((char *)tk_p->content))
 		{
-			set_cmd_redirection(tk_p->content, tk_p->next->content, cmd);
-			tk_p = tk_p->next;
+			if (!tk_p->next)
+			{
+				perror_n_return("syntax error");
+				return (ERROR);
+			}
+			else if (!is_redirection((char *)tk_p->next->content))
+			{
+				set_cmd_redirection(tk_p->content, tk_p->next->content, cmd);
+				tk_p = tk_p->next;
+			}
 		}
 		else
 			(*cmd)->ac++;
@@ -169,7 +184,8 @@ int	init_cmd_lst(t_list **cmd, t_list *tk_lst)
 	new_cmd = NULL;
 	while (tk_p)
 	{
-		tk_p = init_cmd_val(tk_p, &new_cmd);
+		if (init_cmd_val(&tk_p, &new_cmd) < 0)
+			return (ERROR);
 		ft_lstadd_back(cmd, ft_lstnew(new_cmd));
 		if (tk_p)
 			tk_p = tk_p->next;

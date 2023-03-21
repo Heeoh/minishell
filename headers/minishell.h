@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/20 21:20:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 20:49:22 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,16 +46,18 @@ typedef struct s_tokenizer {
 	int		tk_size;
 }	t_tokenizer;
 
-
+int	perror_n_return(char *err_msg);
 int		parsing(char *line, t_list **cmds, t_list *env_lst);
 
 t_cmd	*create_cmd_struct(void);
-int		init_cmd_av(t_list *tk_lst, char **av[], int ac);
-t_list	*init_cmd_val(t_list *tk_lst, t_cmd **cmd);
+t_list	*init_cmd_av(t_list *tk_p, char **av[], int ac);
+int	init_cmd_val(t_list **tk_lst, t_cmd **cmd);
 int	init_cmd_lst(t_list **cmd, t_list *tk_lst);
 
 char	*ft_strndup(const char *str, size_t size);
 char	*strjoin_n_free(char *s1, char *s2);
+void	ft_free_str(char **arg);
+
 
 // parsing
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst);
