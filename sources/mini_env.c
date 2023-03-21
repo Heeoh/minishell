@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 22:22:59 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 22:27:06 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,13 +131,12 @@ void	ft_putenv(t_list *env_lst, char *arg)
 				ft_free_str(&((t_env_var *)p->content)->value);
 			((t_env_var *)p->content)->value = new_env->value;
 			((t_env_var *)p->content)->is_tmp = 0;
-			break ;
+			return ;
 		}
 		if (!p->next->next)
 			break ;
 		p = p->next;
 	}
-	printf("%s\n", ((t_env_var *)p->content)->key);
 	new_node =  ft_lstnew(new_env);
 	ft_lstadd_front(&(p->next), new_node);
 	p->next = new_node;

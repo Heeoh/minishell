@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 21:04:29 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/21 21:24:18 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,8 @@ void	sort_env_lst(t_list **env_lst);
 void	print_env_lst(t_list *env_lst, int env_flag);
 t_list	*init_env(char *org_env[]);
 char	*replace_env(t_list *env_lst, char *data);
+void	ft_putenv(t_list *env_lst, char *arg);
+
 
 
 #endif
