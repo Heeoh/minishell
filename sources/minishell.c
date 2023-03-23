@@ -3,59 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/22 17:51:51 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 20:41:50 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+
+/* to do
+
+
+<
+>f1>f2>f3 -> file 3개 만들어져야됨 (out, append)
+in - 마지막 파일을 읽어오지만, 이전 파일이 없을 경우 error
+heredoc - limiter 순차적으로 받고 이전 limiter 이후부터 마지막 limiter 까지 값이 input으로 넘어감
+
+
+*/
+
 #include "../headers/minishell.h"
+#include <stdio.h>
+#include <readline/readline.h>
+#include <readline/history.h>
 
-// void	init_rl_catch_signals(void)
-// {
-// 	extern int	rl_catch_signals;
-
-// 	rl_catch_signals = 0;
-// }
-
-
-void sigint_handler(int sig) {
-	if (sig != SIGINT)
-		exit(0);
-	ft_putstr_fd("\n", STDOUT_FILENO);	
-	rl_on_new_line();
-	rl_redisplay();
-	return ;
-}
-
-void setting_signal()
-{
-    signal(SIGINT, sigint_handler);	// CTRL + C
-    signal(SIGQUIT, SIG_IGN);		// CTRL + /
-}
-
-void	free_cmd_struct(void *arg)
-{
-	t_cmd	*target;
-	int		i;
-
-	target = (t_cmd *)arg;
-	i = 0;
-	while (i < target->ac)
-		free(target->av[i++]);
-	if (target->rd_in)
-		free(target->rd_in);
-	if (target->rd_out)
-		free(target->rd_out);
-	if (target->rd_heredoc)
-		free(target->rd_heredoc);
-	if (target->rd_append)
-		free(target->rd_append);
-}
 
 void leaks(void) {
 	system("leaks minishell");
+}
+
+void	test_parsing_cmd(t_list *cmd_lst)
+{
+	for (t_list *p = cmd_lst; p; p=p->next) {
+		for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
+			printf("%s, ", ((t_cmd *)p->content)->av[i]);
+		}
+		printf("\n");
+		for (t_list *rd_p = ((t_cmd *)p->content)->rd; rd_p; rd_p = rd_p->next) {
+			printf("(%d %s) ", ((t_redirection *)rd_p->content)->type,  ((t_redirection *)rd_p->content)->val);
+		}
+		printf("\n");
+		// printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
+	}
 }
 
 int	main(int ac, char *av[], char *env[])
@@ -68,9 +57,9 @@ int	main(int ac, char *av[], char *env[])
 	// atexit(leaks);
 	ac = 0;
 	av = 0;
-	// init_rl_catch_signals();
+	init_rl_catch_signals();
+	env_lst = init_env_lst(env);
 	setting_signal();
-	env_lst = init_env(env);
 	// using_history()
 	while (1) {
 		cmd_lst = NULL;
@@ -79,18 +68,12 @@ int	main(int ac, char *av[], char *env[])
 			printf("exit\n"); // CTRL + D
 			break;
 		}
-		if (!strcmp(line, "")) {
+		if (!ft_strncmp(line, "", 10)) {
 				free(line);
 				continue; 
 		}
 		cmd_cnt = parsing(line, &cmd_lst, env_lst);
-		// for (t_list *p = cmd_lst; p; p=p->next) {
-		// 	for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
-		// 		printf("%s, ", ((t_cmd *)p->content)->av[i]);
-		// 	}
-		// 	printf("\n");
-		// 	printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
-		// }
+		test_parsing_cmd(cmd_lst);
 		add_history(line);
 		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);

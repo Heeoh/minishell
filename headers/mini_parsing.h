@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_parsing.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:13:55 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 01:19:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 18:27:34 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,16 @@ void		push_token_back(t_list *env_lst, t_list **tk_lst,
 char		*get_token(t_list *env_lst, t_tokenizer *tokenizer);
 
 // cmd
-int			set_cmd_val(t_list **tk_lst, t_cmd **cmd);
-t_list		*set_cmd_av(t_list *tk_p, char **av[], int ac);
-void		set_cmd_redirection(char *type, char *val, t_cmd **cmd);
 t_cmd		*create_cmd_struct(void);
-t_list		*set_cmd_av(t_list *tk_p, char **av[], int ac);
+void		free_cmd_struct(void *arg);
+int			set_cmd_val(t_list **tk_lst, t_cmd **cmd);
+int			set_cmd_av(t_list *tk_p, char **av[], int ac);
+int	set_cmd_redirection(char *type, char *val, t_list **rd_lst);
 
 // parsing_utils
 int			is_quote(char q, int quote);
 int			is_token_separator(char c);
+int			is_redirection(char *arg);
 
 
 #endif

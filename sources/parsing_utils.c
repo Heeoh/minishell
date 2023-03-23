@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:12:54 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 01:12:55 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 14:10:48 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/mini_token.h"
+#include "../headers/mini_parsing.h"
 
 int	is_quote(char q, int quote)
 {

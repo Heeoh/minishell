@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 01:12:25 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 14:21:46 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/mini_token.h"
+#include "../headers/mini_parsing.h"
 
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {

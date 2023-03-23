@@ -3,14 +3,36 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/22 17:58:55 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 20:41:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
+#include "../library/libft/libft.h"
+
+t_redirection	*create_rd(int type, char *val)
+{
+	t_redirection	*ret;
+
+	ret = 0;
+	if (!val)
+		return (NULL);
+	ret = (t_redirection *)malloc(sizeof(t_redirection));
+	if (!ret)
+		return (NULL);
+	ret->type = type;
+	ret->val = ft_strdup(val);
+	return (ret);
+}
+
+void	free_rd_struct(void *arg)
+{
+	free(((t_redirection *)arg)->val);
+	free(arg);
+}
 
 t_cmd	*create_cmd_struct(void)
 {
@@ -19,10 +41,11 @@ t_cmd	*create_cmd_struct(void)
 	new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	new_cmd->ac = 0;
 	new_cmd->av = 0;
-	new_cmd->rd_in = 0;
-	new_cmd->rd_out = 0;
-	new_cmd->rd_heredoc = 0;
-	new_cmd->rd_append = 0;
+	new_cmd->rd = NULL;
+	// new_cmd->rd_in = 0;
+	// new_cmd->rd_out = 0;
+	// new_cmd->rd_heredoc = 0;
+	// new_cmd->rd_append = 0;
 	return (new_cmd);
 }
 
@@ -35,14 +58,20 @@ void	free_cmd_struct(void *arg)
 	i = 0;
 	while (i < target->ac)
 		free(target->av[i++]);
-	if (target->rd_in)
-		free(target->rd_in);
-	if (target->rd_out)
-		free(target->rd_out);
-	if (target->rd_heredoc)
-		free(target->rd_heredoc);
-	if (target->rd_append)
-		free(target->rd_append);
+	ft_lstclear(&target->rd, free_rd_struct);
+	// ft_lstclear(&(target->rd_in), free);
+	// ft_lstclear(&(target->rd_out), free);
+	// ft_lstclear(&(target->rd_heredoc), free);
+	// ft_lstclear(&(target->rd_append), free);
+
+	// if (target->rd_in)
+	// 	free(target->rd_in);
+	// if (target->rd_out)
+	// 	free(target->rd_out);
+	// if (target->rd_heredoc)
+	// 	free(target->rd_heredoc);
+	// if (target->rd_append)
+	// 	free(target->rd_append);
 }
 
 int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
@@ -55,7 +84,8 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	{
 		if (!tk_p || ft_strncmp(tk_p->content, "|", 5) == 0)
 		{
-			set_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac);
+			if (set_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac) < 0)
+				return (ERROR);
 			*tk_lst = tk_p;
 			return (0);
 		}
@@ -68,7 +98,8 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 			}
 			else if (!is_redirection((char *)tk_p->next->content))
 			{
-				set_cmd_redirection(tk_p->content, tk_p->next->content, cmd);
+				if (set_cmd_redirection(tk_p->content, tk_p->next->content, &(*cmd)->rd) < 0)
+					return (ERROR);
 				tk_p = tk_p->next;
 			}
 		}
@@ -79,13 +110,13 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	}
 }
 
-t_list	*set_cmd_av(t_list *tk_p, char **av[], int ac)
+int	set_cmd_av(t_list *tk_p, char **av[], int ac)
 {
 	int	i;
 
 	*av = (char **)ft_calloc((ac + 1), sizeof(char *));
 	if (!*av)
-		return (NULL);
+		return (ERROR);
 	i = 0;
 	while (i < ac && tk_p)
 	{
@@ -95,37 +126,55 @@ t_list	*set_cmd_av(t_list *tk_p, char **av[], int ac)
 		{
 			(*av)[i] = ft_strdup((char *)tk_p->content);
 			if (!(*av)[i])
-				return (NULL);
+				return (ERROR);
 			i++;
 		}
 		if (tk_p)
 			tk_p = tk_p->next;
 	}
-	return (tk_p);
+	return (0);
 }
 
-void	set_cmd_redirection(char *type, char *val, t_cmd **cmd)
+int	set_cmd_redirection(char *type, char *val, t_list **rd_lst)
 {
-	if (*type == '<')
-	{
-		if ((*cmd)->rd_in)
-			ft_free_str(&(*cmd)->rd_in);
-		if ((*cmd)->rd_heredoc)
-			ft_free_str(&(*cmd)->rd_heredoc);
-		if (ft_strncmp(type, "<", 5) == 0)
-			(*cmd)->rd_in = ft_strdup(val);
-		else if (ft_strncmp(type, "<<", 5) == 0)
-			(*cmd)->rd_heredoc = ft_strdup(val);
-	}
-	else if (*type == '>')
-	{
-		if ((*cmd)->rd_out)
-			ft_free_str(&(*cmd)->rd_out);
-		if ((*cmd)->rd_append)
-			ft_free_str(&(*cmd)->rd_append);
-		if (ft_strncmp(type, ">", 5) == 0)
-			(*cmd)->rd_out = ft_strdup(val);
-		else if (ft_strncmp(type, ">>", 5) == 0)
-			(*cmd)->rd_append = ft_strdup(val);
-	}
+	t_redirection	*new_rd;
+	t_list			*new_node;
+
+	new_rd = 0;
+	if (ft_strncmp(type, "<", 5) == 0)
+		new_rd = create_rd(RD_IN, val);
+	else if (ft_strncmp(type, "<<", 5) == 0)
+		new_rd = create_rd(RD_HEREDOC, val);
+	else if (ft_strncmp(type, ">", 5) == 0)
+		new_rd = create_rd(RD_OUT, val);
+	else if (ft_strncmp(type, ">>", 5) == 0)
+		new_rd = create_rd(RD_APPEND, val);
+	if (!new_rd)
+		return (ERROR);
+	new_node = ft_lstnew(new_rd);
+	ft_lstadd_back(rd_lst, new_node);
+	printf("\n\n");
+	return (0);
+	// if (*type == '<')
+	// {
+	// 	if ((*cmd)->rd_in)
+	// 		ft_free_str(&(*cmd)->rd_in);
+	// 	if ((*cmd)->rd_heredoc)
+	// 		ft_free_str(&(*cmd)->rd_heredoc);
+	// 	if (ft_strncmp(type, "<", 5) == 0)
+	// 		(*cmd)->rd_in = ft_strdup(val);
+	// 	else if (ft_strncmp(type, "<<", 5) == 0)
+	// 		(*cmd)->rd_heredoc = ft_strdup(val);
+	// }
+	// else if (*type == '>')
+	// {
+	// 	if ((*cmd)->rd_out)
+	// 		ft_free_str(&(*cmd)->rd_out);
+	// 	if ((*cmd)->rd_append)
+	// 		ft_free_str(&(*cmd)->rd_append);
+	// 	if (ft_strncmp(type, ">", 5) == 0)
+	// 		(*cmd)->rd_out = ft_strdup(val);
+	// 	else if (ft_strncmp(type, ">>", 5) == 0)
+	// 		(*cmd)->rd_append = ft_strdup(val);
+	// }
 }
