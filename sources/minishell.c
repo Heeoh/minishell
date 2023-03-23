@@ -3,21 +3,22 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/21 18:37:47 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/22 17:51:51 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
 
-void	init_rl_catch_signals(void)
-{
-	extern int	rl_catch_signals;
+// void	init_rl_catch_signals(void)
+// {
+// 	extern int	rl_catch_signals;
 
-	rl_catch_signals = 0;
-}
+// 	rl_catch_signals = 0;
+// }
+
 
 void sigint_handler(int sig) {
 	if (sig != SIGINT)
@@ -53,15 +54,21 @@ void	free_cmd_struct(void *arg)
 		free(target->rd_append);
 }
 
+void leaks(void) {
+	system("leaks minishell");
+}
+
 int	main(int ac, char *av[], char *env[])
 {
 	char	*line;
 	t_list	*cmd_lst;
+	int		cmd_cnt;
 	t_list	*env_lst;
 	
+	// atexit(leaks);
 	ac = 0;
 	av = 0;
-	init_rl_catch_signals();
+	// init_rl_catch_signals();
 	setting_signal();
 	env_lst = init_env(env);
 	// using_history()
@@ -76,19 +83,18 @@ int	main(int ac, char *av[], char *env[])
 				free(line);
 				continue; 
 		}
-		parsing(line, &cmd_lst, env_lst);
-		for (t_list *p = cmd_lst; p; p=p->next) {
-			for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
-				printf("%s, ", ((t_cmd *)p->content)->av[i]);
-			}
-			printf("\n");
-			printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
-		}
+		cmd_cnt = parsing(line, &cmd_lst, env_lst);
+		// for (t_list *p = cmd_lst; p; p=p->next) {
+		// 	for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
+		// 		printf("%s, ", ((t_cmd *)p->content)->av[i]);
+		// 	}
+		// 	printf("\n");
+		// 	printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
+		// }
 		add_history(line);
-		// exe
+		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 	}
-
 
 	// clear_history();
 }

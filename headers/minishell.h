@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/21 20:49:22 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/23 01:15:13 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,10 @@
 #include <readline/history.h>
 #include <signal.h>
 #include <unistd.h>
-#include "../headers/mini_env.h"
+
+# include "../headers/mini_env.h"
+# include "../headers/mini_parsing.h"
+# include "../headers/mini_exe.h"
 
 typedef struct s_cmd {
 	int		ac;
@@ -38,29 +41,27 @@ typedef struct s_cmd {
 	char	*rd_append; // >>
 }	t_cmd;
 
-typedef struct s_tokenizer {
-	char	*line;
-	int		quote;
-	char	*sp;
-	char	*tk_content;
-	int		tk_size;
-}	t_tokenizer;
 
-int	perror_n_return(char *err_msg);
+// parsing
 int		parsing(char *line, t_list **cmds, t_list *env_lst);
-
+int		init_cmd_lst(t_list **cmd, t_list *tk_lst);
+int		set_cmd_val(t_list **tk_lst, t_cmd **cmd);
+t_list	*set_cmd_av(t_list *tk_p, char **av[], int ac);
+void	set_cmd_redirection(char *type, char *val, t_cmd **cmd);
 t_cmd	*create_cmd_struct(void);
-t_list	*init_cmd_av(t_list *tk_p, char **av[], int ac);
-int	init_cmd_val(t_list **tk_lst, t_cmd **cmd);
-int	init_cmd_lst(t_list **cmd, t_list *tk_lst);
+t_list	*set_cmd_av(t_list *tk_p, char **av[], int ac);
 
+// utils
 char	*ft_strndup(const char *str, size_t size);
 char	*strjoin_n_free(char *s1, char *s2);
 void	ft_free_str(char **arg);
+int		perror_n_return(char *err_msg);
 
 
 // parsing
-int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst);
+
+// exe
+// int	execute(int cmd_cnt, t_list *cmds, t_list *env);
 
 //env
 t_list	*init_env(char *org_env[]);

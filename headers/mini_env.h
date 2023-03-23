@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 21:24:18 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/22 16:17:39 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ void	print_env_lst(t_list *env_lst, int env_flag);
 t_list	*init_env(char *org_env[]);
 char	*replace_env(t_list *env_lst, char *data);
 void	ft_putenv(t_list *env_lst, char *arg);
+char	**envlst_2_arr(t_list *env_lst);
 
 
 

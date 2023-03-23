@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 22:27:06 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/22 16:16:00 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	ft_putenv(t_list *env_lst, char *arg)
 	t_env_var	*new_env;
 	t_list		*new_node;
 	t_list		*p;
-	char		*val;
+	// char		*val;
 
 	new_env = create_env_var(arg);
 	if (!new_env)
@@ -140,6 +140,29 @@ void	ft_putenv(t_list *env_lst, char *arg)
 	new_node =  ft_lstnew(new_env);
 	ft_lstadd_front(&(p->next), new_node);
 	p->next = new_node;
+}
+
+char	**envlst_2_arr(t_list *env_lst)
+{
+	char		**arr;
+	t_list		*lst_p;
+	char		**arr_p;
+	t_env_var	*env_var;
+
+	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(env_lst) + 1));
+	if (!arr)
+		return (NULL);
+	lst_p = env_lst;
+	arr_p = arr;
+	while (lst_p)
+	{
+		env_var = (t_env_var *)lst_p->content;
+		*arr_p = ft_strjoin(ft_strjoin(env_var->key, "="), env_var->value);
+		arr_p++;
+		lst_p = lst_p->next;
+	}
+	*arr_p = NULL;
+	return (arr);
 }
 
 void	split_lst(t_list *source, t_list **front, t_list **back)
@@ -302,13 +325,18 @@ t_list	*init_env(char *org_env[])
 // int main(int ac, char *av[], char *env[]){
 
 // 	t_list	*mini_env;
-// 	t_list	*sorted;
+// 	char	**env_arr;
+// 	// t_list	*sorted;
 
 // 	mini_env = init_env(env);
-// 	ft_putenv(mini_env, "kkk=kkkk");
-// 	sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
-// 	sort_env_lst(&sorted);
-// 	print_env_lst(sorted, 1);
+// 	env_arr = envlst_2_arr(mini_env);
+// 	for (char **p = env_arr; p && *p; p++) {
+// 		printf("%s\n", *p);
+// 	}
+// 	// ft_putenv(mini_env, "kkk=kkkk");
+// 	// sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
+// 	// sort_env_lst(&sorted);
+// 	// print_env_lst(sorted, 1);
 // 	// print_env_lst(mini_env);
 // 	// printf("%s\n", getenv("water"));
 // 	// ft_export("water=삼다수");

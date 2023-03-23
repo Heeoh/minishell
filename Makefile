@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/21 18:20:25 by heson            ###   ########.fr        #
+#    Updated: 2023/03/22 14:41:03 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -34,7 +34,8 @@ OBJS += $(addprefix $(OBJS_DIR), $(notdir $(SRCS:.c=.o)))
 # -------------------------------- COMPILATE --------------------------------- #
 
 CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
-RLFLAGS = -lreadline -lhistory -L${READ_DIR}
+RLFLAGS = -lreadline 
+# -lhistory -L${READ_DIR}
 RM		= rm -rf
 MD		= mkdir -p 
 #AR		= ar -rcs
