@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 20:46:12 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 02:51:35 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,6 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env)
 	if (access(path, X_OK) != 0)
 		return (perror_n_return("permission denied"));
 	rd_lst_p = cmd->rd;
-	// write(2, "k", 1);
 	while(rd_lst_p)
 	{
 		rd = (t_redirection *)rd_lst_p->content;

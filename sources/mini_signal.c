@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   mini_signal.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:11:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 18:22:18 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 02:48:12 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../library/libft/libft.h"
 #include <signal.h>
 #include <unistd.h>
+#include <stdio.h>
 #include <readline/readline.h>
 
 void	init_rl_catch_signals(void)
@@ -26,7 +27,7 @@ void    sigint_handler(int sig) {
 	if (sig != SIGINT)
 		exit(0);
 	ft_putstr_fd("\n", STDOUT_FILENO);	
-	// rl_replace_line();
+	rl_replace_line("", 1);
 	rl_on_new_line();
 	rl_redisplay();
 	return ;

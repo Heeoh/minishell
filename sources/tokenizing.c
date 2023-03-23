@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 14:21:46 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 02:33:45 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 	t_tokenizer	*tk_p;
 
 	tk_p = *tokenizer;
-	tk_p->tk_content = get_token(env_lst, tk_p);
+	tk_p->tk_content = get_token(env_lst, tk_p, 0);
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
 	while (is_quote(*tk_p->line, tk_p->quote))
@@ -70,7 +70,7 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 		}
 		tk_p->line++;
 	}
-	tk_p->tk_content = get_token(env_lst, tk_p);
+	tk_p->tk_content = get_token(env_lst, tk_p, tk_p->quote);
 	tk_p->tk_size = ft_strlen(tk_p->tk_content);
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
@@ -87,7 +87,7 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 	ep = tokenizer->line;
 	if (tokenizer->tk_size || tokenizer->sp < ep)
 	{
-		tokenizer->tk_content = get_token(env_lst, tokenizer);
+		tokenizer->tk_content = get_token(env_lst, tokenizer, 0);
 		ft_lstadd_back(tk_lst, ft_lstnew(tokenizer->tk_content));
 	}
 	if (!*ep)
@@ -106,20 +106,29 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 	tokenizer->tk_size = 0;
 }
 
-char	*get_token(t_list *env_lst, t_tokenizer *tokenizer)
+char	*get_token(t_list *env_lst, t_tokenizer *tokenizer, int in_quote)
 {
 	char	*tmp;
 	char	*new_token;
 	char	*sp;
 	char	*ep;
+	char	*dollar_pos;
 
 	sp = tokenizer->sp;
 	ep = tokenizer->line;
 	new_token = NULL;
+	dollar_pos = 0;
 	tmp = ft_strndup(sp, ep - sp);
-	if (ft_strchr(tmp, '$') && tokenizer->quote != 1)
+	dollar_pos = ft_strchr(tmp, '$');
+	if (dollar_pos && tokenizer->quote && !in_quote)
+	{
+		ft_free_str(&tmp);
+		tmp = ft_strdup("");
+	}
+	else if (dollar_pos && in_quote != 1)
 		tmp = replace_env(env_lst, tmp);
+	if (!tmp)
+		return (NULL);
 	new_token = strjoin_n_free(tokenizer->tk_content, tmp);
 	return (new_token);
 }
-

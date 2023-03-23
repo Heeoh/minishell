@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_parsing.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:13:55 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 18:27:34 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 01:11:07 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ t_tokenizer	*init_tokenizer(char *line);
 int			tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer);
 void		push_token_back(t_list *env_lst, t_list **tk_lst,
 							t_tokenizer *tokenizer);
-char		*get_token(t_list *env_lst, t_tokenizer *tokenizer);
+char		*get_token(t_list *env_lst, t_tokenizer *tokenizer, int in_quote);
 
 // cmd
 t_cmd		*create_cmd_struct(void);

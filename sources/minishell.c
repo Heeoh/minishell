@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/23 20:41:50 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 03:10:50 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ void leaks(void) {
 void	test_parsing_cmd(t_list *cmd_lst)
 {
 	for (t_list *p = cmd_lst; p; p=p->next) {
+		// printf("%d\n", ((t_cmd *)p->content)->ac);
 		for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
 			printf("%s, ", ((t_cmd *)p->content)->av[i]);
 		}
@@ -78,6 +79,5 @@ int	main(int ac, char *av[], char *env[])
 		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 	}
-
-	// clear_history();
+	clear_history();
 }

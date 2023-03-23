@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 20:45:44 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 03:13:17 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ char	*create_heredoc_file(char *limiter)
 	{
 		write(STDOUT_FILENO, "> ", 2);
 		str = get_next_line(0);
-		if (ft_strncmp(str, limiter, ft_strlen(limiter)) == 0)
+		if (ft_strncmp(str, limiter, ft_strlen(limiter) + 10) == 0)
 			break ;
 		write(fd, str, ft_strlen(str));
 	}
@@ -69,11 +69,10 @@ int	do_redirection_in(char *val, int *fd, char is_heredoc)
 	if (is_heredoc)
 	{
 		filename = create_heredoc_file(val);
-		dup2(STDIN_FILENO, STDIN_FILENO);
 	}
 	else
 		filename = val;
-	ft_putendl_fd(filename, 2);
+	// ft_putendl_fd(filename, 2);
 	*fd = open(filename, O_RDONLY, 0644);
 	if (fd < 0)
 		return (perror_n_return("file open error"));

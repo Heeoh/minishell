@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 20:41:14 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 03:10:18 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,10 +42,6 @@ t_cmd	*create_cmd_struct(void)
 	new_cmd->ac = 0;
 	new_cmd->av = 0;
 	new_cmd->rd = NULL;
-	// new_cmd->rd_in = 0;
-	// new_cmd->rd_out = 0;
-	// new_cmd->rd_heredoc = 0;
-	// new_cmd->rd_append = 0;
 	return (new_cmd);
 }
 
@@ -59,19 +55,6 @@ void	free_cmd_struct(void *arg)
 	while (i < target->ac)
 		free(target->av[i++]);
 	ft_lstclear(&target->rd, free_rd_struct);
-	// ft_lstclear(&(target->rd_in), free);
-	// ft_lstclear(&(target->rd_out), free);
-	// ft_lstclear(&(target->rd_heredoc), free);
-	// ft_lstclear(&(target->rd_append), free);
-
-	// if (target->rd_in)
-	// 	free(target->rd_in);
-	// if (target->rd_out)
-	// 	free(target->rd_out);
-	// if (target->rd_heredoc)
-	// 	free(target->rd_heredoc);
-	// if (target->rd_append)
-	// 	free(target->rd_append);
 }
 
 int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
@@ -153,7 +136,6 @@ int	set_cmd_redirection(char *type, char *val, t_list **rd_lst)
 		return (ERROR);
 	new_node = ft_lstnew(new_rd);
 	ft_lstadd_back(rd_lst, new_node);
-	printf("\n\n");
 	return (0);
 	// if (*type == '<')
 	// {
