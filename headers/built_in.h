@@ -1,35 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   built_in.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 20:58:15 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 19:47:32 by heson            ###   ########.fr       */
+/*   Created: 2023/03/24 19:46:35 by heson             #+#    #+#             */
+/*   Updated: 2023/03/24 20:03:41 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include "../../library/libft/libft.h"
-// #include <stdio.h> //printf
+#ifndef BUILT_IN_H
+# define BUILT_IN_H
 
-int	ft_pwd(void)
-{
-	char	*ret;
-	int		buffer_size;
+# include "minishell.h"
 
-	buffer_size = 256;
-	ret = getcwd(0, buffer_size);
-	while (!ret)
-	{
-		buffer_size *= 2;
-		ret = getcwd(0, buffer_size);
-	}
-	ft_putendl_fd(ret, STDOUT_FILENO);
-	return (0);
-}
+int ft_export(t_cmd *cmd, t_list *env);
+int	ft_pwd(void);
+int	ft_exit(t_cmd *cmd);
+int	ft_env(t_list *env);
+int	ft_echo(t_cmd *cmd);
+int	ft_cd(char *path, t_list *env);
+int	ft_unset(t_cmd *cmd, t_list **env_lst);
 
-// int main() {
-//     ft_pwd();
-// }
+
+#endif

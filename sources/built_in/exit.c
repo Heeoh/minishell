@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/23 15:03:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 20:03:13 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,23 +35,23 @@ void	exit_argm(char *argm)
 	exit(255);
 }
 
-int	ft_exit(t_list *p)
+int	ft_exit(t_cmd *cmd)
 {
-	if (!ft_strncmp("exit", p->content, 1000) && !p->next)
+	if (!cmd->av[2])
 	{
 		printf("exit\n");
-		exit(EXIT_SUCCESS);
+		exit(0);
 	}
-	else if (!ft_strncmp("exit", p->content, 1000) && p->next)
+	else
 	{
-		if  (is_num(p->next->content))
-			exit_argm(p->next->content);
-		else if (p->next->next)
+		if (is_num(cmd->av[2]))
+			exit_argm(cmd->av[2]);
+		else if (cmd->av[3])
 		{
 			printf("miniHell: too many arguments\n");
-			return (EXIT_FAILURE);
+			return (1);
 		}
 	}
 	printf("exit\n");
-	exit(ft_atoi(p->next->content));
+	exit(ft_atoi(cmd->av[2]));
 }

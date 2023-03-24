@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 03:13:17 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 18:45:19 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,40 +41,55 @@ char	*find_path(char *cmd, t_list *env)
 	return (ret);
 }
 
-char	*create_heredoc_file(char *limiter)
+int	do_heredoc(char *limiter, int *input_fd)
 {
-	int		fd;
-	char	*filename;
-	char	*str;
+	int		fd[2];
+	int		pid;
+	char	*line;
 
-	// open 시 이미 동일한 파일이 있을 경우 처리
-	filename = ft_strdup("heredoc_tmp.txt");
-	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	while (1)
+	fd[R_FD] = -1;
+	fd[W_FD] = -1;
+	line = 0;
+	ft_putendl_fd("heredoc", 2);
+	if (pipe(fd) == -1)
+		return (perror_n_return("pipe error"));
+	pid = fork();
+	if (pid == -1)
+		return (perror_n_return("fork error"));	
+	else if (!pid)
 	{
-		write(STDOUT_FILENO, "> ", 2);
-		str = get_next_line(0);
-		if (ft_strncmp(str, limiter, ft_strlen(limiter) + 10) == 0)
-			break ;
-		write(fd, str, ft_strlen(str));
+		close(fd[R_FD]);
+		while (1)
+		{
+			write(STDOUT_FILENO, "> ", 2);
+			line = get_next_line(0);
+			if (ft_strncmp(line, limiter, ft_strlen(limiter) - 1) == 0)
+				break ;
+			ft_putstr_fd(line, fd[W_FD]);
+		}
+		close(fd[W_FD]);
+		exit(0);
 	}
-	close(fd);
-	return (filename);
+	else if (pid)
+	{
+		close(fd[W_FD]);
+		waitpid(pid, NULL, 0);
+		*input_fd = fd[R_FD];
+	}
+	return (0);
 }
 
 int	do_redirection_in(char *val, int *fd, char is_heredoc)
 {
-	char	*filename;
-
+	dup2(1, STDIN_FILENO);
 	if (is_heredoc)
 	{
-		filename = create_heredoc_file(val);
+		if (do_heredoc(val, fd) < 0)
+			return (perror_n_return("heredoc error"));
 	}
 	else
-		filename = val;
-	// ft_putendl_fd(filename, 2);
-	*fd = open(filename, O_RDONLY, 0644);
-	if (fd < 0)
+		*fd = open(val, O_RDONLY, 0644);
+	if (*fd < 0)
 		return (perror_n_return("file open error"));
 	if (dup2(*fd, STDIN_FILENO) < 0)
 		return (perror_n_return("dup2 error"));

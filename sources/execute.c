@@ -3,14 +3,44 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 02:51:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 20:05:18 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
+#include "built_in.h"
+
+
+int	do_builtin_cmd(t_cmd *cmd_p, t_list *env_lst)
+{
+	char	*lower_cmd;
+	int		i;
+
+	if (!cmd_p || !*(cmd_p->av))
+		return (-1);
+	lower_cmd = (char *)malloc(ft_strlen(cmd_p->av[0]) + 1);
+	i = -1;
+	while (cmd_p->av[0][++i])
+		lower_cmd[i] = ft_tolower(cmd_p->av[0][i]);
+	if (ft_strncmp("cd", cmd_p->av[0], 10) == 0)
+		return (ft_cd(cmd_p->av[1], env_lst));
+	if (ft_strncmp("echo", lower_cmd, 10) == 0)
+		return (ft_echo(cmd_p));
+	if (ft_strncmp("env", lower_cmd, 10) == 0)
+		return (ft_env(env_lst));
+	if (ft_strncmp("exit", cmd_p->av[0], 10) == 0)
+		return (ft_exit(cmd_p));
+	if (ft_strncmp("pwd", lower_cmd, 10) == 0)
+		return (ft_pwd());
+	if (ft_strncmp("unset", cmd_p->av[0], 10) == 0)
+		return (ft_unset(cmd_p, &env_lst));
+	if (ft_strncmp("export", cmd_p->av[0], 10) == 0)
+		return (ft_export(cmd_p, env_lst));
+	return (-1);
+}
 
 int	exe_a_cmd(t_cmd *cmd, t_list *env)
 {
@@ -24,49 +54,45 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env)
 		return (perror_n_return("no such file"));
 	if (access(path, X_OK) != 0)
 		return (perror_n_return("permission denied"));
+	fd = -1;
 	rd_lst_p = cmd->rd;
 	while(rd_lst_p)
 	{
+		if (fd > 0)
+			close(fd);
 		rd = (t_redirection *)rd_lst_p->content;
 		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0) < 0)
 			return (ERROR);
-		if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1) < 0)
+		else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1) < 0)
 			return (ERROR);
-		if (rd->type == RD_OUT && do_redirection_out(rd->val, &fd, 0) < 0)
+		else if (rd->type == RD_OUT && do_redirection_out(rd->val, &fd, 0) < 0)
 			return (ERROR);
-		if (rd->type == RD_APPEND && do_redirection_out(rd->val, &fd, 1) < 0)
+		else if (rd->type == RD_APPEND && do_redirection_out(rd->val, &fd, 1) < 0)
 			return (ERROR);
 		rd_lst_p = rd_lst_p->next;
 	}
-	// if (cmd->rd_in && do_redirection_in(cmd->rd_in, &fd, 0) < 0)
-	// 	return (ERROR);
-	// else if (cmd->rd_heredoc && do_redirection_in(cmd->rd_heredoc, &fd, 1) < 0)
-	// 	return (ERROR);
-	// if (cmd->rd_out && do_redirection_out(cmd->rd_out, &fd, 0) < 0)
-	// 	return (ERROR);
-	// else if (cmd->rd_append && do_redirection_out(cmd->rd_append, &fd, 1) < 0)
-	// 	return (ERROR);
-	// if (unlink(path) == -1)
-	// 	ft_putendl_fd("unlink error", 2);
-	execve(path, cmd->av, envlst_2_arr(env));
+	if (!(cmd->av) || !*(cmd->av))
+		return (ERROR);
+	if (do_builtin_cmd(cmd, env) < 0)
+		execve(path, cmd->av, envlst_2_arr(env));
 	return (0);
 }
 
 void	child_process(int cmd_i, int cmd_cnt, int pipes[][2], char is_heredoc)
 {
 	if (cmd_i != 0 && !is_heredoc)
-		dup2(pipes[(cmd_i + 1) % PIPE_N][0], STDIN_FILENO);
+		dup2(pipes[(cmd_i + 1) % PIPE_N][R_FD], STDIN_FILENO);
 	if (cmd_i != cmd_cnt - 1)
-		dup2(pipes[cmd_i % PIPE_N][1], STDOUT_FILENO);
-	close(pipes[cmd_i % PIPE_N][0]);
-	close(pipes[cmd_i % PIPE_N][1]);
+		dup2(pipes[cmd_i % PIPE_N][W_FD], STDOUT_FILENO);
+	close(pipes[cmd_i % PIPE_N][R_FD]);
+	close(pipes[cmd_i % PIPE_N][W_FD]);
 }
 
 void	parent_process(int cmd_i, int pipes[][2])
 {
-	close(pipes[cmd_i % PIPE_N][1]);
+	close(pipes[cmd_i % PIPE_N][W_FD]);
 	if (cmd_i != 0)
-		close(pipes[(cmd_i + 1) % PIPE_N][0]);
+		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
 // 이럴 경우 예외 케이스가 없을까??
@@ -86,46 +112,13 @@ int	wait_processes(int child_cnt)
 	return (0);
 }
 
-/*
-void	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
+
+int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 {
 	int	cmd_i;
 	int	pid;
 
 	cmd_i = 0;
-	while (cmd_i < cmd_cnt)
-	{
-		if (pipe(pipes[cmd_i % PIPE_N]) == -1)
-			perror_n_return("pipe error");
-		pid = fork();
-		if (pid == -1)
-			perror_n_return("fork error");
-		else if (!pid) // child process
-		{
-			child_process(cmd_i, cmd_cnt, pipes,
-				((t_cmd *)cmd_p->content)->rd_heredoc != 0);
-			exe_a_cmd((t_cmd *)cmd_p->content, env);
-		}
-		else if (pid) // parent process
-			parent_process(cmd_i, pipes);
-		cmd_i++;
-		cmd_p = cmd_p->next;
-	}
-	wait_processes(cmd_cnt);
-}
-*/
-
-int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
-{
-	int	pipes[PIPE_N][2];
-	int	cmd_i;
-	int	pid;
-
-	pipes[0][0] = -1;
-	pipes[0][1] = -1;
-	pipes[1][0] = -1;
-	pipes[1][1] = -1;
-	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
 		if (pipe(pipes[cmd_i % PIPE_N]) == -1)
@@ -137,13 +130,31 @@ int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 		{
 			child_process(cmd_i, cmd_cnt, pipes, 0);
 			if (exe_a_cmd((t_cmd *)cmd_p->content, env) < 0)
-				return (ERROR);
+				exit (ERROR);
 		}
 		else if (pid) // parent process
 			parent_process(cmd_i, pipes);
 		cmd_p = cmd_p->next;
 	}
 	return (wait_processes(cmd_cnt));
+}
+
+int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
+{
+	int	pipes[PIPE_N][2];
+
+	pipes[0][R_FD] = -1;
+	pipes[0][W_FD] = -1;
+	pipes[1][R_FD] = -1;
+	pipes[1][W_FD] = -1;
+	if (cmd_cnt == 1)
+	{
+		if (do_builtin_cmd(cmd_p->content, env) < 0)
+			multiple_pipes(cmd_cnt, cmd_p, env, pipes);
+	}
+	else if (cmd_cnt > 1)
+		multiple_pipes(cmd_cnt, cmd_p, env, pipes);
+	return (0);
 }
 
 /*

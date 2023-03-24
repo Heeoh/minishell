@@ -6,12 +6,11 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/15 13:49:59 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 20:00:00 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include <unistd.h>
-#include <stdio.h> // perror
+#include "built_in.h"
 
 // error 출력 부분 bash 형태에 맞게 손 봐야함
 int	ft_cd(char *path)

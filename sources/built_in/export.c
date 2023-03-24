@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 22:27:25 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 19:41:22 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,14 +73,14 @@
 
 
 
-int ft_export(t_cmd *cmd, t_list **env_lst)
+int ft_export(t_cmd *cmd, t_list *env_lst)
 {
 	char	**p;
 	t_list	*sorted;
 	
 	if (cmd->ac == 1) // 전체 출력
 	{
-		sorted = ft_lstmap(*env_lst, copy_env_var, free_env_var);
+		sorted = ft_lstmap(env_lst, copy_env_var, free_env_var);
 		sort_env_lst(&sorted);
 		print_env_lst(sorted, 0);
 		ft_lstclear(&sorted, free_env_var);
@@ -90,7 +90,7 @@ int ft_export(t_cmd *cmd, t_list **env_lst)
 		p = &(cmd->av[1]);
 		while (p && *p)
 		{
-			ft_putenv(*env_lst, *p);
+			ft_putenv(env_lst, *p);
 			p++;
 		}
 	}
@@ -110,9 +110,9 @@ int main(int ac, char *av[], char *env[]){
 	cmd->av[2] = ft_strdup("water=삼다수");
 	cmd->av[cmd->ac] = 0;
 	mini_env = init_env(env);
-	ft_export(cmd, &mini_env);
+	ft_export(cmd, mini_env);
 	cmd->ac = 1;
-	ft_export(cmd, &mini_env);
+	ft_export(cmd, mini_env);
 	
 	// print_env_lst(mini_env);
 	// printf("%s\n", getenv("water"));

@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/23 17:13:26 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 18:09:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,9 @@
 // 	char	*rd_heredoc; // <<
 // 	char	*rd_append; // >>
 // }	t_cmd;
+
+# define R_FD 0
+# define W_FD 1
 
 enum e_rd_type {
 	RD_IN = 0,
