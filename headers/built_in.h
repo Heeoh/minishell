@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   built_in.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/24 19:46:35 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 20:03:41 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 01:41:26 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,17 @@
 # define BUILT_IN_H
 
 # include "minishell.h"
+
+enum e_builtin_ft {
+	BI_CD = 0,
+	BI_ECHO,
+	BI_ENV,
+	BI_EXIT,
+	BI_EXPORT,
+	BI_PWD,
+	BI_UNSET,
+	BI_CNT
+};
 
 int ft_export(t_cmd *cmd, t_list *env);
 int	ft_pwd(void);

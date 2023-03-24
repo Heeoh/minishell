@@ -3,51 +3,70 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 20:05:18 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 01:54:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-#include "built_in.h"
+#include "../headers/built_in.h"
 
-
-int	do_builtin_cmd(t_cmd *cmd_p, t_list *env_lst)
+int	is_built_in(char *cmd)
 {
 	char	*lower_cmd;
 	int		i;
 
-	if (!cmd_p || !*(cmd_p->av))
+	if (!cmd || !*cmd)
 		return (-1);
-	lower_cmd = (char *)malloc(ft_strlen(cmd_p->av[0]) + 1);
+	lower_cmd = (char *)malloc(ft_strlen(cmd) + 1);
 	i = -1;
-	while (cmd_p->av[0][++i])
-		lower_cmd[i] = ft_tolower(cmd_p->av[0][i]);
-	if (ft_strncmp("cd", cmd_p->av[0], 10) == 0)
-		return (ft_cd(cmd_p->av[1], env_lst));
+	while (cmd[++i])
+		lower_cmd[i] = ft_tolower(cmd[i]);
 	if (ft_strncmp("echo", lower_cmd, 10) == 0)
-		return (ft_echo(cmd_p));
+		return (BI_ECHO);
 	if (ft_strncmp("env", lower_cmd, 10) == 0)
-		return (ft_env(env_lst));
-	if (ft_strncmp("exit", cmd_p->av[0], 10) == 0)
-		return (ft_exit(cmd_p));
+		return (BI_ENV);
 	if (ft_strncmp("pwd", lower_cmd, 10) == 0)
-		return (ft_pwd());
-	if (ft_strncmp("unset", cmd_p->av[0], 10) == 0)
-		return (ft_unset(cmd_p, &env_lst));
-	if (ft_strncmp("export", cmd_p->av[0], 10) == 0)
-		return (ft_export(cmd_p, env_lst));
+		return (BI_PWD);
+	if (ft_strncmp("exit", cmd, 10) == 0)
+		return (BI_EXIT);
+	if (ft_strncmp("cd", cmd, 10) == 0)
+		return (BI_CD);
+	if (ft_strncmp("unset", cmd, 10) == 0)
+		return (BI_UNSET);
+	if (ft_strncmp("export", cmd, 10) == 0)
+		return (BI_EXPORT);
 	return (-1);
 }
 
-int	exe_a_cmd(t_cmd *cmd, t_list *env)
+int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
+{
+	if (cmd_type == BI_CD)
+		return (ft_cd(cmd_p->av[1], env_lst));
+	if (cmd_type == BI_ECHO)
+		return (ft_echo(cmd_p));
+	if (cmd_type == BI_ENV)
+		return (ft_env(env_lst));
+	if (cmd_type == BI_EXIT)
+		return (ft_exit(cmd_p));
+	if (cmd_type == BI_EXPORT)
+		return (ft_export(cmd_p, env_lst));
+	if (cmd_type == BI_PWD)
+		return (ft_pwd());
+	if (cmd_type == BI_UNSET)
+		return (ft_unset(cmd_p, &env_lst));
+	return (-1);
+}
+
+int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 {
 	int				fd;
 	char			*path;
 	t_list			*rd_lst_p;
 	t_redirection	*rd;
+	int				is_builtin;
 
 	path = find_path(cmd->av[0], env);
 	if (access(path, F_OK) != 0)
@@ -59,7 +78,10 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env)
 	while(rd_lst_p)
 	{
 		if (fd > 0)
+		{
+			dup2(fd_stdin, STDIN_FILENO);
 			close(fd);
+		}
 		rd = (t_redirection *)rd_lst_p->content;
 		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0) < 0)
 			return (ERROR);
@@ -73,8 +95,10 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env)
 	}
 	if (!(cmd->av) || !*(cmd->av))
 		return (ERROR);
-	if (do_builtin_cmd(cmd, env) < 0)
-		execve(path, cmd->av, envlst_2_arr(env));
+	is_builtin = is_built_in(cmd->av[0]);
+	if (is_builtin >= 0)
+		return(exe_built_in(cmd, env, is_builtin));
+	execve(path, cmd->av, envlst_2_arr(env));
 	return (0);
 }
 
@@ -117,8 +141,10 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 {
 	int	cmd_i;
 	int	pid;
+	int	fd_stdin;
 
-	cmd_i = 0;
+	fd_stdin = dup(STDIN_FILENO);
+	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
 		if (pipe(pipes[cmd_i % PIPE_N]) == -1)
@@ -129,7 +155,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 		else if (!pid) // child process
 		{
 			child_process(cmd_i, cmd_cnt, pipes, 0);
-			if (exe_a_cmd((t_cmd *)cmd_p->content, env) < 0)
+			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fd_stdin) < 0)
 				exit (ERROR);
 		}
 		else if (pid) // parent process
@@ -139,22 +165,24 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 	return (wait_processes(cmd_cnt));
 }
 
+
+
 int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	pipes[PIPE_N][2];
+	int is_builtin;
 
 	pipes[0][R_FD] = -1;
 	pipes[0][W_FD] = -1;
 	pipes[1][R_FD] = -1;
 	pipes[1][W_FD] = -1;
-	if (cmd_cnt == 1)
-	{
-		if (do_builtin_cmd(cmd_p->content, env) < 0)
-			multiple_pipes(cmd_cnt, cmd_p, env, pipes);
-	}
-	else if (cmd_cnt > 1)
+	is_builtin = is_built_in(((t_cmd *)cmd_p->content)->av[0]);
+	if (cmd_cnt == 1 && is_builtin >= 0)
+		exe_built_in(cmd_p->content, env, is_builtin);
+	else
 		multiple_pipes(cmd_cnt, cmd_p, env, pipes);
 	return (0);
+	
 }
 
 /*

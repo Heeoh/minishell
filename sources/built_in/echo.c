@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 19:57:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 02:07:32 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ int	ft_echo(t_cmd *cmd)
 {
 	int		option_n;
 	int		val_idx;
-	char	*val;
+	// char	*val;
 
 	option_n = 1;
 	val_idx = 1;
@@ -29,9 +29,13 @@ int	ft_echo(t_cmd *cmd)
 		}
 	}
 	while (val_idx < cmd->ac)
+	{
 		ft_putstr_fd(cmd->av[val_idx], STDOUT_FILENO);
+		write(STDOUT_FILENO, " ", 1);
+	}
 	if (option_n)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }
 
 // int main()

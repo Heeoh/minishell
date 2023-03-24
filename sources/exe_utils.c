@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 18:45:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 01:31:41 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,9 +50,11 @@ int	do_heredoc(char *limiter, int *input_fd)
 	fd[R_FD] = -1;
 	fd[W_FD] = -1;
 	line = 0;
-	ft_putendl_fd("heredoc", 2);
 	if (pipe(fd) == -1)
 		return (perror_n_return("pipe error"));
+	ft_putnbr_fd(fd[0], 2);
+	ft_putnbr_fd(fd[1], 2);
+	write(2, "\n", 1);
 	pid = fork();
 	if (pid == -1)
 		return (perror_n_return("fork error"));	
@@ -62,7 +64,7 @@ int	do_heredoc(char *limiter, int *input_fd)
 		while (1)
 		{
 			write(STDOUT_FILENO, "> ", 2);
-			line = get_next_line(0);
+			line = get_next_line(STDIN_FILENO);
 			if (ft_strncmp(line, limiter, ft_strlen(limiter) - 1) == 0)
 				break ;
 			ft_putstr_fd(line, fd[W_FD]);
@@ -81,7 +83,6 @@ int	do_heredoc(char *limiter, int *input_fd)
 
 int	do_redirection_in(char *val, int *fd, char is_heredoc)
 {
-	dup2(1, STDIN_FILENO);
 	if (is_heredoc)
 	{
 		if (do_heredoc(val, fd) < 0)
