@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/24 03:10:50 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:28:06 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,8 +58,8 @@ int	main(int ac, char *av[], char *env[])
 	// atexit(leaks);
 	ac = 0;
 	av = 0;
-	init_rl_catch_signals();
 	env_lst = init_env_lst(env);
+	init_rl_catch_signals();
 	setting_signal();
 	// using_history()
 	while (1) {
@@ -74,7 +74,7 @@ int	main(int ac, char *av[], char *env[])
 				continue; 
 		}
 		cmd_cnt = parsing(line, &cmd_lst, env_lst);
-		test_parsing_cmd(cmd_lst);
+		// test_parsing_cmd(cmd_lst);
 		add_history(line);
 		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);

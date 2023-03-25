@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 02:06:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 14:46:35 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,41 +37,6 @@
 // $_ 처리 
 
 #include "../../headers/minishell.h"
-
-
-// int check_right_var_key(char *key)
-// {
-// 	if (!key)
-// 		return (-1);
-// 	if (!ft_isalpha(*key))
-// 		return (-1);
-// 	return (0);
-// }
-
-// int	check_right_var_val(char *val)
-// {
-// 	char	quote_flag;
-
-// 	// '' || "" 안에 둘러싸여져 있는지 확인
-// 	// quote o -> " " || ' ' 사이에 있는 문자는 하나의 문자열로 인식
-// 	// quote 나올 때가지 포인터 이동, 나오면 quote전까지 strcat, close quote 나올때까지 다시 이동 quote 사이 통채로 strcat
-// 	if (!val)
-// 		return (-1);
-	
-// }
-
-// void	add_an_env_var(t_list **env_lst, char *arg)
-// {
-// 	t_env_var	*new_var;
-// 	if (!arg || !*arg)
-// 		return ;
-// 	new_var = create_env_var(arg);
-// 	if (!check_right_var_key(new_var->key) || !check_right_var_val(new_var->value))
-// 		return ;
-// 	ft_lstadd_back(env_lst, ft_lstnew(new_var));
-// }
-
-
 
 int ft_export(t_cmd *cmd, t_list *env_lst)
 {

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/03/23 14:44:03 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 14:53:56 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,11 +19,11 @@
 typedef struct s_env_var {
 	char    *key;
 	char    *value;
-	char	is_tmp;
+	int		is_tmp;
 }   t_env_var;
 
 t_env_var	*create_env_var(char *arg);
-t_env_var	*create_env_var_struct(char *key, char *val, char is_tmp);
+t_env_var	*create_env_var_struct(char *key, char *val, int is_tmp);
 void		free_env_var(void	*arg);
 void		*copy_env_var(void *arg);
 

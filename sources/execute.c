@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 01:54:54 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:27:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,10 +20,15 @@ int	is_built_in(char *cmd)
 
 	if (!cmd || !*cmd)
 		return (-1);
-	lower_cmd = (char *)malloc(ft_strlen(cmd) + 1);
-	i = -1;
-	while (cmd[++i])
+	lower_cmd = (char *)ft_calloc(ft_strlen(cmd) + 1, sizeof(char));
+	if (!lower_cmd)
+		return (-1);
+	i = 0;
+	while (cmd[i])
+	{
 		lower_cmd[i] = ft_tolower(cmd[i]);
+		i++;
+	}
 	if (ft_strncmp("echo", lower_cmd, 10) == 0)
 		return (BI_ECHO);
 	if (ft_strncmp("env", lower_cmd, 10) == 0)
@@ -170,15 +175,23 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	pipes[PIPE_N][2];
-	int is_builtin;
+	int	fd_stdin;
+	int fd_stdout;
+	int	ret;
 
 	pipes[0][R_FD] = -1;
 	pipes[0][W_FD] = -1;
 	pipes[1][R_FD] = -1;
 	pipes[1][W_FD] = -1;
-	is_builtin = is_built_in(((t_cmd *)cmd_p->content)->av[0]);
-	if (cmd_cnt == 1 && is_builtin >= 0)
-		exe_built_in(cmd_p->content, env, is_builtin);
+	fd_stdin = dup(STDIN_FILENO);
+	fd_stdout = dup(STDOUT_FILENO);
+	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
+	{
+		ret = exe_a_cmd(cmd_p->content, env, STDIN_FILENO);
+		dup2(fd_stdin, STDIN_FILENO);
+		dup2(fd_stdout, STDOUT_FILENO);
+		return (ret);
+	}
 	else
 		multiple_pipes(cmd_cnt, cmd_p, env, pipes);
 	return (0);

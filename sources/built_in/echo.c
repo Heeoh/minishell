@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 02:07:32 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:22:03 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,9 @@ int	ft_echo(t_cmd *cmd)
 	while (val_idx < cmd->ac)
 	{
 		ft_putstr_fd(cmd->av[val_idx], STDOUT_FILENO);
-		write(STDOUT_FILENO, " ", 1);
+		val_idx++;
+		if (val_idx < cmd->ac)
+			write(STDOUT_FILENO, " ", 1);
 	}
 	if (option_n)
 		ft_putchar_fd('\n', STDOUT_FILENO);

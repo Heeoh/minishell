@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:37:44 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 02:32:03 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 14:53:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ t_env_var	*create_env_var(char *arg)
 	return (create_env_var_struct(key, val, !eq_pos));
 }
 
-t_env_var	*create_env_var_struct(char *key, char *val, char is_my_tmp)
+t_env_var	*create_env_var_struct(char *key, char *val, int is_tmp)
 {
 	t_env_var	*ret;
 
 	ret = (t_env_var *)malloc(sizeof(t_env_var));
 	if (!ret)
 		return (NULL);
-	ret->is_tmp = is_my_tmp;
+	ret->is_tmp = is_tmp;
 	ret->key = key;
 	ret->value = val;
 	return (ret);
@@ -57,7 +57,7 @@ void	free_env_var(void	*arg)
 {
 	t_env_var	*env_var;
 
-	env_var = arg;
+	env_var = (t_env_var *)arg;
 	if (env_var->key)
 		free(env_var->key);
 	if (env_var->value)
@@ -68,7 +68,13 @@ void	free_env_var(void	*arg)
 void	*copy_env_var(void *arg)
 {
 	t_env_var	*var;
+	char		*key;
+	char		*value;
+	t_env_var	*copied;
 
-	var = arg;
-	return (create_env_var_struct(var->key, var->value, var->is_tmp));
+	var = (t_env_var *)arg;
+	key = ft_strdup(var->key);
+	value = ft_strdup(var->value);
+	copied = create_env_var_struct(key, value, var->is_tmp); 
+	return (copied);
 }
