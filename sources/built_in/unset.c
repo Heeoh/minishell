@@ -6,9 +6,11 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:51:19 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 15:45:51 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:46:05 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
+
+#include "../../headers/minishell.h"
 
 int	ft_unset(char *key, t_list **env_lst)
 {
