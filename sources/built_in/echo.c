@@ -3,20 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/20 21:05:46 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:22:03 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../library/libft/libft.h"
+# include "built_in.h"
 
-void	ft_echo(char *str, char option_n)
+int	ft_echo(t_cmd *cmd)
 {
-	ft_putstr_fd(str, STDOUT_FILENO);
-	if (!option_n)
+	int		option_n;
+	int		val_idx;
+	// char	*val;
+
+	option_n = 1;
+	val_idx = 1;
+	if (cmd->ac >= 2)
+	{
+		if (cmd->av[1] && ft_strncmp(cmd->av[1], "-n", 10) == 0)
+		{
+			option_n = 0;
+			val_idx++;
+		}
+	}
+	while (val_idx < cmd->ac)
+	{
+		ft_putstr_fd(cmd->av[val_idx], STDOUT_FILENO);
+		val_idx++;
+		if (val_idx < cmd->ac)
+			write(STDOUT_FILENO, " ", 1);
+	}
+	if (option_n)
 		ft_putchar_fd('\n', STDOUT_FILENO);
+	return (0);
 }
 
 // int main()

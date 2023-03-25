@@ -6,22 +6,16 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:24:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/13 21:30:32 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 20:00:11 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../library/libft/libft.h"
+#include "built_in.h"
 
-void	ft_env(char *env[])
+int	ft_env(t_list *env)
 {
-	char	**p;
-
-	p = env;
-	while (p && *p)
-	{
-		ft_putendl_fd(*p, STDOUT_FILENO);
-		p++;
-	}
+	print_env_lst(env, 1);
+	return (0);
 }
 
 // int main(int ac, char *av[], char *env[])

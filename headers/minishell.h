@@ -6,63 +6,65 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/21 20:49:22 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/24 18:09:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# define PIPE_N 2
 # define ERROR -1
 // # define ERROR_P NULL
 
 #include "../library/libft/libft.h"
-#include "../library/get_next_line/get_next_line.h"
-#include "../headers/minishell.h"
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <signal.h>
-#include <unistd.h>
-#include "../headers/mini_env.h"
+// #include "../library/get_next_line/get_next_line.h"
+
+// #include <string.h>
+// #include <stdlib.h>
+
+// typedef struct s_cmd {
+// 	int		ac;
+// 	char	**av;
+// 	char	*rd_in; // <
+// 	char	*rd_out; // >
+// 	char	*rd_heredoc; // <<
+// 	char	*rd_append; // >>
+// }	t_cmd;
+
+# define R_FD 0
+# define W_FD 1
+
+enum e_rd_type {
+	RD_IN = 0,
+	RD_OUT,
+	RD_HEREDOC,
+	RD_APPEND,
+	RD_CNT
+};
+
+typedef struct s_redirection {
+	int		type;
+	char	*val;
+}	t_redirection;
 
 typedef struct s_cmd {
 	int		ac;
 	char	**av;
-	char	*rd_in; // <
-	char	*rd_out; // >
-	char	*rd_heredoc; // <<
-	char	*rd_append; // >>
+	t_list	*rd;
+	// t_list	*rd_in; // <
+	// t_list	*rd_out; // >
+	// t_list	*rd_heredoc; // <<
+	// t_list	*rd_append; // >>
 }	t_cmd;
 
-typedef struct s_tokenizer {
-	char	*line;
-	int		quote;
-	char	*sp;
-	char	*tk_content;
-	int		tk_size;
-}	t_tokenizer;
+# include "../headers/mini_utils.h"
+# include "../headers/mini_env.h"
+# include "../headers/mini_parsing.h"
+# include "../headers/mini_exe.h"
 
-int	perror_n_return(char *err_msg);
-int		parsing(char *line, t_list **cmds, t_list *env_lst);
-
-t_cmd	*create_cmd_struct(void);
-t_list	*init_cmd_av(t_list *tk_p, char **av[], int ac);
-int	init_cmd_val(t_list **tk_lst, t_cmd **cmd);
-int	init_cmd_lst(t_list **cmd, t_list *tk_lst);
-
-char	*ft_strndup(const char *str, size_t size);
-char	*strjoin_n_free(char *s1, char *s2);
-void	ft_free_str(char **arg);
-
-
-// parsing
-int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst);
-
-//env
-t_list	*init_env(char *org_env[]);
+// signal
+void	init_rl_catch_signals(void);
+void	sigint_handler(int sig);
+void	setting_signal(void);
 
 #endif

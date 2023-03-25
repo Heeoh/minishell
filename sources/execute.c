@@ -3,142 +3,130 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/20 21:05:16 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 15:27:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../library/libft/libft.h"
-#include "../library/get_next_line/get_next_line.h"
 #include "../headers/minishell.h"
-#include <unistd.h> // access
-#include <stdio.h> //printf 
-#include <fcntl.h> // open, write
-#include <readline/readline.h>
+#include "../headers/built_in.h"
 
-void	print_error_n_exit(char *err_msg)
+int	is_built_in(char *cmd)
 {
-	printf("%s\n", err_msg);
-	exit(0);
-}
-
-char	*find_path(char *cmd, char **env)
-{
-	char	*ret;
-	char	**path_group;
+	char	*lower_cmd;
 	int		i;
 
-	ret = 0;
-	while (ft_strnstr(*env, "PATH", 4) == 0)
-		env++;
-	path_group = ft_split(*env, ':');
-	i = -1;
-	while (path_group[++i])
+	if (!cmd || !*cmd)
+		return (-1);
+	lower_cmd = (char *)ft_calloc(ft_strlen(cmd) + 1, sizeof(char));
+	if (!lower_cmd)
+		return (-1);
+	i = 0;
+	while (cmd[i])
 	{
-		ret = ft_strjoin(path_group[i], "/");
-		ret = ft_strjoin(ret, cmd);
-		if (access(ret, F_OK) == 0)
-			break ;
-		free(ret);
+		lower_cmd[i] = ft_tolower(cmd[i]);
+		i++;
 	}
-	i = -1;
-	while (path_group[++i])
-		free(path_group[i]);
-	free(path_group);
-	return (ret);
+	if (ft_strncmp("echo", lower_cmd, 10) == 0)
+		return (BI_ECHO);
+	if (ft_strncmp("env", lower_cmd, 10) == 0)
+		return (BI_ENV);
+	if (ft_strncmp("pwd", lower_cmd, 10) == 0)
+		return (BI_PWD);
+	if (ft_strncmp("exit", cmd, 10) == 0)
+		return (BI_EXIT);
+	if (ft_strncmp("cd", cmd, 10) == 0)
+		return (BI_CD);
+	if (ft_strncmp("unset", cmd, 10) == 0)
+		return (BI_UNSET);
+	if (ft_strncmp("export", cmd, 10) == 0)
+		return (BI_EXPORT);
+	return (-1);
 }
 
-char	*create_heredoc_file(char *limiter)
+int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 {
-	int		fd;
-	char	*filename;
-	char	*str;
-
-	// open 시 이미 동일한 파일이 있을 경우 처리
-	filename = ft_strdup("heredoc_tmp.txt");
-	fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	while (1)
-	{
-		write(STDOUT_FILENO, "> ", 2);
-		str = get_next_line(0);
-		if (ft_strncmp(str, limiter, ft_strlen(limiter)) == 0)
-			break ;
-		write(fd, str, ft_strlen(str));
-	}
-	close(fd);
-	return (filename);
+	if (cmd_type == BI_CD)
+		return (ft_cd(cmd_p->av[1], env_lst));
+	if (cmd_type == BI_ECHO)
+		return (ft_echo(cmd_p));
+	if (cmd_type == BI_ENV)
+		return (ft_env(env_lst));
+	if (cmd_type == BI_EXIT)
+		return (ft_exit(cmd_p));
+	if (cmd_type == BI_EXPORT)
+		return (ft_export(cmd_p, env_lst));
+	if (cmd_type == BI_PWD)
+		return (ft_pwd());
+	if (cmd_type == BI_UNSET)
+		return (ft_unset(cmd_p, &env_lst));
+	return (-1);
 }
 
-void	do_redirection_in(char *val, int *fd, char is_heredoc)
+int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 {
-	char	*filename;
-
-	if (is_heredoc)
-		filename = create_heredoc_file(val);
-	else
-		filename = val;
-	*fd = open(filename, O_RDONLY, 0644);
-	if (fd < 0)
-		print_error_n_exit("file open error");
-	if (dup2(*fd, STDIN_FILENO) < 0)
-		print_error_n_exit("dup2 error");
-}
-
-void	do_redirection_out(char *filename, int *fd, char is_append)
-{
-	close(*fd);
-	if (is_append)
-		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
-	else
-		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-	if (dup2(*fd, STDOUT_FILENO) < 0)
-		print_error_n_exit("dup2 error");
-}
-
-void	exe_a_cmd(t_cmd *cmd, char *env[])
-{
-	int		fd;
-	char	*path;
+	int				fd;
+	char			*path;
+	t_list			*rd_lst_p;
+	t_redirection	*rd;
+	int				is_builtin;
 
 	path = find_path(cmd->av[0], env);
 	if (access(path, F_OK) != 0)
-		print_error_n_exit("no such file");
+		return (perror_n_return("no such file"));
 	if (access(path, X_OK) != 0)
-		print_error_n_exit("permission denied");
-	if (cmd->rd_in)
-		do_redirection_in(cmd->rd_in, &fd, 0);
-	else if (cmd->rd_heredoc)
-		do_redirection_in(cmd->rd_heredoc, &fd, 1);
-	if (cmd->rd_out)
-		do_redirection_out(cmd->rd_out, &fd, 0);
-	else if (cmd->rd_append)
-		do_redirection_out(cmd->rd_append, &fd, 1);
-	// if (unlink(path) == -1)
-	// 	ft_putendl_fd("unlink error", 2);
-	execve(path, cmd->av, env);
+		return (perror_n_return("permission denied"));
+	fd = -1;
+	rd_lst_p = cmd->rd;
+	while(rd_lst_p)
+	{
+		if (fd > 0)
+		{
+			dup2(fd_stdin, STDIN_FILENO);
+			close(fd);
+		}
+		rd = (t_redirection *)rd_lst_p->content;
+		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0) < 0)
+			return (ERROR);
+		else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1) < 0)
+			return (ERROR);
+		else if (rd->type == RD_OUT && do_redirection_out(rd->val, &fd, 0) < 0)
+			return (ERROR);
+		else if (rd->type == RD_APPEND && do_redirection_out(rd->val, &fd, 1) < 0)
+			return (ERROR);
+		rd_lst_p = rd_lst_p->next;
+	}
+	if (!(cmd->av) || !*(cmd->av))
+		return (ERROR);
+	is_builtin = is_built_in(cmd->av[0]);
+	if (is_builtin >= 0)
+		return(exe_built_in(cmd, env, is_builtin));
+	execve(path, cmd->av, envlst_2_arr(env));
+	return (0);
 }
 
 void	child_process(int cmd_i, int cmd_cnt, int pipes[][2], char is_heredoc)
 {
 	if (cmd_i != 0 && !is_heredoc)
-		dup2(pipes[(cmd_i + 1) % PIPE_N][0], STDIN_FILENO);
+		dup2(pipes[(cmd_i + 1) % PIPE_N][R_FD], STDIN_FILENO);
 	if (cmd_i != cmd_cnt - 1)
-		dup2(pipes[cmd_i % PIPE_N][1], STDOUT_FILENO);
-	close(pipes[cmd_i % PIPE_N][0]);
-	close(pipes[cmd_i % PIPE_N][1]);
+		dup2(pipes[cmd_i % PIPE_N][W_FD], STDOUT_FILENO);
+	close(pipes[cmd_i % PIPE_N][R_FD]);
+	close(pipes[cmd_i % PIPE_N][W_FD]);
 }
 
 void	parent_process(int cmd_i, int pipes[][2])
 {
-	close(pipes[cmd_i % PIPE_N][1]);
+	close(pipes[cmd_i % PIPE_N][W_FD]);
 	if (cmd_i != 0)
-		close(pipes[(cmd_i + 1) % PIPE_N][0]);
+		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
 // 이럴 경우 예외 케이스가 없을까??
-void	wait_processes(int child_cnt)
+// ctrl + D 들어왔을 때!!!!!!
+int	wait_processes(int child_cnt)
 {
 	int	count;
 	int	status;
@@ -147,58 +135,67 @@ void	wait_processes(int child_cnt)
 	while (count < child_cnt)
 	{
 		if (wait(&status) == -1 || WIFEXITED(status) != 1)
-			print_error_n_exit("wait error");
+			return (perror_n_return("wait error"));
 		count++;
 	}
+	return (0);
 }
 
-void	multiple_pipes(int cmd_cnt, t_list *cmd_p, char *env[], int pipes[][2])
+
+int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int pipes[][2])
 {
 	int	cmd_i;
 	int	pid;
-	int	done_cnt;
+	int	fd_stdin;
 
-	cmd_i = 0;
-	done_cnt = 0;
-	while (cmd_i < cmd_cnt)
+	fd_stdin = dup(STDIN_FILENO);
+	cmd_i = -1;
+	while (++cmd_i < cmd_cnt)
 	{
 		if (pipe(pipes[cmd_i % PIPE_N]) == -1)
-			print_error_n_exit("pipe error");
+			return (perror_n_return("pipe error"));
 		pid = fork();
 		if (pid == -1)
-			print_error_n_exit("fork error");
+			return (perror_n_return("fork error"));
 		else if (!pid) // child process
 		{
-			child_process(cmd_i, cmd_cnt, pipes,
-				((t_cmd *)cmd_p->content)->rd_heredoc != 0);
-			exe_a_cmd((t_cmd *)cmd_p->content, env);
+			child_process(cmd_i, cmd_cnt, pipes, 0);
+			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fd_stdin) < 0)
+				exit (ERROR);
 		}
 		else if (pid) // parent process
 			parent_process(cmd_i, pipes);
-		cmd_i++;
 		cmd_p = cmd_p->next;
 	}
-	wait_processes(cmd_cnt);
+	return (wait_processes(cmd_cnt));
 }
 
-void	execute(int cmd_cnt, t_list *cmds, char *env[])
-{
-	int	i;
-	int	pipes[PIPE_N][2];
 
-	i = 0;
-	while (i < PIPE_N)
+
+int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
+{
+	int	pipes[PIPE_N][2];
+	int	fd_stdin;
+	int fd_stdout;
+	int	ret;
+
+	pipes[0][R_FD] = -1;
+	pipes[0][W_FD] = -1;
+	pipes[1][R_FD] = -1;
+	pipes[1][W_FD] = -1;
+	fd_stdin = dup(STDIN_FILENO);
+	fd_stdout = dup(STDOUT_FILENO);
+	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
 	{
-		pipes[i][0] = -1;
-		pipes[i][1] = -1;
-		i++;
+		ret = exe_a_cmd(cmd_p->content, env, STDIN_FILENO);
+		dup2(fd_stdin, STDIN_FILENO);
+		dup2(fd_stdout, STDOUT_FILENO);
+		return (ret);
 	}
-	if (cmd_cnt <= 0)
-		return ;
-	if (cmd_cnt == 1)
-		exe_a_cmd((t_cmd *)cmds->content, env);
 	else
-		multiple_pipes(cmd_cnt, cmds, env, pipes);
+		multiple_pipes(cmd_cnt, cmd_p, env, pipes);
+	return (0);
+	
 }
 
 /*

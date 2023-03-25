@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/21 22:23:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/25 14:46:35 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,49 +38,14 @@
 
 #include "../../headers/minishell.h"
 
-
-// int check_right_var_key(char *key)
-// {
-// 	if (!key)
-// 		return (-1);
-// 	if (!ft_isalpha(*key))
-// 		return (-1);
-// 	return (0);
-// }
-
-// int	check_right_var_val(char *val)
-// {
-// 	char	quote_flag;
-
-// 	// '' || "" 안에 둘러싸여져 있는지 확인
-// 	// quote o -> " " || ' ' 사이에 있는 문자는 하나의 문자열로 인식
-// 	// quote 나올 때가지 포인터 이동, 나오면 quote전까지 strcat, close quote 나올때까지 다시 이동 quote 사이 통채로 strcat
-// 	if (!val)
-// 		return (-1);
-	
-// }
-
-// void	add_an_env_var(t_list **env_lst, char *arg)
-// {
-// 	t_env_var	*new_var;
-// 	if (!arg || !*arg)
-// 		return ;
-// 	new_var = create_env_var(arg);
-// 	if (!check_right_var_key(new_var->key) || !check_right_var_val(new_var->value))
-// 		return ;
-// 	ft_lstadd_back(env_lst, ft_lstnew(new_var));
-// }
-
-
-
-int ft_export(t_cmd *cmd, t_list **env_lst)
+int ft_export(t_cmd *cmd, t_list *env_lst)
 {
 	char	**p;
 	t_list	*sorted;
 	
 	if (cmd->ac == 1) // 전체 출력
 	{
-		sorted = ft_lstmap(*env_lst, copy_env_var, free_env_var);
+		sorted = ft_lstmap(env_lst, copy_env_var, free_env_var);
 		sort_env_lst(&sorted);
 		print_env_lst(sorted, 0);
 		ft_lstclear(&sorted, free_env_var);
@@ -90,7 +55,7 @@ int ft_export(t_cmd *cmd, t_list **env_lst)
 		p = &(cmd->av[1]);
 		while (p && *p)
 		{
-			ft_putenv(*env_lst, *p);
+			ft_putenv(env_lst, *p);
 			p++;
 		}
 	}
@@ -106,13 +71,13 @@ int ft_export(t_cmd *cmd, t_list **env_lst)
 // 	cmd->ac = 3;
 // 	cmd->av = (char **)malloc(sizeof(char *) * (cmd->ac + 1));
 // 	cmd->av[0] = ft_strdup("export");
-// 	cmd->av[1] = ft_strdup("water=");
-// 	cmd->av[2] = ft_strdup("kkk");
+// 	cmd->av[1] = ft_strdup("water=jj");
+// 	cmd->av[2] = ft_strdup("water=삼다수");
 // 	cmd->av[cmd->ac] = 0;
-// 	mini_env = init_env(env);
-// 	ft_export(cmd, &mini_env);
+// 	mini_env = init_env_lst(env);
+// 	ft_export(cmd, mini_env);
 // 	cmd->ac = 1;
-// 	ft_export(cmd, &mini_env);
+// 	ft_export(cmd, mini_env);
 	
 // 	// print_env_lst(mini_env);
 // 	// printf("%s\n", getenv("water"));
