@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 19:26:41 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 20:23:34 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,7 @@ int	child_process(int cmd_i, int cmd_cnt, int pipes[][2])
 	}
 	close(pipes[cmd_i % PIPE_N][R_FD]);
 	close(pipes[cmd_i % PIPE_N][W_FD]);
+	return (0);
 }
 
 void	parent_process(int cmd_i, int pipes[][2])

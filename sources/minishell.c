@@ -6,22 +6,23 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 19:18:51 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 20:19:48 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 /* to do
 
-awk
-momory leak
+print error
 exit status
 	- init 0
 	- syntax error - 258
 	- command not found - 127
 	- path permission denied - 126
-print error
 built in 함수들 exit으로 -> exe_a_cmd void 가능
+termios
+awk, sed
+momory leak, norm
 
 */
 
@@ -70,7 +71,7 @@ int	main(int ac, char *av[], char *env[])
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL) {
-			printf("\bexit\n"); // CTRL + D
+			printf("exit\n"); // CTRL + D
 			break;
 		}
 		if (!ft_strncmp(line, "", 10)) {
