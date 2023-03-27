@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 14:55:07 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 22:10:31 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int	ft_cd(char *path, t_list *env_lst)
 {
 	char	*old_pwd;
 	// printf("from: %s\n", getcwd(0, 256));
-	if (!path || (ft_strncmp(path, "~", 5) == 0))
+	if (!path || (ft_strncmp(path, "~", 5) == 0)) // cd ~ 항상 나오는데.... 어떻게 하지..
 	{
 		path = ft_getenv(env_lst, "HOME");
 		if (!path)

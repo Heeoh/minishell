@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 20:19:48 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 22:12:15 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ exit status
 	- command not found - 127
 	- path permission denied - 126
 built in 함수들 exit으로 -> exe_a_cmd void 가능
-termios
+termios, old_ter, new_ter (clhild -> 나와야 됨)
 awk, sed
 momory leak, norm
 
@@ -85,6 +85,7 @@ int	main(int ac, char *av[], char *env[])
 		// test_parsing_cmd(cmd_lst);
 		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
+		free(line);
 	}
 	clear_history();
 	ft_lstclear(&env_lst, free_env_var);
