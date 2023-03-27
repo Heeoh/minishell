@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 15:24:44 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 16:26:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 	return (-1);
 }
 
-int	exe_a_cmd(t_cmd *cmd, t_list *env, int std_fd[])
+int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 {
 	int				fd;
 	char			*path;
@@ -78,9 +78,9 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int std_fd[])
 	{
 		path = find_path(cmd->av[0], env);
 		if (access(path, F_OK) != 0)
-			return (perror_n_return("no such file"));
+			return (perror_n_return(cmd->av[0]));
 		if (access(path, X_OK) != 0)
-			return (perror_n_return("permission denied"));
+			return (perror_n_return(cmd->av[0]));
 	}
 	fd = -1;
 	rd_lst_p = cmd->rd;
@@ -89,9 +89,9 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int std_fd[])
 		if (fd > 0)
 			close(fd);
 		rd = (t_redirection *)rd_lst_p->content;
-		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0, std_fd) < 0)
+		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0, fd_stdin) < 0)
 			return (ERROR);
-		else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1, std_fd) < 0)
+		else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1, fd_stdin) < 0)
 			return (ERROR);
 		else if (rd->type == RD_OUT && do_redirection_out(rd->val, &fd, 0) < 0)
 			return (ERROR);
@@ -157,7 +157,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 		else if (!pid) // child process
 		{
 			child_process(cmd_i, cmd_cnt, fds);
-			exit (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD]));
+			exit (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD][R_FD]));
 		}
 		else if (pid) // parent process
 			parent_process(cmd_i, fds);

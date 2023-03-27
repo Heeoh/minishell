@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/22 17:51:49 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 16:21:30 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ char	*ft_strndup(const char *str, size_t size)
 
 int	perror_n_return(char *err_msg)
 {
-	printf("%s\n", err_msg);
+	// printf("%s\n", err_msg);
+	perror(err_msg);
 	return (-1);
 }
