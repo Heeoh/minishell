@@ -6,12 +6,12 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 02:05:37 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 14:55:07 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
-#include "built_in.h"
+#include "../../headers/built_in.h"
 #include <unistd.h>
 #include <stdio.h> // perror
 
@@ -30,23 +30,28 @@ void	set_env_pwd(char *old_pwd, t_list *env_lst)
 	free(new_pwd);
 }
 
-// error 출력 부분 bash 형태에 맞게 손 봐야함
-//cd: HOME not set\n
-//cd - -> $OLDPWD참조 -> 만약 없으면 "minishell: cd: HOME not set\n"
 int	ft_cd(char *path, t_list *env_lst)
 {
-	char *old_pwd;
+	char	*old_pwd;
 	// printf("from: %s\n", getcwd(0, 256));
+	if (!path || (ft_strncmp(path, "~", 5) == 0))
+	{
+		path = ft_getenv(env_lst, "HOME");
+		if (!path)
+		{
+			printf("minishell: cd: HOME not set\n");
+			return (-1);
+		}
+	}
 	old_pwd = getcwd(NULL, 0);
-	printf("minishell: cd: HOME not set");
 	if (chdir(path) < 0)
 	{
 		if (access(path, F_OK) == -1)
 			printf("minishell: cd: %s: No such file or directory\n", path);
 		else if (access(path, X_OK) == -1)
-			printf("cd: permission denied: %s", path);
+			printf("cd: permission denied: %s\n", path);
 		else
-			printf("minishell: cd: %s: Not a directory", path);
+			printf("minishell: cd: %s: Not a directory\n", path);
 		return (-1);
 	}
 	else
@@ -56,7 +61,7 @@ int	ft_cd(char *path, t_list *env_lst)
 	return (0);
 }
 
-// int main(int ac, char *av[]) {
+// int main(int ac, char *av[]) {​
 // 	if (ac != 2)
 // 		return (1);
 // 	if (ft_cd(av[1]) < 0)

@@ -6,7 +6,7 @@
 /*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 01:31:41 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 15:41:29 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,9 +52,6 @@ int	do_heredoc(char *limiter, int *input_fd)
 	line = 0;
 	if (pipe(fd) == -1)
 		return (perror_n_return("pipe error"));
-	ft_putnbr_fd(fd[0], 2);
-	ft_putnbr_fd(fd[1], 2);
-	write(2, "\n", 1);
 	pid = fork();
 	if (pid == -1)
 		return (perror_n_return("fork error"));	
@@ -81,12 +78,18 @@ int	do_heredoc(char *limiter, int *input_fd)
 	return (0);
 }
 
-int	do_redirection_in(char *val, int *fd, char is_heredoc)
+int	do_redirection_in(char *val, int *fd, char is_heredoc, int std_fd[])
 {
+	// int	out_fd;
+
 	if (is_heredoc)
 	{
+		// out_fd = dup(STDOUT_FILENO);
+		dup2(std_fd[R_FD], STDIN_FILENO);
+		// dup2(std_fd[W_FD], STDOUT_FILENO);
 		if (do_heredoc(val, fd) < 0)
 			return (perror_n_return("heredoc error"));
+		// dup2(out_fd, STDOUT_FILENO);
 	}
 	else
 		*fd = open(val, O_RDONLY, 0644);
