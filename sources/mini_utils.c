@@ -6,11 +6,12 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 16:21:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 17:50:52 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../headers/minishell.h"
+#include "../headers/minishell.h"
+#include <errno.h>
 
 void	ft_free_str(char **arg)
 {
@@ -58,9 +59,14 @@ char	*ft_strndup(const char *str, size_t size)
 	return (ret);
 }
 
-int	perror_n_return(char *err_msg)
+int	perror_n_return(char *err_msg, int is_custom, int exit_status)
 {
-	// printf("%s\n", err_msg);
-	perror(err_msg);
+	extern int	g_exit_status;
+
+	g_exit_status = exit_status;
+	if (is_custom)
+		printf("%s\n", err_msg);
+	else
+		perror(err_msg);
 	return (-1);
 }

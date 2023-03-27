@@ -3,22 +3,25 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/25 15:28:06 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 19:18:51 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 /* to do
 
-
-<
->f1>f2>f3 -> file 3개 만들어져야됨 (out, append)
-in - 마지막 파일을 읽어오지만, 이전 파일이 없을 경우 error
-heredoc - limiter 순차적으로 받고 이전 limiter 이후부터 마지막 limiter 까지 값이 input으로 넘어감
-
+awk
+momory leak
+exit status
+	- init 0
+	- syntax error - 258
+	- command not found - 127
+	- path permission denied - 126
+print error
+built in 함수들 exit으로 -> exe_a_cmd void 가능
 
 */
 
@@ -27,6 +30,7 @@ heredoc - limiter 순차적으로 받고 이전 limiter 이후부터 마지막 l
 #include <readline/readline.h>
 #include <readline/history.h>
 
+int	g_exit_status = 0;
 
 void leaks(void) {
 	system("leaks minishell");
@@ -66,18 +70,21 @@ int	main(int ac, char *av[], char *env[])
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL) {
-			printf("exit\n"); // CTRL + D
+			printf("\bexit\n"); // CTRL + D
 			break;
 		}
 		if (!ft_strncmp(line, "", 10)) {
 				free(line);
 				continue; 
 		}
-		cmd_cnt = parsing(line, &cmd_lst, env_lst);
-		// test_parsing_cmd(cmd_lst);
 		add_history(line);
+		cmd_cnt = parsing(line, &cmd_lst, env_lst);
+		if (cmd_cnt < 0)
+			continue ;
+		// test_parsing_cmd(cmd_lst);
 		execute(cmd_cnt, cmd_lst, env_lst);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 	}
 	clear_history();
+	ft_lstclear(&env_lst, free_env_var);
 }

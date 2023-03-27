@@ -3,22 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/23 01:20:07 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 17:38:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-//unset(환경변수 지우기)
-//exit
-// >< 
-//built in func
-//built in 이랑 실행부 연결
-//awk
-//export
-//momory leak
 
 int	parsing(char *line, t_list **cmd, t_list *env_lst)
 {

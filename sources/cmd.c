@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 03:10:18 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 18:08:01 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,6 +39,8 @@ t_cmd	*create_cmd_struct(void)
 	t_cmd	*new_cmd;
 
 	new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
+	if (!new_cmd)
+		return (NULL);
 	new_cmd->ac = 0;
 	new_cmd->av = 0;
 	new_cmd->rd = NULL;
@@ -62,6 +64,8 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	t_list	*tk_p;
 
 	*cmd = create_cmd_struct();
+	if (!*cmd)
+		return (ERROR);
 	tk_p = *tk_lst;
 	while (1)
 	{
@@ -74,12 +78,9 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 		}
 		else if (is_redirection((char *)tk_p->content))
 		{
-			if (!tk_p->next)
-			{
-				perror_n_return("syntax error");
-				return (ERROR);
-			}
-			else if (!is_redirection((char *)tk_p->next->content))
+			if (!tk_p->next || is_redirection((char *)tk_p->next->content))
+				return (perror_n_return("syntax error: unexpected token", 1, 258));
+			else
 			{
 				if (set_cmd_redirection(tk_p->content, tk_p->next->content, &(*cmd)->rd) < 0)
 					return (ERROR);
@@ -137,26 +138,4 @@ int	set_cmd_redirection(char *type, char *val, t_list **rd_lst)
 	new_node = ft_lstnew(new_rd);
 	ft_lstadd_back(rd_lst, new_node);
 	return (0);
-	// if (*type == '<')
-	// {
-	// 	if ((*cmd)->rd_in)
-	// 		ft_free_str(&(*cmd)->rd_in);
-	// 	if ((*cmd)->rd_heredoc)
-	// 		ft_free_str(&(*cmd)->rd_heredoc);
-	// 	if (ft_strncmp(type, "<", 5) == 0)
-	// 		(*cmd)->rd_in = ft_strdup(val);
-	// 	else if (ft_strncmp(type, "<<", 5) == 0)
-	// 		(*cmd)->rd_heredoc = ft_strdup(val);
-	// }
-	// else if (*type == '>')
-	// {
-	// 	if ((*cmd)->rd_out)
-	// 		ft_free_str(&(*cmd)->rd_out);
-	// 	if ((*cmd)->rd_append)
-	// 		ft_free_str(&(*cmd)->rd_append);
-	// 	if (ft_strncmp(type, ">", 5) == 0)
-	// 		(*cmd)->rd_out = ft_strdup(val);
-	// 	else if (ft_strncmp(type, ">>", 5) == 0)
-	// 		(*cmd)->rd_append = ft_strdup(val);
-	// }
 }

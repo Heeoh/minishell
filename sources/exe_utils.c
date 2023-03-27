@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 15:53:00 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 19:16:30 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,10 +51,10 @@ int	do_heredoc(char *limiter, int *input_fd)
 	fd[W_FD] = -1;
 	line = 0;
 	if (pipe(fd) == -1)
-		return (perror_n_return("pipe error"));
+		return (perror_n_return("pipe error", 0, EXIT_FAILURE));
 	pid = fork();
 	if (pid == -1)
-		return (perror_n_return("fork error"));	
+		return (perror_n_return("fork error", 0, EXIT_FAILURE));	
 	else if (!pid)
 	{
 		close(fd[R_FD]);
@@ -84,14 +84,16 @@ int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_stdin)
 	{
 		dup2(fd_stdin, STDIN_FILENO);
 		if (do_heredoc(val, fd) < 0)
-			return (perror_n_return("heredoc error"));
+			return (ERROR);
 	}
 	else
+	{
 		*fd = open(val, O_RDONLY, 0644);
-	if (*fd < 0)
-		return (perror_n_return("file open error"));
+		if (*fd < 0)
+			return (perror_n_return(val, 0, EXIT_FAILURE));
+	}
 	if (dup2(*fd, STDIN_FILENO) < 0)
-		return (perror_n_return("dup2 error"));
+		return (perror_n_return(NULL, 0, EXIT_FAILURE));
 	return (0);
 }
 
@@ -103,6 +105,6 @@ int	do_redirection_out(char *filename, int *fd, char is_append)
 	else
 		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (dup2(*fd, STDOUT_FILENO) < 0)
-		return (perror_n_return("dup2 error"));
+		return (perror_n_return(NULL, 0, EXIT_FAILURE));
 	return (0);
 }
