@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 20:23:34 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 22:19:51 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,7 +103,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 		return (ERROR);
 	if (is_builtin >= 0)
 		return(exe_built_in(cmd, env, is_builtin));
-	execve(path, cmd->av, envlst_2_arr(env));
+	execve(path, cmd->av, envlst_2_arr(env)); // return -1
 	return (0);
 }
 

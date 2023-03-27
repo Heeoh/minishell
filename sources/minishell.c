@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 22:12:15 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/27 22:24:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@ exit status
 	- syntax error - 258
 	- command not found - 127
 	- path permission denied - 126
+	- ctrl + D - 0
+	- ctrl + C - 1
+$?
+cd ~ .....?
 built in 함수들 exit으로 -> exe_a_cmd void 가능
 termios, old_ter, new_ter (clhild -> 나와야 됨)
 awk, sed
