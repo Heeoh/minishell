@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 22:24:08 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:08:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ momory leak, norm
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <termios.h>
 
 int	g_exit_status = 0;
 
@@ -57,19 +58,33 @@ void	test_parsing_cmd(t_list *cmd_lst)
 	}
 }
 
+void	set_termios(struct termios *org_term, struct termios *new_term)
+{
+	tcgetattr(STDOUT_FILENO, org_term);
+	tcgetattr(STDOUT_FILENO, new_term);
+	new_term->c_lflag &= ~(ECHOCTL);  // ICANON, ECHO 속성을 off
+	new_term->c_cc[VMIN] = 1;               // 1 바이트씩 처리
+	new_term->c_cc[VTIME] = 0;              // 시간은 설정하지 않음
+}
+
 int	main(int ac, char *av[], char *env[])
 {
-	char	*line;
-	t_list	*cmd_lst;
-	int		cmd_cnt;
-	t_list	*env_lst;
+	char			*line;
+	t_list			*cmd_lst;
+	int				cmd_cnt;
+	t_list			*env_lst;
+	struct termios	terms[2];
+	
+
 	
 	// atexit(leaks);
 	ac = 0;
 	av = 0;
 	env_lst = init_env_lst(env);
-	init_rl_catch_signals();
+	// init_rl_catch_signals();
 	setting_signal();
+	set_termios(&terms[0], &terms[1]);
+	// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[1]);
 	// using_history()
 	while (1) {
 		cmd_lst = NULL;
@@ -87,9 +102,11 @@ int	main(int ac, char *av[], char *env[])
 		if (cmd_cnt < 0)
 			continue ;
 		// test_parsing_cmd(cmd_lst);
+		// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[0]);
 		execute(cmd_cnt, cmd_lst, env_lst);
+		// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[1]);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
-		free(line);
+		ft_free_str(&line);
 	}
 	clear_history();
 	ft_lstclear(&env_lst, free_env_var);

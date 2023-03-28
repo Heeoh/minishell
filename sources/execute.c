@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 14:11:10 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:07:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -142,7 +142,7 @@ int	wait_processes(int child_cnt)
 	count = 0;
 	while (count < child_cnt)
 	{
-		if (wait(&status) == -1 || WIFEXITED(status) != 1)
+		if (wait(&status) == -1 || !(WIFEXITED(status) || WIFSIGNALED(status) || WIFSTOPPED(status)))
 			perror_n_exit("wait error", 0, status);
 		count++;
 	}

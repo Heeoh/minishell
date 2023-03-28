@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 20:25:02 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 15:31:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ int	get_env_key(char *sp, char **env_key)
 	ep = sp + 1;
 	if (!*ep)
 		return (0);
-	if (ft_isdigit(*ep))
+	if (ft_isdigit(*ep) || *ep == '?')
 		ep++;
 	else if (is_var_char(*ep))
 	{
@@ -106,24 +106,40 @@ int	get_env_key(char *sp, char **env_key)
 
 char	*replace_env(t_list *env_lst, char *data)
 {
+	char		*dollar_pos;
 	int			env_sp;
 	int			env_ep;
 	char		*front;
 	char		*back;
 	t_env_var	target_env;
+	extern int	g_exit_status;
 
-	env_sp = ft_strchr(data, '$') - data;
-	env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
-	if (env_sp == env_ep)
-		return (data);
-	if (env_sp > env_ep)
-		return (NULL);
-	front = ft_strndup(data, env_sp);
-	back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
-	target_env.value = ft_getenv(env_lst, target_env.key);
-	return (strjoin_n_free(ft_strjoin(front, target_env.value), back));
-	if (front)
-		free(front);
+	while (data)
+	{
+		dollar_pos = ft_strchr(data, '$');
+		if (!dollar_pos)
+			return (data);
+		env_sp = dollar_pos - data;
+		env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
+		if (ft_strncmp(target_env.key, "?", 5) == 0)
+		{
+			free(data);
+			data = ft_itoa(g_exit_status);
+			return (data);
+		}
+		if (env_sp == env_ep)
+			return (data);
+		if (env_sp > env_ep)
+			return (NULL);
+		front = ft_strndup(data, env_sp);
+		back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
+		target_env.value = ft_getenv(env_lst, target_env.key);
+		free(data);
+		data = strjoin_n_free(ft_strjoin(front, target_env.value), back);
+		if (front)
+			free(front);
+	}
+	return (NULL);
 }
 
 /*

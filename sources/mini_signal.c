@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_signal.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:11:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/24 02:48:12 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:09:04 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void    sigint_handler(int sig) {
 	if (sig != SIGINT)
 		exit(0);
 	ft_putstr_fd("\n", STDOUT_FILENO);	
-	rl_replace_line("", 1);
+	rl_replace_line("", 0);
 	rl_on_new_line();
 	rl_redisplay();
 	return ;
