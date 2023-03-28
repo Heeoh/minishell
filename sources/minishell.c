@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 22:24:08 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:07:50 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,19 +14,19 @@
 /* to do
 
 print error
-exit status
+- exit status
 	- init 0
 	- syntax error - 258
 	- command not found - 127
 	- path permission denied - 126
 	- ctrl + D - 0
 	- ctrl + C - 1
-$?
-cd ~ .....?
-built in 함수들 exit으로 -> exe_a_cmd void 가능
-termios, old_ter, new_ter (clhild -> 나와야 됨)
-awk, sed
-momory leak, norm
+- $?
+- replace env 수정
+built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 해야됨(안그럼 부모 프로세스 죽음)
+- termios, old_ter, new_ter (clhild -> 나와야 됨)
+awk, sed (...wait)
+momory leak, norm (later)
 
 */
 
@@ -34,6 +34,7 @@ momory leak, norm
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <signal.h>
 
 int	g_exit_status = 0;
 
@@ -75,6 +76,8 @@ int	main(int ac, char *av[], char *env[])
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL) {
+			ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+			ft_putstr_fd("\033[12C", STDOUT_FILENO);
 			printf("exit\n"); // CTRL + D
 			break;
 		}
