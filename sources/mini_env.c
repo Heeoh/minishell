@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 20:37:22 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:24:22 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -105,7 +105,7 @@ int	get_env_key(char *sp, char **env_key)
 	key_len = ep - sp - 1;
 	*env_key = (char *)malloc(sizeof(char *) * (key_len + 1));
 	if (!*env_key)
-		return (-1);
+		exit(1);
 	ft_strlcpy(*env_key, sp + 1, key_len + 1);
 	return (key_len);
 }

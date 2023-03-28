@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 19:00:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:22:23 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ t_tokenizer	*init_tokenizer(char *line)
 	t_tokenizer	*tokenizer;
 
 	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
+	if (!tokenizer)
+		exit(1);
 	tokenizer->line = line;
 	tokenizer->sp = line;
 	tokenizer->quote = 0;
