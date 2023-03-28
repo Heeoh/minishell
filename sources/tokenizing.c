@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:22:23 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 22:00:57 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,10 +66,12 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 	//null
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
-	while (is_quote(*tk_p->line, tk_p->quote))
+	while (1)
 	{
-		if (!tk_p->line)
+		if (!tk_p->line || !*tk_p->line)
 			return (perror_n_return("syntax error : not closed quote", 1, 258));
+		if (is_quote(*tk_p->line, tk_p->quote) == 0)
+			break ;
 		tk_p->line++;
 	}
 	tk_p->tk_content = get_token(env_lst, tk_p, tk_p->quote);

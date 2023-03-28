@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 21:49:02 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 22:22:16 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,9 @@ X built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 �
 V termios, old_ter, new_ter (clhild -> 나와야 됨)
 V for executing, ctrl + C -> double
 - awk, sed (...wait)
-- malloc error
+- <<end cat | ls
+- export | grep PWD
+V malloc error
 - momory leak, norm (later)
 
 */
