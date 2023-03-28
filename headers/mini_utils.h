@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:42:34 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 17:51:44 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 14:06:40 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@
 char	*ft_strndup(const char *str, size_t size);
 char	*strjoin_n_free(char *s1, char *s2);
 void	ft_free_str(char **arg);
-int	perror_n_return(char *err_msg, int is_custom, int exit_status);
+int	    perror_n_return(char *err_msg, int is_custom, int exit_status);
+void	perror_n_exit(char *err_msg, int is_custom, int exit_status);
 
 #endif

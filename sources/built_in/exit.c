@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/24 20:00:52 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 14:16:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,21 +37,21 @@ void	exit_argm(char *argm)
 
 int	ft_exit(t_cmd *cmd)
 {
-	if (!cmd->av[2])
+	if (cmd->ac == 1)
 	{
 		printf("exit\n");
 		exit(0);
 	}
 	else
 	{
-		if (is_num(cmd->av[2]))
-			exit_argm(cmd->av[2]);
-		else if (cmd->av[3])
+		if (cmd->av[1] && is_num(cmd->av[1]))
+			exit_argm(cmd->av[1]);
+		else if (cmd->ac > 2)
 		{
 			printf("miniHell: too many arguments\n");
 			return (1);
 		}
 	}
 	printf("exit\n");
-	exit(ft_atoi(cmd->av[2]));
+	exit(ft_atoi(cmd->av[1]));
 }
