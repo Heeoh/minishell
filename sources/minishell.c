@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 22:22:16 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 02:44:30 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,31 @@ X built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 �
 V termios, old_ter, new_ter (clhild -> 나와야 됨)
 V for executing, ctrl + C -> double
 - awk, sed (...wait)
-- <<end cat | ls
-- export | grep PWD
 V malloc error
 - momory leak, norm (later)
 
+test error
+- unset 여러개 -> 첫 번째만 됨
+
+- *exportO=o / *exportO+=o -> 이게 뭐지..?
+
+- cd - 처리할까 말까..? 하는 건 쉬울 거 같긴 한데..? (cd to oldpwd and print oldpwd)
+- unset PWD -> cd -> PWD 재설정 안됨
+- 현재 dir 지운 후 pwd -> bash 에서는 나옴 && cd . -> 에러 (우리는 여기서 SEGV...ㅎ)
+
+- <<end cat | ls / - <<end > out | cat out | wc -l 
+- echo "-n hello" -> -n hello 출력됨 
+- echo "-n-n-n-n-n-n-n" hello -> -n-n-n-n-n-n-n hello 
+- echo -nnnnnnnnn -n -nnnnnm -> -nnnnnm .... 왜..? ㅎㅎ
+- echo $TEST > $TEST
+
+- | 뒤에 아무 것도 없거나 |가 나오면 syntax error
+- ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
+
+- $_ : env | grep SHLVL -> 이건 또 뭐람..
+V export | grep PWD
+
+- <<end cat && ctrl + C -> minishell 한 줄 더 나옴
 */
 
 #include "../headers/minishell.h"

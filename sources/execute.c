@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 22:08:02 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 03:08:35 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 		rd_lst_p = rd_lst_p->next;
 	}
 	set_termios(1);
+	// signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (!(cmd->av) || !*(cmd->av))
 		return (ERROR);
@@ -135,22 +136,27 @@ void	parent_process(int cmd_i, int pipes[][2])
 		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
+#include <errno.h>
+
 // 이럴 경우 예외 케이스가 없을까??
 // ctrl + D 들어왔을 때!!!!!!
-int wait_processes(int child_cnt, int pid)
+int wait_processes(int child_cnt, int pid[])
 {
     int count;
     int status;
-	int	wait_pid;
+	pid_t	wait_pid;
+
     count = 0;
-	
     while (count < child_cnt)
     {
-		wait_pid = wait(&status);
-        if (wait_pid == -1)
+		wait_pid = waitpid(pid[count++], &status, 0);
+        if (wait_pid < 0)
             perror_n_exit("wait error", 0, status);
-		if (WIFEXITED(status) && (wait_pid == pid))
-			g_exit_status = WEXITSTATUS(status);
+		if (WIFEXITED(status))
+		{
+			if (wait_pid == pid[child_cnt - 1])
+				g_exit_status = WEXITSTATUS(status);
+		}
 		else if (WIFSIGNALED(status))
 		{
 			if (WTERMSIG(status) == 2)
@@ -166,7 +172,6 @@ int wait_processes(int child_cnt, int pid)
 			else
 				g_exit_status = WTERMSIG(status);
 		}
-        count++;
     }
     return (0);
 }
@@ -174,26 +179,28 @@ int wait_processes(int child_cnt, int pid)
 int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 {
 	int	cmd_i;
-	int	pid;
+	int	pid[cmd_cnt];
 
 	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
 			return (perror_n_return("pipe error", 0, EXIT_FAILURE));
-		signal(SIGINT, SIG_IGN);
-		pid = fork();
-		if (pid == -1)
+		pid[cmd_i] = fork();
+		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
+		if (pid[cmd_i] == -1)
 			return (perror_n_return("fork error", 0, EXIT_FAILURE));
-		else if (!pid) // child process
+		else if (!pid[cmd_i]) // child process
 		{
-			// setting_signal_exe();
 			child_process(cmd_i, cmd_cnt, fds);
 			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD][R_FD]) < 0)
-				exit(g_exit_status);
+				exit(EXIT_FAILURE);
+			exit(EXIT_SUCCESS);
 		}
-		else if (pid) // parent process
+		else if (pid[cmd_i]) // parent process
+		{
 			parent_process(cmd_i, fds);
+		}
 		cmd_p = cmd_p->next;
 	}
 	return (wait_processes(cmd_cnt, pid));
@@ -211,7 +218,10 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 	fds[STD][W_FD] = dup(STDOUT_FILENO);
 	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
 	{
-		g_exit_status = exe_a_cmd(cmd_p->content, env, STDIN_FILENO);
+		if (exe_a_cmd(cmd_p->content, env, STDIN_FILENO) < 0)
+			g_exit_status = EXIT_FAILURE;
+		else
+			g_exit_status = EXIT_SUCCESS;
 		dup2(fds[STD][R_FD], STDIN_FILENO);
 		dup2(fds[STD][W_FD], STDOUT_FILENO);
 		// return (ret);
