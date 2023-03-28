@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:36:43 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:52:25 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -190,10 +190,9 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 
 
 
-int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
+void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	fds[PIPE_N + 1][2];
-	int	ret;
 
 	fds[0][R_FD] = -1;
 	fds[0][W_FD] = -1;
@@ -203,14 +202,14 @@ int	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 	fds[STD][W_FD] = dup(STDOUT_FILENO);
 	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
 	{
-		ret = exe_a_cmd(cmd_p->content, env, STDIN_FILENO);
+		g_exit_status = exe_a_cmd(cmd_p->content, env, STDIN_FILENO);
 		dup2(fds[STD][R_FD], STDIN_FILENO);
 		dup2(fds[STD][W_FD], STDOUT_FILENO);
-		return (ret);
+		// return (ret);
 	}
 	else
 		multiple_pipes(cmd_cnt, cmd_p, env, fds);
-	return (0);
+	// return (0);
 	
 }
 

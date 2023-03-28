@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 15:30:06 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:43:31 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@
 # define ERROR -1
 // # define ERROR_P NULL
 
-extern int	g_exit_status = 0;
+extern int	g_exit_status;
 
 #include "../library/libft/libft.h"
 // #include "../library/get_next_line/get_next_line.h"

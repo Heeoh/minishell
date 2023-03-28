@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 14:40:23 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:53:46 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	ft_cd(char *path, t_list *env_lst)
 		if (!path)
 		{
 			printf("minishell: cd: HOME not set\n");
-			return (-1);
+			return (EXIT_FAILURE);
 		}
 	}
 	old_pwd = getcwd(NULL, 0);
@@ -52,13 +52,13 @@ int	ft_cd(char *path, t_list *env_lst)
 			printf("minishell: cd: %s: Permission denied\n", path);
 		else
 			printf("minishell: cd: %s: Not a directory\n", path);
-		return (-1);
+		return (EXIT_FAILURE);
 	}
 	else
 		set_env_pwd(old_pwd, env_lst);
 	free(old_pwd);
     // printf("to: %s\n", getcwd(0, 256));
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 // int main(int ac, char *av[]) {​

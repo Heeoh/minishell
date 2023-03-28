@@ -3,30 +3,31 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 16:08:21 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 19:01:26 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 
 /* to do
 
-print error
+v print error
 - exit status
-	- init 0
+	v init 0
 	- syntax error - 258
 	- command not found - 127
 	- path permission denied - 126
-	- ctrl + D - 0
-	- ctrl + C - 1
-- $?
+	v ctrl + D - 0
+	v ctrl + C - 1
+v $?
 - replace env 수정
 built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 해야됨(안그럼 부모 프로세스 죽음)
 - termios, old_ter, new_ter (clhild -> 나와야 됨)
-awk, sed (...wait)
-momory leak, norm (later)
+- for executing, ctrl + C -> double
+- awk, sed (...wait)
+- momory leak, norm (later)
 
 */
 
@@ -60,8 +61,8 @@ void	test_parsing_cmd(t_list *cmd_lst)
 
 void	set_termios(struct termios *org_term, struct termios *new_term)
 {
-	tcgetattr(STDOUT_FILENO, org_term);
-	tcgetattr(STDOUT_FILENO, new_term);
+	tcgetattr(STDIN_FILENO, org_term);
+	tcgetattr(STDIN_FILENO, new_term);
 	new_term->c_lflag &= ~(ECHOCTL);  // ICANON, ECHO 속성을 off
 	new_term->c_cc[VMIN] = 1;               // 1 바이트씩 처리
 	new_term->c_cc[VTIME] = 0;              // 시간은 설정하지 않음
@@ -76,24 +77,23 @@ int	main(int ac, char *av[], char *env[])
 	struct termios	terms[2];
 	
 
-	
-	// atexit(leaks);
+	atexit(leaks);
 	ac = 0;
 	av = 0;
 	env_lst = init_env_lst(env);
 	// init_rl_catch_signals();
 	setting_signal();
 	set_termios(&terms[0], &terms[1]);
-	// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[1]);
+	tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
 	// using_history()
 	while (1) {
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL) {
 			ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
-			ft_putstr_fd("\033[12C", STDOUT_FILENO);
+			ft_putstr_fd("\033[11C", STDOUT_FILENO);
 			printf("exit\n"); // CTRL + D
-			break;
+			break ;
 		}
 		if (!ft_strncmp(line, "", 10)) {
 				free(line);
@@ -104,11 +104,12 @@ int	main(int ac, char *av[], char *env[])
 		if (cmd_cnt < 0)
 			continue ;
 		// test_parsing_cmd(cmd_lst);
-		// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[0]);
+		tcsetattr(STDIN_FILENO, TCSANOW, &terms[0]);
 		execute(cmd_cnt, cmd_lst, env_lst);
-		// tcsetattr(STDOUT_FILENO, TCSANOW, &terms[1]);
+		tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 		ft_free_str(&line);
+		// system("leaks ./minishell");
 	}
 	clear_history();
 	ft_lstclear(&env_lst, free_env_var);

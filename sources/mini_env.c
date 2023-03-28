@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 15:31:14 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 17:14:49 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,18 @@ int	is_valid_key(char *key)
 	char	*p;
 
 	p = key;
-	if (is_var_char(*p) && !ft_isdigit(*p))
+	if (ft_isdigit(*p))
+		return (0);
+	else if (is_var_char(*p))
 	{
 		while (++p && *p)
 		{
 			if (!is_var_char(*p))
 				return (0);
 		}
+		return (1);
 	}
-	return (1);
+	return (0);
 }
 
 char	*ft_getenv(t_list *env_lst, char *key)
@@ -49,7 +52,7 @@ char	*ft_getenv(t_list *env_lst, char *key)
 	return (NULL);
 }
 
-void	ft_putenv(t_list *env_lst, char *arg)
+int	ft_putenv(t_list *env_lst, char *arg)
 {
 	t_env_var	*new_env;
 	t_list		*new_node;
@@ -57,7 +60,9 @@ void	ft_putenv(t_list *env_lst, char *arg)
 
 	new_env = create_env_var(arg);
 	if (!(new_env && is_valid_key(new_env->key)))
-		return ;
+		return (-1);
+	if (ft_strncmp(new_env->key, "_", 10) == 0)
+		return (0);
 	p = env_lst;
 	while (p)
 	{
@@ -67,7 +72,7 @@ void	ft_putenv(t_list *env_lst, char *arg)
 				ft_free_str(&((t_env_var *)p->content)->value);
 			((t_env_var *)p->content)->value = new_env->value;
 			((t_env_var *)p->content)->is_tmp = 0;
-			return ;
+			return (0);
 		}
 		if (!p->next->next)
 			break ;
@@ -76,6 +81,7 @@ void	ft_putenv(t_list *env_lst, char *arg)
 	new_node = ft_lstnew(new_env);
 	ft_lstadd_front(&(p->next), new_node);
 	p->next = new_node;
+	return (0);
 }
 
 int	get_env_key(char *sp, char **env_key)

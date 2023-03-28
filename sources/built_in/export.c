@@ -3,38 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 14:46:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 17:01:53 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
-// export = -> bash: export: `=': not a valid identifier (error)
-// export hhh -> nothing
-// export hhh= -> make nex env 'hhh' but value is empty
-
-// export water="삼다수"
-// export TEMP_DIR=/tmp
-// export BASE_DIR=$TEMP_DIR/backup
-
-/*
-1. main에서 받아온 환경변수를 복사해서 minishell에서 쓰는 환경변수를 따로 만들어야 함
-2. parameter로 커스텀된 환경변수와 (전역변수로 안만든다면) 추가할 환경변수 문자열을 받음
-3. 환경변수 문자열이 valid 한지 확인
-	- name=value 형태로 되어 있어야 함
-	- name, = 사이에 공백이 있을 수 없음, = , value 사이에 공백이 있을 경우 공백만 value로 인식됨
-	- value는 없을 수 있으며, 이 때에도 =은 반드시 있어야 됨 -> = 없으면 무시됨
-	- value는 "", ''로 쌓여져 있을 수 있으며, value에 공백이 포함되어 있을 경우 반드시 ""/'' 안에 있어야 함
-	- ""/'' 안에 포함되지 않은 공백 이후 값은 무시됨
-	- value에 환경변수를 사용할 수 있음, 이때 ' ' 안에 포함된 $환경변수는 값이 치환되지 않음
-4. 이미 존재하는 환경변수인지 확인
-	- 이미 존재한다면 새로운 값으로 업데이트
-	- 없다면 새로 추가
-*/
-
-
-// $_ 처리 
 
 #include "../../headers/minishell.h"
 
@@ -55,11 +29,15 @@ int ft_export(t_cmd *cmd, t_list *env_lst)
 		p = &(cmd->av[1]);
 		while (p && *p)
 		{
-			ft_putenv(env_lst, *p);
+			if (ft_putenv(env_lst, *p) < 0)
+			{
+				printf("minishell: export: '%s': not a valid identifier\n", *p);
+				return (EXIT_FAILURE);
+			}
 			p++;
 		}
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 // int main(int ac, char *av[], char *env[]){

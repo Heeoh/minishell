@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 20:24:02 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/24 20:00:51 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/28 17:16:43 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ int	ft_unset(t_cmd *cmd, t_list **env_lst)
 			tmp = p;
 			*env_lst = p->next;
 			ft_lstdelone(tmp, free_env_var);
-			return (0);
+			return (EXIT_SUCCESS);
 		}
 		while (p && p->next)
 		{
@@ -65,7 +65,7 @@ int	ft_unset(t_cmd *cmd, t_list **env_lst)
 		}
 		i++;
 	}
-	return (0);
+	return (EXIT_SUCCESS);
 }
 
 // int main(int ac, char *av[], char *env[]){

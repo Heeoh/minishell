@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 22:07:11 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 19:00:19 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,8 +126,7 @@ char	*get_token(t_list *env_lst, t_tokenizer *tokenizer, int in_quote)
 	dollar_pos = ft_strchr(tmp, '$');
 	if (dollar_pos && !*(dollar_pos + 1) && tokenizer->quote && !in_quote)
 	{
-		ft_free_str(&tmp);
-		tmp = ft_strdup("");
+		tmp[ft_strlen(tmp) - 1] = '\0';
 	}
 	else if (dollar_pos && in_quote != 1)
 		tmp = replace_env(env_lst, tmp);
