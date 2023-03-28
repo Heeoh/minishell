@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 20:50:48 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:42:12 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,6 +63,8 @@ typedef struct s_cmd {
 # include "../headers/mini_env.h"
 # include "../headers/mini_parsing.h"
 # include "../headers/mini_exe.h"
+
+
 
 // signal
 void	init_rl_catch_signals(void);

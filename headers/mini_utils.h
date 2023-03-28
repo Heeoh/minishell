@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:42:34 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 14:06:40 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:42:20 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,8 @@
 # include <stdlib.h>
 # include <stdio.h>
 # include "../library/libft/libft.h"
+
+void	set_termios(int echoctl_on);
 
 char	*ft_strndup(const char *str, size_t size);
 char	*strjoin_n_free(char *s1, char *s2);

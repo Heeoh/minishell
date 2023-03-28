@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 21:15:49 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:49:02 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ v $?
 V replace env 수정
 X built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 해야됨(안그럼 부모 프로세스 죽음)
 V termios, old_ter, new_ter (clhild -> 나와야 됨)
-- for executing, ctrl + C -> double
+V for executing, ctrl + C -> double
 - awk, sed (...wait)
 - malloc error
 - momory leak, norm (later)
@@ -60,13 +60,16 @@ void	test_parsing_cmd(t_list *cmd_lst)
 	}
 }
 
-void	set_termios(struct termios *org_term, struct termios *new_term)
+void	set_termios(int echoctl_on)
 {
-	tcgetattr(STDIN_FILENO, org_term);
-	tcgetattr(STDIN_FILENO, new_term);
-	new_term->c_lflag &= ~(ECHOCTL);  // ICANON, ECHO 속성을 off
-	new_term->c_cc[VMIN] = 1;               // 1 바이트씩 처리
-	new_term->c_cc[VTIME] = 0;              // 시간은 설정하지 않음
+	struct termios	new_term;
+
+	tcgetattr(STDIN_FILENO, &new_term);
+	if (echoctl_on)
+		new_term.c_lflag |= ECHOCTL; 
+	if (!echoctl_on)
+		new_term.c_lflag &= ~(ECHOCTL); 
+	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 }
 
 int	main(int ac, char *av[], char *env[])
@@ -75,18 +78,14 @@ int	main(int ac, char *av[], char *env[])
 	t_list			*cmd_lst;
 	int				cmd_cnt;
 	t_list			*env_lst;
-	struct termios	terms[2];
 	
 
 	// atexit(leaks);
 	ac = 0;
 	av = 0;
 	env_lst = init_env_lst(env);
-	// init_rl_catch_signals();
-	
-	set_termios(&terms[0], &terms[1]);
-	tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
 	setting_signal();
+	set_termios(0);
 	// using_history()
 	while (1) {
 		cmd_lst = NULL;
@@ -105,14 +104,11 @@ int	main(int ac, char *av[], char *env[])
 		cmd_cnt = parsing(line, &cmd_lst, env_lst);
 		if (cmd_cnt < 0)
 			continue ;
-		// test_parsing_cmd(cmd_lst);
-		tcsetattr(STDIN_FILENO, TCSANOW, &terms[0]);
 		execute(cmd_cnt, cmd_lst, env_lst);
-		// tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
+		set_termios(0);
 		setting_signal();
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 		ft_free_str(&line);
-		// system("leaks ./minishell");
 	}
 	clear_history();
 	ft_lstclear(&env_lst, free_env_var);

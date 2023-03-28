@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:16:32 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:46:05 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 	t_redirection	*rd;
 	int				is_builtin;
 
+	signal(SIGINT, SIG_DFL);
 	is_builtin = is_built_in(cmd->av[0]);
 	if (is_builtin < 0)
 	{
@@ -101,6 +102,8 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 			return (ERROR);
 		rd_lst_p = rd_lst_p->next;
 	}
+	set_termios(1);
+	signal(SIGQUIT, SIG_DFL);
 	if (!(cmd->av) || !*(cmd->av))
 		return (ERROR);
 	if (is_builtin >= 0)
@@ -151,9 +154,15 @@ int wait_processes(int child_cnt, int pid)
 		else if (WIFSIGNALED(status))
 		{
 			if (WTERMSIG(status) == 2)
+			{
+				ft_putstr_fd("\n", 2);
 				g_exit_status = 130;
+			}
 			else if (WTERMSIG(status) == 3)
+			{
+				ft_putstr_fd("Quit: 3\n", 2);
 				g_exit_status = 131;
+			}
 			else
 				g_exit_status = WTERMSIG(status);
 		}
@@ -172,12 +181,13 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	{
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
 			return (perror_n_return("pipe error", 0, EXIT_FAILURE));
+		signal(SIGINT, SIG_IGN);
 		pid = fork();
 		if (pid == -1)
 			return (perror_n_return("fork error", 0, EXIT_FAILURE));
 		else if (!pid) // child process
 		{
-			// signal(SIG_INT, )
+			// setting_signal_exe();
 			child_process(cmd_i, cmd_cnt, fds);
 			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD][R_FD]) < 0)
 				exit(g_exit_status);
