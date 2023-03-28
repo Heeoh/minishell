@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 19:01:26 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:15:49 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,11 +22,12 @@ v print error
 	v ctrl + D - 0
 	v ctrl + C - 1
 v $?
-- replace env 수정
-built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 해야됨(안그럼 부모 프로세스 죽음)
-- termios, old_ter, new_ter (clhild -> 나와야 됨)
+V replace env 수정
+X built in 함수들 exit으로 -> exe_a_cmd void 가능 ->안됨 return으로 해야됨(안그럼 부모 프로세스 죽음)
+V termios, old_ter, new_ter (clhild -> 나와야 됨)
 - for executing, ctrl + C -> double
 - awk, sed (...wait)
+- malloc error
 - momory leak, norm (later)
 
 */
@@ -77,14 +78,15 @@ int	main(int ac, char *av[], char *env[])
 	struct termios	terms[2];
 	
 
-	atexit(leaks);
+	// atexit(leaks);
 	ac = 0;
 	av = 0;
 	env_lst = init_env_lst(env);
 	// init_rl_catch_signals();
-	setting_signal();
+	
 	set_termios(&terms[0], &terms[1]);
 	tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
+	setting_signal();
 	// using_history()
 	while (1) {
 		cmd_lst = NULL;
@@ -106,7 +108,8 @@ int	main(int ac, char *av[], char *env[])
 		// test_parsing_cmd(cmd_lst);
 		tcsetattr(STDIN_FILENO, TCSANOW, &terms[0]);
 		execute(cmd_cnt, cmd_lst, env_lst);
-		tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
+		// tcsetattr(STDIN_FILENO, TCSANOW, &terms[1]);
+		setting_signal();
 		ft_lstclear(&cmd_lst, free_cmd_struct);
 		ft_free_str(&line);
 		// system("leaks ./minishell");

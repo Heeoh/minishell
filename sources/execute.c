@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:52:25 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:16:32 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -177,6 +177,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 			return (perror_n_return("fork error", 0, EXIT_FAILURE));
 		else if (!pid) // child process
 		{
+			// signal(SIG_INT, )
 			child_process(cmd_i, cmd_cnt, fds);
 			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD][R_FD]) < 0)
 				exit(g_exit_status);
@@ -187,8 +188,6 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	}
 	return (wait_processes(cmd_cnt, pid));
 }
-
-
 
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {

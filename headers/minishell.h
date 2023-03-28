@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 16:43:31 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 20:50:48 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,5 +68,7 @@ typedef struct s_cmd {
 void	init_rl_catch_signals(void);
 void	sigint_handler(int sig);
 void	setting_signal(void);
+void	setting_signal_exe(void);
+
 
 #endif

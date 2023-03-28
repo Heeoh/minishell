@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 17:14:49 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 20:37:22 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -119,7 +119,9 @@ char	*replace_env(t_list *env_lst, char *data)
 	char		*back;
 	t_env_var	target_env;
 	extern int	g_exit_status;
+	char		*tmp;
 
+	tmp = 0;
 	while (data)
 	{
 		dollar_pos = ft_strchr(data, '$');
@@ -127,23 +129,25 @@ char	*replace_env(t_list *env_lst, char *data)
 			return (data);
 		env_sp = dollar_pos - data;
 		env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
-		if (ft_strncmp(target_env.key, "?", 5) == 0)
-		{
-			free(data);
-			data = ft_itoa(g_exit_status);
-			return (data);
-		}
 		if (env_sp == env_ep)
 			return (data);
 		if (env_sp > env_ep)
 			return (NULL);
 		front = ft_strndup(data, env_sp);
 		back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
-		target_env.value = ft_getenv(env_lst, target_env.key);
+		if (ft_strncmp(target_env.key, "?", 5) == 0)
+		{
+			tmp = ft_itoa(g_exit_status);
+			target_env.value = tmp;	
+		}
+		else
+			target_env.value = ft_getenv(env_lst, target_env.key);
 		free(data);
 		data = strjoin_n_free(ft_strjoin(front, target_env.value), back);
 		if (front)
 			free(front);
+		if (tmp)
+			free(tmp);
 	}
 	return (NULL);
 }

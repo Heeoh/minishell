@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:56:34 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:14:06 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	ft_echo(t_cmd *cmd)
 	val_idx = 1;
 	if (cmd->ac >= 2)
 	{
-		if (cmd->av[1] && ft_strncmp(cmd->av[1], "-n", 10) == 0)
+		if (cmd->av[1] && ft_strncmp(cmd->av[1], "-n", 2) == 0)
 		{
 			option_n = 0;
 			val_idx++;

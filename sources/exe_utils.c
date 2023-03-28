@@ -6,11 +6,14 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 19:16:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:08:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
+
+#include <signal.h>
+
 
 char	*find_path(char *cmd, t_list *env)
 {
@@ -46,6 +49,7 @@ int	do_heredoc(char *limiter, int *input_fd)
 	int		fd[2];
 	int		pid;
 	char	*line;
+	int		status;
 
 	fd[R_FD] = -1;
 	fd[W_FD] = -1;
@@ -57,11 +61,14 @@ int	do_heredoc(char *limiter, int *input_fd)
 		return (perror_n_return("fork error", 0, EXIT_FAILURE));	
 	else if (!pid)
 	{
+		signal(SIGINT, SIG_DFL);
 		close(fd[R_FD]);
 		while (1)
 		{
 			write(STDOUT_FILENO, "> ", 2);
 			line = get_next_line(STDIN_FILENO);
+			if (!line)
+				break ;
 			if (ft_strncmp(line, limiter, ft_strlen(limiter) - 1) == 0)
 				break ;
 			ft_putstr_fd(line, fd[W_FD]);
@@ -72,7 +79,21 @@ int	do_heredoc(char *limiter, int *input_fd)
 	else if (pid)
 	{
 		close(fd[W_FD]);
-		waitpid(pid, NULL, 0);
+		waitpid(pid, &status, 0);
+		if (WIFSIGNALED(status))
+		{
+			// ft_putendl_fd("in herdoc parent", 2);
+			if (WTERMSIG(status) == 2)
+			{
+				ft_putendl_fd("", 2);
+				exit(1);
+			}
+			else if (WTERMSIG(status) == 3)
+			{
+				ft_putendl_fd("", 2);
+				exit(1);
+			}
+		}
 		*input_fd = fd[R_FD];
 	}
 	return (0);
