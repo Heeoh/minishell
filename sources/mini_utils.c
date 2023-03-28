@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 14:07:59 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:23:20 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,7 @@ char	*ft_strndup(const char *str, size_t size)
 
 	ret = (char *)malloc(size + 1);
 	if (!ret)
-		return (NULL);
+		exit(1);
 	i = 0;
 	strp = (char *)str;
 	while (strp && *strp && i < size)

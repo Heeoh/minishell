@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env_var.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:37:44 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 14:53:14 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:25:07 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,11 @@ t_env_var	*create_env_var(char *arg)
 		val_len = ft_strlen(arg) - key_len - 1;
 	}
 	key = (char *)malloc(key_len + 1);
+	if (!key)
+		exit(1);
 	val = (char *)malloc(val_len + 1);
+	if (!val)
+		exit(1);
 	ft_strlcpy(key, arg, key_len + 1);
 	*val = '\0';
 	if (eq_pos)
@@ -46,7 +50,7 @@ t_env_var	*create_env_var_struct(char *key, char *val, int is_tmp)
 
 	ret = (t_env_var *)malloc(sizeof(t_env_var));
 	if (!ret)
-		return (NULL);
+		exit(1);
 	ret->is_tmp = is_tmp;
 	ret->key = key;
 	ret->value = val;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/27 18:08:01 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:26:15 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ t_redirection	*create_rd(int type, char *val)
 		return (NULL);
 	ret = (t_redirection *)malloc(sizeof(t_redirection));
 	if (!ret)
-		return (NULL);
+		exit(1);
 	ret->type = type;
 	ret->val = ft_strdup(val);
 	return (ret);
@@ -40,7 +40,7 @@ t_cmd	*create_cmd_struct(void)
 
 	new_cmd = (t_cmd *)malloc(sizeof(t_cmd));
 	if (!new_cmd)
-		return (NULL);
+		exit(1);
 	new_cmd->ac = 0;
 	new_cmd->av = 0;
 	new_cmd->rd = NULL;

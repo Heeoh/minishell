@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:35:43 by heson             #+#    #+#             */
-/*   Updated: 2023/03/25 15:11:05 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:25:29 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -133,7 +133,7 @@ char	**envlst_2_arr(t_list *env_lst)
 
 	arr = (char **)malloc(sizeof(char *) * (ft_lstsize(env_lst) + 1));
 	if (!arr)
-		return (NULL);
+		exit(1);
 	lst_p = env_lst;
 	arr_p = arr;
 	while (lst_p)

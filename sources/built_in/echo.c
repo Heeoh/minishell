@@ -3,20 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:14:06 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:35:14 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "built_in.h"
+#include "built_in.h"
 
 int	ft_echo(t_cmd *cmd)
 {
 	int		option_n;
 	int		val_idx;
-	// char	*val;
 
 	option_n = 1;
 	val_idx = 1;
