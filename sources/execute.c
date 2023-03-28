@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:07:54 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 16:36:43 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,19 +134,32 @@ void	parent_process(int cmd_i, int pipes[][2])
 
 // 이럴 경우 예외 케이스가 없을까??
 // ctrl + D 들어왔을 때!!!!!!
-int	wait_processes(int child_cnt)
+int wait_processes(int child_cnt, int pid)
 {
-	int	count;
-	int	status;
-
-	count = 0;
-	while (count < child_cnt)
-	{
-		if (wait(&status) == -1 || !(WIFEXITED(status) || WIFSIGNALED(status) || WIFSTOPPED(status)))
-			perror_n_exit("wait error", 0, status);
-		count++;
-	}
-	return (0);
+    int count;
+    int status;
+	int	wait_pid;
+    count = 0;
+	
+    while (count < child_cnt)
+    {
+		wait_pid = wait(&status);
+        if (wait_pid == -1)
+            perror_n_exit("wait error", 0, status);
+		if (WIFEXITED(status) && (wait_pid == pid))
+			g_exit_status = WEXITSTATUS(status);
+		else if (WIFSIGNALED(status))
+		{
+			if (WTERMSIG(status) == 2)
+				g_exit_status = 130;
+			else if (WTERMSIG(status) == 3)
+				g_exit_status = 131;
+			else
+				g_exit_status = WTERMSIG(status);
+		}
+        count++;
+    }
+    return (0);
 }
 
 int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
@@ -172,7 +185,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 			parent_process(cmd_i, fds);
 		cmd_p = cmd_p->next;
 	}
-	return (wait_processes(cmd_cnt));
+	return (wait_processes(cmd_cnt, pid));
 }
 
 
