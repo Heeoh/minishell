@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 20:24:02 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 17:16:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/28 21:47:01 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,20 @@ int	is_key(char *av)
 	return (1);
 }
 
+void	del_key_front(t_list *tmp, t_list *p, t_list **env_lst)
+{
+	tmp = p;
+	*env_lst = p->next;
+	ft_lstdelone(tmp, free_env_var);
+}
+
+void	del_key(t_list *tmp, t_list *p)
+{
+	tmp = p->next;
+	p->next = p->next->next;
+	ft_lstdelone(tmp, free_env_var);
+}
+
 int	ft_unset(t_cmd *cmd, t_list **env_lst)
 {
 	int		i;
@@ -48,32 +62,17 @@ int	ft_unset(t_cmd *cmd, t_list **env_lst)
 		if (ft_strncmp(cmd->av[i], ((t_env_var *)(*env_lst)->content)->key,
 			1000) == 0 && ft_strncmp(cmd->av[i], "_", 5) != 0)
 		{
-			tmp = p;
-			*env_lst = p->next;
-			ft_lstdelone(tmp, free_env_var);
+			del_key_front(tmp, p, env_lst);
 			return (EXIT_SUCCESS);
 		}
 		while (p && p->next)
 		{
-			if (ft_strncmp(cmd->av[i], ((t_env_var *)p->next->content)->key, 1000) == 0)
-			{
-				tmp = p->next;
-				p->next = p->next->next;
-				ft_lstdelone(tmp, free_env_var);
-			}
+			if (ft_strncmp(cmd->av[i], ((t_env_var *)p->next->content)->key,
+					1000) == 0)
+				del_key(tmp, p);
 			p = p->next;
 		}
 		i++;
 	}
 	return (EXIT_SUCCESS);
 }
-
-// int main(int ac, char *av[], char *env[]){
-//     t_list  *mini_env;
-//     mini_env = init_env(env);
-//      ft_putenv(mini_env, "kkk=a");
-// 	 print_env_lst(mini_env, 1);
-// 	ft_unset("fdjkl", &mini_env);
-// 	printf("\n\n\n\n");
-//     print_env_lst(mini_env, 1);
-// }
