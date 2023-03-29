@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 17:28:24 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 20:11:33 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,14 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	if (!*cmd)
 		return (ERROR);
 	tk_p = *tk_lst;
+	if (ft_strncmp(tk_p->content, "|", 5) == 0)
+		return (perror_n_return("syntax error", "unexpected token", 1, 258));
 	while (1)
 	{
 		if (!tk_p || ft_strncmp(tk_p->content, "|", 5) == 0)
 		{
+			if (tk_p && (!tk_p->next || (tk_p->next && ft_strncmp(tk_p->next->content, "|", 5) == 0)))
+				return (perror_n_return("syntax error", "unexpected token", 1, 258));
 			if (set_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac) < 0)
 				return (ERROR);
 			*tk_lst = tk_p;

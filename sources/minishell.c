@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 18:04:52 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 19:36:10 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,20 +38,21 @@ V unset 여러개 -> 첫 번째만 됨
 V cd - 처리할까 말까..? 하는 건 쉬울 거 같긴 한데..? (cd to oldpwd and print oldpwd)
 V unset PWD -> cd -> PWD 재설정 안됨//////맞는거아녀?!
 V 현재 dir 지운 후 pwd -> bash 에서는 나옴 && cd . -> 에러 (우리는 여기서 SEGV...ㅎ)
-- minishell 처음 실행후 export 하면 oldpwd변수 없음
+V minishell 처음 실행후 export 하면 oldpwd변수 없음
 
 V <<end cat | ls 
 V <<end > out | cat out | wc -l 
-- <<end | <<Lim | <<kkk 
+//////////-> <<end | <<Lim | <<kkk 
 
 V echo "-n hello" -> -n hello 출력됨
 V echo "-n-n-n-n-n-n-n" hello -> -n-n-n-n-n-n-n hello
 V echo -nnnnnnnnn -n -nnnnnm -> -nnnnnm .... 왜..? ㅎㅎ
 V echo $TEST > $TEST
 
-**-> | 뒤에 아무 것도 없거나 |가 나오면 syntax error
-- ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
-**-> /랑 ;처리 지우기
+//////////-> | 뒤에 아무 것도 없거나 |가 나오면 syntax error
+//맨처음 토큰이  파이프일때
+V ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
+V /랑 ;처리 지우기
 
 V export | grep PWD
 
