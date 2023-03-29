@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 17:41:27 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/29 20:50:25 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,25 +44,18 @@ int	ft_cd(char *path, t_list *env_lst)
 {
 	char	*old_pwd;
 
-	if (ft_strncmp(path, "-", 5) == 0)
-	{
-		path = ft_getenv(env_lst, "OLDPWD");
-		if (!path)
-		{
-			printf("minishell: cd: OLDPWD not set\n");
-			return (EXIT_FAILURE);
-		}
-		else
-			printf("%s\n", path);
-	}
 	if (!path || (path && !*path) || (ft_strncmp(path, "~", 5) == 0))
 	{
 		path = ft_getenv(env_lst, "HOME");
 		if (!path)
-		{
-			printf("minishell: cd: HOME not set\n");
-			return (EXIT_FAILURE);
-		}
+			return (perror_n_return("cd", "HOME not set", 1, 1));
+	}
+	if (ft_strncmp(path, "-", 5) == 0)
+	{
+		path = ft_getenv(env_lst, "OLDPWD");
+		if (!path)
+			return (perror_n_return("cd", "OLDPWD not set", 1, 1));
+		printf("%s\n", path);
 	}
 	old_pwd = getcwd(NULL, 0);
 	if (chdir(path) < 0 || !old_pwd)

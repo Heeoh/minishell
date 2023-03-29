@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 21:33:48 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 21:44:30 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,16 +43,17 @@ V minishell 처음 실행후 export 하면 oldpwd변수 없음
 
 V <<end cat | ls 
 V <<end > out | cat out | wc -l 
-- <<end | <<Lim | <<kkk 
+//////////-> <<end | <<Lim | <<kkk 
 
 V echo "-n hello" -> -n hello 출력됨
 V echo "-n-n-n-n-n-n-n" hello -> -n-n-n-n-n-n-n hello
 V echo -nnnnnnnnn -n -nnnnnm -> -nnnnnm .... 왜..? ㅎㅎ
 V echo $TEST > $TEST
 
-**-> | 뒤에 아무 것도 없거나 |가 나오면 syntax error
-- ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
-**-> /랑 ;처리 지우기
+//////////-> | 뒤에 아무 것도 없거나 |가 나오면 syntax error
+//맨처음 토큰이  파이프일때
+V ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
+V /랑 ;처리 지우기
 
 V export | grep PWD
 
