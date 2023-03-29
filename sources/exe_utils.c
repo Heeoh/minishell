@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 17:27:27 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:40:43 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ char	*find_path(char *cmd, t_list *env)
 // 	exit(1);
 // }
 
-int	do_heredoc(char *limiter, int *input_fd, int fd_stdin)
+int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 {
 	int		fd[2];
 	// int		pid;
@@ -66,8 +66,8 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_stdin)
 		return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
 	while (1)
 	{
-		write(2, "> ", 2); // stdout으로 하면 파이프에서 히어독 안됨, 근데... ls 전에도 같이 나와...
-		line = get_next_line(fd_stdin);
+		write(fd_std[W_FD], "> ", 2); // stdout으로 하면 파이프에서 히어독 안됨, 근데... ls 전에도 같이 나와...
+		line = get_next_line(fd_std[R_FD]);
 		if (!line)
 			break ;
 		if (ft_strncmp(line, limiter, ft_strlen(limiter) - 1) == 0)
@@ -120,11 +120,11 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_stdin)
 	return (0);
 }
 
-int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_stdin)
+int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_std[])
 {
 	if (is_heredoc)
 	{
-		if (do_heredoc(val, fd, fd_stdin) < 0)
+		if (do_heredoc(val, fd, fd_std) < 0)
 			return (ERROR);
 	}
 	else
