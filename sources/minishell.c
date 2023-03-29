@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 02:44:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:56:01 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,29 +29,30 @@ V for executing, ctrl + C -> double
 - awk, sed (...wait)
 V malloc error
 - momory leak, norm (later)
-
+//ft함수에서 malloc 쓴거 처리안함?
 test error
-- unset 여러개 -> 첫 번째만 됨
+V unset 여러개 -> 첫 번째만 됨
 
-- *exportO=o / *exportO+=o -> 이게 뭐지..?
+- *export O=o / *exportO+=o -> 이게 뭐지..?
 
 - cd - 처리할까 말까..? 하는 건 쉬울 거 같긴 한데..? (cd to oldpwd and print oldpwd)
-- unset PWD -> cd -> PWD 재설정 안됨
-- 현재 dir 지운 후 pwd -> bash 에서는 나옴 && cd . -> 에러 (우리는 여기서 SEGV...ㅎ)
+- unset PWD -> cd -> PWD 재설정 안됨//////맞는거아녀?!
+**- 현재 dir 지운 후 pwd -> bash 에서는 나옴 && cd . -> 에러 (우리는 여기서 SEGV...ㅎ)
+- minishell 처음 실행후 export 하면 oldpwd변수 없음
 
 - <<end cat | ls / - <<end > out | cat out | wc -l 
-- echo "-n hello" -> -n hello 출력됨 
-- echo "-n-n-n-n-n-n-n" hello -> -n-n-n-n-n-n-n hello 
+- echo "-n hello" -> -n hello 출력됨
+- echo "-n-n-n-n-n-n-n" hello -> -n-n-n-n-n-n-n hello
 - echo -nnnnnnnnn -n -nnnnnm -> -nnnnnm .... 왜..? ㅎㅎ
 - echo $TEST > $TEST
 
-- | 뒤에 아무 것도 없거나 |가 나오면 syntax error
+**-> | 뒤에 아무 것도 없거나 |가 나오면 syntax error
 - ls |;, ls |& -> syntax error인데... 우리는 예외문자라 어떻게 처리해야 할까....?
+**-> /랑 ;처리 지우기
 
-- $_ : env | grep SHLVL -> 이건 또 뭐람..
 V export | grep PWD
 
-- <<end cat && ctrl + C -> minishell 한 줄 더 나옴
+V <<end cat && ctrl + C -> minishell 한 줄 더 나옴
 */
 
 #include "../headers/minishell.h"

@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:34:21 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:41:27 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,9 +25,9 @@ void	set_env_pwd(char *old_pwd, t_list *env_lst)
 	free(str);
 	new_pwd = getcwd(NULL, 0);
 	str = ft_strjoin("PWD=", new_pwd);
-	free(str);
-	ft_putenv(env_lst, new_pwd);
 	free(new_pwd);
+	ft_putenv(env_lst, str);
+	free(str);
 }
 
 void	cd_error_print(char *path)
@@ -44,6 +44,17 @@ int	ft_cd(char *path, t_list *env_lst)
 {
 	char	*old_pwd;
 
+	if (ft_strncmp(path, "-", 5) == 0)
+	{
+		path = ft_getenv(env_lst, "OLDPWD");
+		if (!path)
+		{
+			printf("minishell: cd: OLDPWD not set\n");
+			return (EXIT_FAILURE);
+		}
+		else
+			printf("%s\n", path);
+	}
 	if (!path || (path && !*path) || (ft_strncmp(path, "~", 5) == 0))
 	{
 		path = ft_getenv(env_lst, "HOME");
@@ -54,7 +65,7 @@ int	ft_cd(char *path, t_list *env_lst)
 		}
 	}
 	old_pwd = getcwd(NULL, 0);
-	if (chdir(path) < 0)
+	if (chdir(path) < 0 || !old_pwd)
 	{
 		cd_error_print(path);
 		return (EXIT_FAILURE);

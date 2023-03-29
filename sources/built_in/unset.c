@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 20:24:02 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 21:53:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 15:22:56 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ int	ft_unset(t_cmd *cmd, t_list **env_lst)
 	i = 1;
 	while (cmd->av[i] && is_key(cmd->av[i]))
 	{
+		p = *env_lst;
 		if (ft_strncmp(cmd->av[i], ((t_env_var *)(*env_lst)->content)->key,
 			1000) == 0 && ft_strncmp(cmd->av[i], "_", 5) != 0)
 		{
