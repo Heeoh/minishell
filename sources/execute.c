@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 17:41:44 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 21:42:40 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[])
 	t_redirection	*rd;
 	int				is_builtin;
 
-	signal(SIGINT, SIG_DFL);
+	// signal(SIGINT, SIG_DFL);
 	is_builtin = is_built_in(cmd->av[0]);
 	if (is_builtin < 0)
 	{
@@ -94,8 +94,8 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[])
 		rd = (t_redirection *)rd_lst_p->content;
 		if (rd->type == RD_IN && do_redirection_in(rd->val, &fd, 0, fd_std) < 0)
 			return (ERROR);
-		else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1, fd_std) < 0)
-			return (ERROR);
+		// else if (rd->type == RD_HEREDOC && do_redirection_in(rd->val, &fd, 1, fd_std) < 0)
+		// 	return (ERROR);
 		else if (rd->type == RD_OUT && do_redirection_out(rd->val, &fd, 0) < 0)
 			return (ERROR);
 		else if (rd->type == RD_APPEND && do_redirection_out(rd->val, &fd, 1) < 0)
@@ -103,7 +103,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[])
 		rd_lst_p = rd_lst_p->next;
 	}
 	set_termios(1);
-	// signal(SIGINT, SIG_DFL);
+	signal(SIGINT, SIG_DFL);
 	signal(SIGQUIT, SIG_DFL);
 	if (!(cmd->av) || !*(cmd->av))
 		return (ERROR);
@@ -112,9 +112,9 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[])
 	return (execve(path, cmd->av, envlst_2_arr(env)));
 }
 
-int	child_process(int cmd_i, int cmd_cnt, int pipes[][2])
+int	child_process(int cmd_i, int cmd_cnt, int pipes[][2], int is_heredoc)
 {
-	if (cmd_i != 0)
+	if (cmd_i != 0 && !is_heredoc)
 	{
 		if( dup2(pipes[(cmd_i + 1) % PIPE_N][R_FD], STDIN_FILENO) < 0)
 			perror_n_exit(0, 0, EXIT_FAILURE);
@@ -136,7 +136,7 @@ void	parent_process(int cmd_i, int pipes[][2])
 		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
-#include <errno.h>
+// #include <errno.h>
 
 // 이럴 경우 예외 케이스가 없을까??
 // ctrl + D 들어왔을 때!!!!!!
@@ -180,19 +180,41 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 {
 	int	cmd_i;
 	int	pid[cmd_cnt];
+	t_list	*rd_p;
+	int		fd;
+	int		is_heredoc;
 
 	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
+		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
+		fd = -1;
+		is_heredoc = 0;
+		rd_p = ((t_cmd *)cmd_p->content)->rd;
+		while (rd_p)
+		{
+			if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
+			{
+				is_heredoc = 1;
+				if (do_redirection_in(((t_redirection *)rd_p->content)->val, &fd, 1, fds[STD]) < 0)
+					return (ERROR);
+				if (fd > 0)
+					close(fd);
+			}
+			rd_p = rd_p->next;
+		}
+
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
 			return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
 		pid[cmd_i] = fork();
-		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
 		if (pid[cmd_i] == -1)
 			return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
 		else if (!pid[cmd_i]) // child process
 		{
-			child_process(cmd_i, cmd_cnt, fds);
+			child_process(cmd_i, cmd_cnt, fds, is_heredoc);
+			// ft_putnbr_fd(fds[cmd_i % PIPE_N][R_FD], 2);
+			// ft_putnbr_fd(fds[cmd_i % PIPE_N][W_FD], 2);
+			// write(2, "\n", 1);
 			if (exe_a_cmd((t_cmd *)cmd_p->content, env, fds[STD]) < 0)
 				exit(EXIT_FAILURE);
 			exit(EXIT_SUCCESS);
@@ -222,14 +244,11 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 			g_exit_status = EXIT_FAILURE;
 		else
 			g_exit_status = EXIT_SUCCESS;
-		dup2(fds[STD][R_FD], STDIN_FILENO);
-		dup2(fds[STD][W_FD], STDOUT_FILENO);
-		// return (ret);
 	}
 	else
 		multiple_pipes(cmd_cnt, cmd_p, env, fds);
-	// return (0);
-	
+	dup2(fds[STD][R_FD], STDIN_FILENO);
+	dup2(fds[STD][W_FD], STDOUT_FILENO);
 }
 
 /*

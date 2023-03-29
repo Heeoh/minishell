@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 18:04:52 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 21:33:48 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ V for executing, ctrl + C -> double
 V malloc error
 - momory leak, norm (later)
 //ft함수에서 malloc 쓴거 처리안함?
+
 test error
 V unset 여러개 -> 첫 번째만 됨
 
@@ -38,7 +39,7 @@ V unset 여러개 -> 첫 번째만 됨
 V cd - 처리할까 말까..? 하는 건 쉬울 거 같긴 한데..? (cd to oldpwd and print oldpwd)
 V unset PWD -> cd -> PWD 재설정 안됨//////맞는거아녀?!
 V 현재 dir 지운 후 pwd -> bash 에서는 나옴 && cd . -> 에러 (우리는 여기서 SEGV...ㅎ)
-- minishell 처음 실행후 export 하면 oldpwd변수 없음
+V minishell 처음 실행후 export 하면 oldpwd변수 없음
 
 V <<end cat | ls 
 V <<end > out | cat out | wc -l 
@@ -104,7 +105,6 @@ int	main(int ac, char *av[], char *env[])
 	t_list			*cmd_lst;
 	int				cmd_cnt;
 	t_list			*env_lst;
-	
 
 	// atexit(leaks);
 	ac = 0;

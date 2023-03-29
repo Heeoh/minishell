@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 16:58:00 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 21:19:41 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,10 +84,5 @@ int	perror_n_return(char *err_pos, char *err_msg, int is_custom, int exit_status
 void	perror_n_exit(char *err_msg, int is_custom, int exit_status)
 {
 	perror_n_return(0, err_msg, is_custom, exit_status);
-	// g_exit_status = exit_status;
-	// if (is_custom)
-	// 	printf("%s\n", err_msg);
-	// else
-	// 	perror(err_msg);
 	exit(g_exit_status);
 }
