@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 03:08:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:26:40 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,9 +81,9 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_stdin)
 	{
 		path = find_path(cmd->av[0], env);
 		if (access(path, F_OK) != 0)
-			return (perror_n_return(cmd->av[0], 0, 127));
+			return (perror_n_return(cmd->av[0], "Command not found", 1, 127));
 		if (access(path, X_OK) != 0)
-			return (perror_n_return(cmd->av[0], 0, 126));
+			return (perror_n_return(cmd->av[0], 0, 0, 126));
 	}
 	fd = -1;
 	rd_lst_p = cmd->rd;
@@ -117,12 +117,12 @@ int	child_process(int cmd_i, int cmd_cnt, int pipes[][2])
 	if (cmd_i != 0)
 	{
 		if( dup2(pipes[(cmd_i + 1) % PIPE_N][R_FD], STDIN_FILENO) < 0)
-			perror_n_exit(NULL, 0, EXIT_FAILURE);
+			perror_n_exit(0, 0, EXIT_FAILURE);
 	}
 	if (cmd_i != cmd_cnt - 1)
 	{
 		if (dup2(pipes[cmd_i % PIPE_N][W_FD], STDOUT_FILENO) < 0)
-			perror_n_exit(NULL, 0, EXIT_FAILURE);
+			perror_n_exit(0, 0, EXIT_FAILURE);
 	}
 	close(pipes[cmd_i % PIPE_N][R_FD]);
 	close(pipes[cmd_i % PIPE_N][W_FD]);
@@ -151,7 +151,7 @@ int wait_processes(int child_cnt, int pid[])
     {
 		wait_pid = waitpid(pid[count++], &status, 0);
         if (wait_pid < 0)
-            perror_n_exit("wait error", 0, status);
+            perror_n_exit("wait child process", 0, status);
 		if (WIFEXITED(status))
 		{
 			if (wait_pid == pid[child_cnt - 1])
@@ -185,11 +185,11 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	while (++cmd_i < cmd_cnt)
 	{
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
-			return (perror_n_return("pipe error", 0, EXIT_FAILURE));
+			return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
 		pid[cmd_i] = fork();
 		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
 		if (pid[cmd_i] == -1)
-			return (perror_n_return("fork error", 0, EXIT_FAILURE));
+			return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
 		else if (!pid[cmd_i]) // child process
 		{
 			child_process(cmd_i, cmd_cnt, fds);

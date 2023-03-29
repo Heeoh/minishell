@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 03:33:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:27:27 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_stdin)
 	fd[W_FD] = -1;
 	line = 0;
 	if (pipe(fd) == -1)
-		return (perror_n_return("pipe error", 0, EXIT_FAILURE));
+		return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
 	while (1)
 	{
 		write(2, "> ", 2); // stdout으로 하면 파이프에서 히어독 안됨, 근데... ls 전에도 같이 나와...
@@ -131,10 +131,10 @@ int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_stdin)
 	{
 		*fd = open(val, O_RDONLY, 0644);
 		if (*fd < 0)
-			return (perror_n_return(val, 0, EXIT_FAILURE));
+			return (perror_n_return(val, 0, 0, EXIT_FAILURE));
 	}
 	if (dup2(*fd, STDIN_FILENO) < 0)
-		return (perror_n_return(NULL, 0, EXIT_FAILURE));
+		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
 	return (0);
 }
 
@@ -145,7 +145,9 @@ int	do_redirection_out(char *filename, int *fd, char is_append)
 		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+	if (*fd < 0)
+		return (perror_n_return(filename, 0, 0, EXIT_FAILURE));
 	if (dup2(*fd, STDOUT_FILENO) < 0)
-		return (perror_n_return(NULL, 0, EXIT_FAILURE));
+		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
 	return (0);
 }

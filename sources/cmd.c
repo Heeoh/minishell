@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:26:15 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:28:24 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,7 +79,7 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 		else if (is_redirection((char *)tk_p->content))
 		{
 			if (!tk_p->next || is_redirection((char *)tk_p->next->content))
-				return (perror_n_return("syntax error: unexpected token", 1, 258));
+				return (perror_n_return("syntax error", "unexpected token", 1, 258));
 			else
 			{
 				if (set_cmd_redirection(tk_p->content, tk_p->next->content, &(*cmd)->rd) < 0)

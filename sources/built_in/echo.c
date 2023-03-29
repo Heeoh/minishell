@@ -3,30 +3,47 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:35:14 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/29 16:09:26 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "built_in.h"
+
+int	check_option_n(int ac, char **av, int *idx)
+{
+	char	*p;
+	int		option_n;
+
+	option_n = 0;
+	*idx = 1;
+	while (*idx < ac)
+	{
+		p = av[*idx];
+		if (p && *p == '-')
+		{
+			while (p++ && *p)
+			{
+				if (*p != 'n')
+					return (option_n);
+			}
+			option_n = 1;
+		}
+		else
+			return (option_n);
+		(*idx)++;
+	}
+	return (option_n);
+}
 
 int	ft_echo(t_cmd *cmd)
 {
 	int		option_n;
 	int		val_idx;
 
-	option_n = 1;
-	val_idx = 1;
-	if (cmd->ac >= 2)
-	{
-		if (cmd->av[1] && ft_strncmp(cmd->av[1], "-n", 2) == 0)
-		{
-			option_n = 0;
-			val_idx++;
-		}
-	}
+	option_n = check_option_n(cmd->ac, cmd->av, &val_idx);
 	while (val_idx < cmd->ac)
 	{
 		ft_putstr_fd(cmd->av[val_idx], STDOUT_FILENO);
@@ -34,7 +51,7 @@ int	ft_echo(t_cmd *cmd)
 		if (val_idx < cmd->ac)
 			write(STDOUT_FILENO, " ", 1);
 	}
-	if (option_n)
+	if (!option_n)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }

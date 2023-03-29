@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 22:00:57 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/29 17:28:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,8 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 		tokenizer->quote = is_quote(*tokenizer->line, tokenizer->quote);
 		if (tokenizer->quote == 0)
 		{
-			if (*tokenizer->line == ';' || *tokenizer->line == '\\') // 이거 그냥 문자 처리..?
-				return (perror_n_return("syntax error : invlaid character", 1, 258));
+			// if (*tokenizer->line == ';' || *tokenizer->line == '\\') // 이거 그냥 문자 처리..?
+			// 	return (perror_n_return(0, "syntax error : invlaid character", 1, 258));
 			if (is_token_separator(*tokenizer->line))
 			{
 				push_token_back(env_lst, tk_lst, tokenizer);
@@ -69,14 +69,14 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 	while (1)
 	{
 		if (!tk_p->line || !*tk_p->line)
-			return (perror_n_return("syntax error : not closed quote", 1, 258));
+			return (perror_n_return("syntax error", "not closed quote", 1, 258));
 		if (is_quote(*tk_p->line, tk_p->quote) == 0)
 			break ;
 		tk_p->line++;
 	}
 	tk_p->tk_content = get_token(env_lst, tk_p, tk_p->quote);
 	//null
-	tk_p->tk_size = ft_strlen(tk_p->tk_content);
+	tk_p->tk_size = ft_strlen(tk_p->tk_content) + 1;
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
 	tk_p->quote = 0;
