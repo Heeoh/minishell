@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:45:54 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 20:49:46 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,9 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 		tokenizer->quote = is_quote(*tokenizer->line, tokenizer->quote);
 		if (tokenizer->quote == 0)
 		{
-			// if (*tokenizer->line == ';' || *tokenizer->line == '\\') // 이거 그냥 문자 처리..?
-			// 	return (perror_n_return(0, "syntax error : invlaid character", 1, 258));
+			// if (*tokenizer->line == ';' || *tokenizer->line == '\\')
+			// 	return (perror_n_return(0,
+			//			"syntax error : invlaid character", 1, 258));
 			if (is_token_separator(*tokenizer->line))
 			{
 				push_token_back(env_lst, tk_lst, tokenizer);
@@ -69,7 +70,8 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 	while (1)
 	{
 		if (!tk_p->line || !*tk_p->line)
-			return (perror_n_return("syntax error", "not closed quote", 1, 258));
+			return (perror_n_return("syntax error",
+					"not closed quote", 1, 258));
 		if (is_quote(*tk_p->line, tk_p->quote) == 0)
 			break ;
 		tk_p->line++;

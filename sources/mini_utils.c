@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:52:20 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 19:43:44 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,29 @@ int	compare_strs(char *str1, char *str2)
 	return (ft_strncmp(str1, str2, cmp_len + 10));
 }
 
-int	perror_n_return(char *err_pos, char *err_msg, int is_custom, int exit_status)
+int	per_n_ret(char *pos, char *msg1, char *msg2, int exit_status)
+{
+	extern int	g_exit_status;
+
+	g_exit_status = exit_status;
+	ft_putstr_fd("minishell: ", 2);
+	if (pos)
+	{
+		ft_putstr_fd(pos, 2);
+		write(2, ": ", 2);
+	}
+	if (msg1)
+	{
+		ft_putstr_fd(msg1, 2);
+		write(2, ": ", 2);
+	}
+	if (msg2)
+		ft_putendl_fd(msg2, 2);
+	return (EXIT_FAILURE);
+}
+
+int	perror_n_return(char *err_pos, char *err_msg,
+					int is_custom, int exit_status)
 {
 	extern int	g_exit_status;
 

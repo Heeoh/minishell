@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/21 20:24:02 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 21:05:43 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 19:04:03 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	is_key(char *av)
 	i = 0;
 	if (!ft_isalpha(av[i]) && av[i] != '_')
 	{
-		printf("minishell: unset: `%s': not a valid identifier\n", av);
+		per_n_ret("unset", av, "not a valid identifier", 1);
 		return (0);
 	}
 	i++;
@@ -27,7 +27,7 @@ int	is_key(char *av)
 	{
 		if (!ft_isalnum(av[i]) && av[i] != '_')
 		{
-			printf("minishell: unset: `%s': not a valid identifier\n", av);
+			per_n_ret("unset", av, "not a valid identifier", 1);
 			return (0);
 		}
 		i++;

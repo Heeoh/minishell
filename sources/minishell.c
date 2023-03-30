@@ -3,13 +3,12 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 17:35:58 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 20:44:37 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
-
 
 /* to do
 
@@ -87,6 +86,38 @@ void	test_parsing_cmd(t_list *cmd_lst)
 	}
 }
 
+void	init_mini_main(int ac, char *av[])
+{
+	ac = 0;
+	av = 0;
+	setting_signal();
+	set_termios(0);
+}
+
+void	utils_mini_main(int cmd_cnt, t_list *cmd_lst,
+		t_list *env_lst, char *line)
+{
+	execute(cmd_cnt, cmd_lst, env_lst);
+	set_termios(0);
+	setting_signal();
+	ft_lstclear(&cmd_lst, free_cmd_struct);
+	ft_free_str(&line);
+}
+
+int	ctrl_d_minishell(void)
+{
+	ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
+	ft_putstr_fd("\033[11C", STDOUT_FILENO);
+	printf("exit\n");
+	return (1);
+}
+
+void	utils_mini_main_1(t_list *env_lst)
+{
+	clear_history();
+	ft_lstclear(&env_lst, free_env_var);
+}
+
 int	main(int ac, char *av[], char *env[])
 {
 	char			*line;
@@ -94,36 +125,24 @@ int	main(int ac, char *av[], char *env[])
 	int				cmd_cnt;
 	t_list			*env_lst;
 
-	// atexit(leaks);
-	ac = 0;
-	av = 0;
 	env_lst = init_env_lst(env);
-	setting_signal();
-	set_termios(0);
-	// using_history()
-	while (1) {
+	init_mini_main(ac, av); //using_history()
+	while (1)
+	{
 		cmd_lst = NULL;
 		line = readline("minishell> ");
-		if (line == NULL) {
-			ft_putstr_fd("\x1b[1A", STDOUT_FILENO);
-			ft_putstr_fd("\033[11C", STDOUT_FILENO);
-			printf("exit\n"); // CTRL + D
+		if (line == NULL && ctrl_d_minishell())
 			break ;
-		}
-		if (!ft_strncmp(line, "", 10)) {
-				free(line);
-				continue; 
+		if (!ft_strncmp(line, "", 10))
+		{
+			free(line);
+			continue ;
 		}
 		add_history(line);
 		cmd_cnt = parsing(line, &cmd_lst, env_lst);
 		if (cmd_cnt < 0)
 			continue ;
-		execute(cmd_cnt, cmd_lst, env_lst);
-		set_termios(0);
-		setting_signal();
-		ft_lstclear(&cmd_lst, free_cmd_struct);
-		ft_free_str(&line);
+		utils_mini_main(cmd_cnt, cmd_lst, env_lst, line);
 	}
-	clear_history();
-	ft_lstclear(&env_lst, free_env_var);
+	utils_mini_main_1(env_lst);
 }

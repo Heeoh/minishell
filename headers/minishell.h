@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 16:49:08 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 18:07:44 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,5 +72,7 @@ void	sigint_handler(int sig);
 void	setting_signal(void);
 void	setting_signal_exe(void);
 
+//mini_utils
+int	per_n_ret(char *pos, char *msg1, char *msg2, int exit_status);
 
 #endif

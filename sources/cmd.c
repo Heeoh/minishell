@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 16:20:03 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 21:45:44 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,6 +59,18 @@ void	free_cmd_struct(void *arg)
 	ft_lstclear(&target->rd, free_rd_struct);
 }
 
+int	set_cmd_pipe(t_list **tk_lst, t_list *tk_p, t_cmd **cmd)
+{
+	if (tk_p && (!tk_p->next || (tk_p->next
+				&& ft_strncmp(tk_p->next->content, "|", 5) == 0)))
+		return (perror_n_return("syntax error",
+				"unexpected token", 1, 258));
+	if (set_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac) < 0)
+		return (ERROR);
+	*tk_lst = tk_p;
+	return (0);
+}
+
 int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 {
 	t_list	*tk_p;
@@ -72,21 +84,16 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	while (1)
 	{
 		if (!tk_p || ft_strncmp(tk_p->content, "|", 5) == 0)
-		{
-			if (tk_p && (!tk_p->next || (tk_p->next && ft_strncmp(tk_p->next->content, "|", 5) == 0)))
-				return (perror_n_return("syntax error", "unexpected token", 1, 258));
-			if (set_cmd_av(*tk_lst, &(*cmd)->av, (*cmd)->ac) < 0)
-				return (ERROR);
-			*tk_lst = tk_p;
-			return (0);
-		}
+			return (set_cmd_pipe(tk_lst, tk_p, cmd));
 		else if (is_redirection((char *)tk_p->content))
 		{
 			if (!tk_p->next || is_redirection((char *)tk_p->next->content))
-				return (perror_n_return("syntax error", "unexpected token", 1, 258));
+				return (perror_n_return("syntax error",
+						"unexpected token", 1, 258));
 			else
 			{
-				if (set_cmd_redirection(tk_p->content, tk_p->next->content, &(*cmd)->rd) < 0)
+				if (set_cmd_redirection(tk_p->content,
+						tk_p->next->content, &(*cmd)->rd) < 0)
 					return (ERROR);
 				tk_p = tk_p->next;
 			}

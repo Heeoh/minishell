@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:12:54 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:44:50 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 19:34:03 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,11 +54,10 @@ int	is_redirection(char *arg)
 
 void	cus_ft_lstadd_back(t_list **lst, void *content)
 {
-	t_list *new;
+	t_list	*new;
 
 	new = ft_lstnew(content);
 	if (!new)
 		exit(1);
 	ft_lstadd_back(lst, new);
 }
-

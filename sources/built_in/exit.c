@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/28 21:35:35 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 19:28:22 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	is_num(char *str)
 void	exit_argm(char *argm)
 {
 	printf("exit\n");
-	printf("minishell: exit: %s:  numeric argument required\n", argm);
+	per_n_ret("exit", argm, "numeric argument required", 1);
 	exit(255);
 }
 
@@ -48,7 +48,8 @@ int	ft_exit(t_cmd *cmd)
 			exit_argm(cmd->av[1]);
 		else if (cmd->ac > 2)
 		{
-			printf("minishell: too many arguments\n");
+			printf("exit\n");
+			perror_n_return("exit", "too many arguments", 1, 1);
 			return (EXIT_FAILURE);
 		}
 	}

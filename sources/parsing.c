@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 17:45:05 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 21:23:58 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ int	init_cmd_lst(t_list **cmd, t_list *tk_lst)
 	return (cmd_cnt);
 }
 
-
 // int main(int ac, char *av[], char *env[])
 // {
 // 	t_list	*cmds;
@@ -63,6 +62,10 @@ int	init_cmd_lst(t_list **cmd, t_list *tk_lst)
 // 			printf("%s, ", ((t_cmd *)p->content)->av[i]);
 // 		}
 // 		printf("\n");
-// 		printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
+// 		printf("in: %s, out: %s, heredoc: %s, append: %s\n",
+//				((t_cmd *)p->content)->rd_in,
+//				((t_cmd *)p->content)->rd_out,
+// 				((t_cmd *)p->content)->rd_heredoc,
+//				((t_cmd *)p->content)->rd_append);
 // 	}
 // }

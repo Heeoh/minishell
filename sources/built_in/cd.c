@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 15:45:22 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 18:16:23 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,11 +37,11 @@ void	set_env_pwd(char *old_pwd, t_list *env_lst)
 void	cd_error_print(char *path)
 {
 	if (access(path, F_OK) == -1)
-		printf("minishell: cd: %s: No such file or directory\n", path);
+		per_n_ret("cd", path, "No such file or directory", 1);
 	else if (access(path, X_OK) == -1)
-		printf("minishell: cd: %s: Permission denied\n", path);
+		per_n_ret("cd", path, "Permission denied", 1);
 	else
-		printf("minishell: cd: %s: Not a directory\n", path);
+		per_n_ret("cd", path, "Not a directory", 1);
 }
 
 int	ft_cd(char *path, t_list *env_lst)

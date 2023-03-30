@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:37:19 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 19:10:46 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,10 +30,7 @@ int	ft_export(t_cmd *cmd, t_list *env_lst)
 		while (p && *p)
 		{
 			if (ft_putenv(env_lst, *p) < 0)
-			{
-				printf("minishell: export: '%s': not a valid identifier\n", *p);
-				return (EXIT_FAILURE);
-			}
+				return (per_n_ret("export", *p, "not a valid identifier", 1));
 			p++;
 		}
 	}
