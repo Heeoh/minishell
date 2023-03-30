@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:59:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 15:46:01 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "../library/libft/libft.h"
 # include "../headers/mini_utils.h"
+
+extern int	g_exit_status;
 
 typedef struct s_env_var {
 	char    *key;

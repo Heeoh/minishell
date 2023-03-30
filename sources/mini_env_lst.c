@@ -6,11 +6,11 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:35:43 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 16:35:39 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:48:27 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../headers/mini_env.h"
+#include "../headers/mini_env.h"
 
 t_list	*init_env_lst(char *org_env[])
 {
@@ -49,7 +49,6 @@ void	print_env_lst(t_list *env_lst, int env_flag)
 				printf("declare -x %s\n", var->key);
 			else if (ft_strncmp(var->key, "_", 5) != 0)
 				printf("declare -x %s=\"%s\"\n", var->key, var->value);
-			
 		}
 		p = p->next;
 	}

@@ -6,11 +6,11 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:37:44 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 16:38:54 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:49:08 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "../headers/mini_env.h"
+#include "../headers/mini_env.h"
 
 t_env_var	*create_env_var(char *arg)
 {
@@ -31,16 +31,11 @@ t_env_var	*create_env_var(char *arg)
 		key_len = eq_pos - arg;
 		val_len = ft_strlen(arg) - key_len - 1;
 	}
-	key = (char *)malloc(key_len + 1);
-	if (!key)
-		exit(1);
-	val = (char *)malloc(val_len + 1);
-	if (!val)
-		exit(1);
-	ft_strlcpy(key, arg, key_len + 1);
-	*val = '\0';
+	key = ft_strndup(arg, key_len);
 	if (eq_pos)
-		ft_strlcpy(val, eq_pos + 1, val_len + 1);
+		val = ft_strndup(eq_pos + 1, val_len);
+	else
+		val = ft_strndup("", 0);
 	return (create_env_var_struct(key, val, !eq_pos));
 }
 
