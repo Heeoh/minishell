@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:37:44 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 17:56:22 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:38:54 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,11 @@ void	*copy_env_var(void *arg)
 
 	var = (t_env_var *)arg;
 	key = ft_strdup(var->key);
+	if (!key)
+		exit(1);
 	value = ft_strdup(var->value);
+	if (!value)
+		exit(1);
 	copied = create_env_var_struct(key, value, var->is_tmp); 
 	return (copied);
 }

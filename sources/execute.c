@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 21:44:14 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:28:04 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ int	is_built_in(char *cmd)
 		return (-1);
 	lower_cmd = (char *)ft_calloc(ft_strlen(cmd) + 1, sizeof(char));
 	if (!lower_cmd)
-		return (-1);
+		exit(1);
 	i = 0;
 	while (cmd[i])
 	{

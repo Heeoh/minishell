@@ -3,17 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 21:34:57 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:22:22 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-
 #include <signal.h>
-
 
 char	*find_path(char *cmd, t_list *env)
 {
@@ -28,11 +26,17 @@ char	*find_path(char *cmd, t_list *env)
 	if (!path_env)
 		return (NULL);
 	path_group = ft_split(path_env, ':');
+	if (!path_group)
+		exit(1);
 	i = -1;
 	while (path_group[++i])
 	{
 		ret = ft_strjoin(path_group[i], "/");
+		if (!ret)
+			exit(1);
 		ret = ft_strjoin(ret, cmd);
+		if (!ret)
+			exit(1);
 		if (access(ret, F_OK) == 0)
 			break ;
 		free(ret);

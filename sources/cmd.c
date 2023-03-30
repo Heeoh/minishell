@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 20:11:33 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:20:03 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,8 @@ int	set_cmd_redirection(char *type, char *val, t_list **rd_lst)
 	if (!new_rd)
 		return (ERROR);
 	new_node = ft_lstnew(new_rd);
+	if (!new_node)
+		exit(1);
 	ft_lstadd_back(rd_lst, new_node);
 	return (0);
 }

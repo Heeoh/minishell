@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 20:50:25 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 15:45:22 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,10 +21,14 @@ void	set_env_pwd(char *old_pwd, t_list *env_lst)
 	char	*new_pwd;
 
 	str = ft_strjoin("OLDPWD=", old_pwd);
+	if (!str)
+		exit(1);
 	ft_putenv(env_lst, str);
 	free(str);
 	new_pwd = getcwd(NULL, 0);
 	str = ft_strjoin("PWD=", new_pwd);
+	if (!str)
+		exit(1);
 	free(new_pwd);
 	ft_putenv(env_lst, str);
 	free(str);

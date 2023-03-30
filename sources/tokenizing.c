@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 19:53:15 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:45:54 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 	{
 		tokenizer->tk_content = get_token(env_lst, tokenizer, 0);
 		//null
-		ft_lstadd_back(tk_lst, ft_lstnew(tokenizer->tk_content));
+		cus_ft_lstadd_back(tk_lst, tokenizer->tk_content);
 	}
 	if (!*ep)
 		return ;
@@ -104,7 +104,7 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 		if ((*ep == '<' || *ep == '>') && *ep == *(ep + 1))
 			tokenizer->tk_size++;
 		tokenizer->tk_content = ft_strndup(ep, tokenizer->tk_size);
-		ft_lstadd_back(tk_lst, ft_lstnew(tokenizer->tk_content));
+		cus_ft_lstadd_back(tk_lst, tokenizer->tk_content);
 	}
 	tokenizer->line = ep + tokenizer->tk_size;
 	tokenizer->sp = tokenizer->line;

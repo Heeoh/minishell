@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:24:22 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:41:50 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,6 +79,8 @@ int	ft_putenv(t_list *env_lst, char *arg)
 		p = p->next;
 	}
 	new_node = ft_lstnew(new_env);
+	if (!new_node)
+		exit(1);
 	ft_lstadd_front(&(p->next), new_node);
 	p->next = new_node;
 	return (0);
@@ -138,6 +140,8 @@ char	*replace_env(t_list *env_lst, char *data)
 		if (ft_strncmp(target_env.key, "?", 5) == 0)
 		{
 			tmp = ft_itoa(g_exit_status);
+			if (!tmp)
+				exit(1);
 			target_env.value = tmp;	
 		}
 		else

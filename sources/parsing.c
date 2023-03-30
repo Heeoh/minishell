@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/27 17:38:09 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:45:05 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	init_cmd_lst(t_list **cmd, t_list *tk_lst)
 	{
 		if (set_cmd_val(&tk_p, &new_cmd) < 0)
 			return (ERROR);
-		ft_lstadd_back(cmd, ft_lstnew(new_cmd));
+		cus_ft_lstadd_back(cmd, new_cmd);
 		cmd_cnt++;
 		if (tk_p)
 			tk_p = tk_p->next;
