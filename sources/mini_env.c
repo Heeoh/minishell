@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 21:24:22 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 15:59:19 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,24 @@ int	is_valid_key(char *key)
 	return (0);
 }
 
+int	ft_strcmp(char *str1, char *str2)
+{
+	int		len1;
+	int		len2;
+	int		cmp_len;
+
+	len1 = 0;
+	len2 = 0;
+	if (str1)
+		len1 = ft_strlen(str1);
+	if (str2)
+		len2 = ft_strlen(str2);
+	cmp_len = len1;
+	if (cmp_len < len2)
+		cmp_len = len2;
+	return (ft_strncmp(str1, str2, cmp_len + 10));
+}
+
 char	*ft_getenv(t_list *env_lst, char *key)
 {
 	t_list	*p;
@@ -45,7 +63,7 @@ char	*ft_getenv(t_list *env_lst, char *key)
 	p = env_lst;
 	while (p)
 	{
-		if (ft_strncmp(key, ((t_env_var *)p->content)->key, 1000) == 0)
+		if (ft_strcmp(key, ((t_env_var *)p->content)->key) == 0)
 			return (((t_env_var *)p->content)->value);
 		p = p->next;
 	}
@@ -66,21 +84,18 @@ int	ft_putenv(t_list *env_lst, char *arg)
 	p = env_lst;
 	while (p)
 	{
-		if (ft_strncmp(new_env->key, ((t_env_var *)p->content)->key, 1000) == 0)
+		if (ft_strcmp(new_env->key, ((t_env_var *)p->content)->key) == 0)
 		{
-			if (((t_env_var *)p->content)->value)
-				ft_free_str(&((t_env_var *)p->content)->value);
-			((t_env_var *)p->content)->value = new_env->value;
-			((t_env_var *)p->content)->is_tmp = 0;
+			if (ft_strncmp(new_env->value, "", 10) == 0)
+				return (0);
+			free_env_var(p->content);
+			p->content = new_env;
 			return (0);
 		}
-		if (!p->next->next)
-			break ;
 		p = p->next;
 	}
 	new_node = ft_lstnew(new_env);
-	ft_lstadd_front(&(p->next), new_node);
-	p->next = new_node;
+	ft_lstadd_back(&env_lst, new_node);
 	return (0);
 }
 
@@ -110,44 +125,51 @@ int	get_env_key(char *sp, char **env_key)
 	return (key_len);
 }
 
-char	*replace_env(t_list *env_lst, char *data)
+char	*split_by_dollar(char *data, char **front, char **back, t_list *env_lst)
 {
 	char		*dollar_pos;
 	int			env_sp;
 	int			env_ep;
+	char		*key;
+	char		*env_val;
+
+	dollar_pos = ft_strchr(data, '$');
+	if (!dollar_pos)
+		return (data);
+	env_sp = dollar_pos - data;
+	env_ep = env_sp + get_env_key(data + env_sp, &key);
+	if (env_sp == env_ep)
+		return (data);
+	if (env_sp > env_ep)
+		return (NULL);
+	*front = ft_strndup(data, env_sp);
+	*back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
+	if (ft_strncmp(key, "?", 5) == 0)
+		return (ft_itoa(g_exit_status));
+	env_val = ft_getenv(env_lst, key);
+	if (env_val)
+		return (ft_strdup(env_val));
+	return (ft_strndup("", 0));
+}
+
+char	*replace_env(t_list *env_lst, char *data)
+{
 	char		*front;
 	char		*back;
-	t_env_var	target_env;
-	extern int	g_exit_status;
-	char		*tmp;
+	char		*env_val;
 
-	tmp = 0;
+	front = 0;
+	back = 0;
+	env_val = 0;
 	while (data)
 	{
-		dollar_pos = ft_strchr(data, '$');
-		if (!dollar_pos)
-			return (data);
-		env_sp = dollar_pos - data;
-		env_ep = env_sp + get_env_key(data + env_sp, &(target_env.key));
-		if (env_sp == env_ep)
-			return (data);
-		if (env_sp > env_ep)
+		env_val = split_by_dollar(data, &front, &back, env_lst);
+		if (!env_val)
 			return (NULL);
-		front = ft_strndup(data, env_sp);
-		back = ft_strndup(data + env_ep + 1, ft_strlen(data) - env_ep);
-		if (ft_strncmp(target_env.key, "?", 5) == 0)
-		{
-			tmp = ft_itoa(g_exit_status);
-			target_env.value = tmp;	
-		}
-		else
-			target_env.value = ft_getenv(env_lst, target_env.key);
+		if (ft_strcmp(env_val, data) == 0)
+			return (data);
 		free(data);
-		data = strjoin_n_free(ft_strjoin(front, target_env.value), back);
-		if (front)
-			free(front);
-		if (tmp)
-			free(tmp);
+		data = strjoin_n_free(strjoin_n_free(front, env_val), back);
 	}
 	return (NULL);
 }
