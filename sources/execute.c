@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 18:57:13 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/30 22:08:38 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,32 @@ int	do_redirection(int type, char *val, int fd_std[], int *fd)
 	return (0);
 }
 
+int	find_cmd_path(char *cmd, t_list *env, char **path)
+{
+	char	*dir;
+	char	*cwd;
+
+	if (ft_strncmp(cmd, "./minishell", 100) == 0)
+	{
+		cwd = getcwd(NULL, 0);
+		dir = ft_strjoin(cwd, "/");
+		if (!dir)
+			exit(1);
+		*path = ft_strjoin(dir, cmd);
+		if (!*path)
+			exit(1);
+		free(dir);
+		if (access(*path, F_OK) == 0)
+			return (0);
+	}
+	path = find_path(cmd, env);
+	if (access(path, F_OK) != 0)
+		return (perror_n_return(cmd, "Command not found", 1, 127));
+	if (access(path, X_OK) != 0)
+		return (perror_n_return(cmd, 0, 0, 126));
+	return (0);
+}
+
 int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[], int heredoc_fd)
 {
 	char			*path;
@@ -93,16 +119,9 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[], int heredoc_fd)
 	int				is_builtin;
 	int				fd;
 
-	// signal(SIGINT, SIG_DFL);
 	is_builtin = is_built_in(cmd->av[0]);
-	if (is_builtin < 0)
-	{
-		path = find_path(cmd->av[0], env);
-		if (access(path, F_OK) != 0)
-			return (perror_n_return(cmd->av[0], "Command not found", 1, 127));
-		if (access(path, X_OK) != 0)
-			return (perror_n_return(cmd->av[0], 0, 0, 126));
-	}
+	if (is_builtin < 0 && find_cmd_path(cmd->av[0], env, &path) < 0)
+		return (ERROR);
 	rd_p = cmd->rd;
 	while (rd_p)
 	{
@@ -223,9 +242,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 			exit(EXIT_SUCCESS);
 		}
 		else if (pid) // parent process
-		{
 			parent_process(cmd_i, fds);
-		}
 		cmd_p = cmd_p->next;
 	}
 	return (wait_processes(cmd_cnt, pid));
