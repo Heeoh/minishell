@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:24:09 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:51:25 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,17 @@ char	*find_path(char *cmd, t_list *env)
 	if (!path_env)
 		return (NULL);
 	path_group = ft_split(path_env, ':');
+	if (!path_group)
+		exit(1);
 	i = -1;
 	while (path_group[++i])
 	{
 		ret = ft_strjoin(path_group[i], "/");
+		if (!ret)
+			exit(1);
 		ret = ft_strjoin(ret, cmd);
+		if (!ret)
+			exit(1);
 		if (access(ret, F_OK) == 0)
 			break ;
 		free(ret);

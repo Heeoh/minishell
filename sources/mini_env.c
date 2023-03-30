@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 16:49:39 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:52:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,10 @@ int	ft_putenv(t_list *env_lst, char *arg)
 		p = p->next;
 	}
 	new_node = ft_lstnew(new_env);
-	ft_lstadd_back(&env_lst, new_node);
+	if (!new_node)
+		exit(1);
+	ft_lstadd_front(&(p->next), new_node);
+	p->next = new_node;
 	return (0);
 }
 

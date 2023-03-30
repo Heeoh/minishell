@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env_var.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:37:44 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 14:48:33 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:49:08 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,11 @@ void	*copy_env_var(void *arg)
 
 	var = (t_env_var *)arg;
 	key = ft_strdup(var->key);
+	if (!key)
+		exit(1);
 	value = ft_strdup(var->value);
-	copied = create_env_var_struct(key, value, var->is_tmp);
+	if (!value)
+		exit(1);
+	copied = create_env_var_struct(key, value, var->is_tmp); 
 	return (copied);
 }

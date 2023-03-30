@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:36:40 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:52:20 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,14 +32,14 @@ char	*strjoin_n_free(char *s1, char *s2)
 	{
 		ret = ft_strjoin(s1, s2);
 		if (!ret)
-			return (NULL);
+			exit(1);
 		ft_free_str(&s1);
 		ft_free_str(&s2);
 	}
 	else if (!s1)
-		ret = ft_strdup(s2);
+		ret = ft_strndup(s2, ft_strlen(s2));
 	else if (!s2)
-		ret = ft_strdup(s1);
+		ret = ft_strndup(s1, ft_strlen(s1));
 	return (ret);
 }
 

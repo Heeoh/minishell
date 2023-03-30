@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:35:43 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 14:44:26 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:48:27 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,8 @@ t_list	*init_env_lst(char *org_env[])
 	while (org_env && *org_env)
 	{
 		new_env_node = ft_lstnew((void *)create_env_var(*org_env++));
+		if (!new_env_node)
+			exit(1);
 		ft_lstadd_back(&mini_env, new_env_node);
 	}
 	ft_putenv(mini_env, "OLDPWD");
@@ -140,6 +142,8 @@ char	**envlst_2_arr(t_list *env_lst)
 	{
 		env_var = (t_env_var *)lst_p->content;
 		*arr_p = ft_strjoin(ft_strjoin(env_var->key, "="), env_var->value);
+		if (!*arr_p)
+			exit(1);
 		arr_p++;
 		lst_p = lst_p->next;
 	}
