@@ -6,11 +6,12 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 15:59:19 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 16:49:39 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/mini_env.h"
+#include "mini_utils.h"
 
 int	is_var_char(char ch)
 {
@@ -38,23 +39,7 @@ int	is_valid_key(char *key)
 	return (0);
 }
 
-int	ft_strcmp(char *str1, char *str2)
-{
-	int		len1;
-	int		len2;
-	int		cmp_len;
 
-	len1 = 0;
-	len2 = 0;
-	if (str1)
-		len1 = ft_strlen(str1);
-	if (str2)
-		len2 = ft_strlen(str2);
-	cmp_len = len1;
-	if (cmp_len < len2)
-		cmp_len = len2;
-	return (ft_strncmp(str1, str2, cmp_len + 10));
-}
 
 char	*ft_getenv(t_list *env_lst, char *key)
 {
@@ -63,7 +48,7 @@ char	*ft_getenv(t_list *env_lst, char *key)
 	p = env_lst;
 	while (p)
 	{
-		if (ft_strcmp(key, ((t_env_var *)p->content)->key) == 0)
+		if (compare_strs(key, ((t_env_var *)p->content)->key) == 0)
 			return (((t_env_var *)p->content)->value);
 		p = p->next;
 	}
@@ -84,7 +69,7 @@ int	ft_putenv(t_list *env_lst, char *arg)
 	p = env_lst;
 	while (p)
 	{
-		if (ft_strcmp(new_env->key, ((t_env_var *)p->content)->key) == 0)
+		if (compare_strs(new_env->key, ((t_env_var *)p->content)->key) == 0)
 		{
 			if (ft_strncmp(new_env->value, "", 10) == 0)
 				return (0);
@@ -166,7 +151,7 @@ char	*replace_env(t_list *env_lst, char *data)
 		env_val = split_by_dollar(data, &front, &back, env_lst);
 		if (!env_val)
 			return (NULL);
-		if (ft_strcmp(env_val, data) == 0)
+		if (compare_strs(env_val, data) == 0)
 			return (data);
 		free(data);
 		data = strjoin_n_free(strjoin_n_free(front, env_val), back);

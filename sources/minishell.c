@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/29 21:44:30 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:35:58 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,6 @@ V <<end cat && ctrl + C -> minishell 한 줄 더 나옴
 #include <stdio.h>
 #include <readline/readline.h>
 #include <readline/history.h>
-#include <termios.h>
 
 int	g_exit_status = 0;
 
@@ -86,18 +85,6 @@ void	test_parsing_cmd(t_list *cmd_lst)
 		printf("\n");
 		// printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
 	}
-}
-
-void	set_termios(int echoctl_on)
-{
-	struct termios	new_term;
-
-	tcgetattr(STDIN_FILENO, &new_term);
-	if (echoctl_on)
-		new_term.c_lflag |= ECHOCTL; 
-	if (!echoctl_on)
-		new_term.c_lflag &= ~(ECHOCTL); 
-	tcsetattr(STDIN_FILENO, TCSANOW, &new_term);
 }
 
 int	main(int ac, char *av[], char *env[])

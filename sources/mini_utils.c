@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 21:19:41 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:36:40 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,24 @@ char	*ft_strndup(const char *str, size_t size)
 		ret[i++] = *strp++;
 	ret[i] = '\0';
 	return (ret);
+}
+
+int	compare_strs(char *str1, char *str2)
+{
+	int		len1;
+	int		len2;
+	int		cmp_len;
+
+	len1 = 0;
+	len2 = 0;
+	if (str1)
+		len1 = ft_strlen(str1);
+	if (str2)
+		len2 = ft_strlen(str2);
+	cmp_len = len1;
+	if (cmp_len < len2)
+		cmp_len = len2;
+	return (ft_strncmp(str1, str2, cmp_len + 10));
 }
 
 int	perror_n_return(char *err_pos, char *err_msg, int is_custom, int exit_status)

@@ -6,14 +6,13 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 21:34:57 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/30 17:24:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
-
+#include "mini_utils.h"
 #include <signal.h>
-
 
 char	*find_path(char *cmd, t_list *env)
 {
@@ -44,20 +43,57 @@ char	*find_path(char *cmd, t_list *env)
 	return (ret);
 }
 
-// void sig_han(int sig)
-// {
-// 	if (sig != SIGINT)
-// 		return ;
-// 	ft_putendl_fd("sigint handler of heredoc", 2);
-// 	exit(1);
-// }
+int	get_heredoc_input(int fd[], int fd_std[], char *limiter)
+{
+	char	*line;
+
+	signal(SIGINT, SIG_DFL);
+	close(fd[R_FD]);
+	while (1)
+	{
+		write(fd_std[W_FD], "> ", 2);
+		line = get_next_line(fd_std[R_FD]);
+		if (!line)
+			break ;
+		if (ft_strlen(line) - 1 == ft_strlen(limiter)
+			&& ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+		{
+			free(line);
+			break ;
+		}
+		ft_putstr_fd(line, fd[W_FD]);
+		free(line);
+	}
+	close(fd[W_FD]);
+	return (0);
+}
+
+int	wait_heredoc_input(int fd[], int child_pid)
+{
+	int	status;
+
+	close(fd[W_FD]);
+	if (waitpid(child_pid, &status, 0) < 0)
+		return (perror_n_return("waitpid", 0, 0, EXIT_FAILURE));
+	if (WIFSIGNALED(status))
+	{
+		if (WTERMSIG(status) == 2)
+		{
+			ft_putstr_fd("\n", 2);
+			g_exit_status = 1;
+			return (ERROR);
+		}
+	}
+	else if (WIFEXITED(status))
+		return (fd[R_FD]);
+	return (ERROR);
+}
 
 int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 {
 	int		fd[2];
 	int		pid;
 	char	*line;
-	int		status;
 
 	// signal(SIGINT, SIG_IGN);
 	fd[R_FD] = -1;
@@ -65,57 +101,16 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	line = 0;
 	if (pipe(fd) == -1)
 		return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
-	// while (1)
-	// {
-	// 	write(fd_std[W_FD], "> ", 2); // stdout으로 하면 파이프에서 히어독 안됨, 근데... ls 전에도 같이 나와...
-	// 	line = get_next_line(fd_std[R_FD]);
-	// 	if (!line)
-	// 		break ;
-	// 	if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
-	// 		break ;
-	// 	ft_putstr_fd(line, fd[W_FD]);
-	// }
-	// close(fd[W_FD]);
-	// *input_fd = fd[R_FD];
 	pid = fork();
 	if (pid == -1)
-		return (perror_n_return("fork", 0, 0, EXIT_FAILURE));	
+		return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
 	else if (!pid)
-	{
-		signal(SIGINT, SIG_DFL);
-		close(fd[R_FD]);
-		while (1)
-		{
-			write(fd_std[W_FD], "> ", 2); // stdout으로 하면 파이프에서 히어독 안됨, 근데... ls 전에도 같이 나와...
-			line = get_next_line(fd_std[R_FD]);
-			if (!line)
-				break ;
-			if (ft_strncmp(line, limiter, ft_strlen(limiter) - 1) == 0)
-			{
-				free(line);
-				break ;
-			}
-			ft_putstr_fd(line, fd[W_FD]);
-			free(line);
-		}
-		close(fd[W_FD]);
-		exit(0);
-	}
+		exit(get_heredoc_input(fd, fd_std, limiter));
 	else if (pid)
 	{
-		close(fd[W_FD]);
-		if (waitpid(pid, &status, 0) < 0)
-			return (perror_n_return("waitpid", 0, 0, EXIT_FAILURE));
-		if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == 2)
-			{
-				ft_putstr_fd("\n", 2);
-				return (ERROR);
-			}
-		}
-		else if (WIFEXITED(status))
-			*input_fd = fd[R_FD];
+		*input_fd = wait_heredoc_input(fd, pid);
+		if (*input_fd < 0)
+			return (ERROR);
 	}
 	return (0);
 }
@@ -124,7 +119,7 @@ int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_std[])
 {
 	if (is_heredoc)
 	{
-		if (do_heredoc(val, fd, fd_std) < 0)
+		if (*fd < 0 && do_heredoc(val, fd, fd_std) < 0)
 			return (ERROR);
 	}
 	else
@@ -135,13 +130,11 @@ int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_std[])
 	}
 	if (dup2(*fd, STDIN_FILENO) < 0)
 		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
-	close(*fd);
 	return (0);
 }
 
 int	do_redirection_out(char *filename, int *fd, char is_append)
 {
-	close(*fd);
 	if (is_append)
 		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
