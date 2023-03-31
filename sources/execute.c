@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 20:13:15 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 20:24:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -225,7 +225,7 @@ int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
 void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd)
 {
 	if (exe_a_cmd(cmd, env, heredoc_fd) < 0)
-		exit(EXIT_FAILURE);
+		exit(g_exit_status);
 	exit(EXIT_SUCCESS);
 }
 
@@ -274,9 +274,7 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 		if (check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
 				fds[STD], &heredoc_fd) < 0)
 			return ;
-		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) < 0)
-			g_exit_status = EXIT_FAILURE;
-		else
+		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) != ERROR)
 			g_exit_status = EXIT_SUCCESS;
 	}
 	else
