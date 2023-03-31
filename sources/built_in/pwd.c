@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 20:58:15 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 19:27:49 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 17:52:13 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@ int	ft_pwd(t_cmd *cmd)
 		ret = getcwd(NULL, 0);
 		if (ret)
 			ft_putendl_fd(ret, STDOUT_FILENO);
-		else
-			return (EXIT_FAILURE);
+		// else //perror
+		// 	return (EXIT_FAILURE);
 	}
 	else
 	{

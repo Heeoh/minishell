@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 19:43:44 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 17:50:36 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,6 +109,11 @@ int	perror_n_return(char *err_pos, char *err_msg,
 	if (err_pos)
 	{
 		ft_putstr_fd(err_pos, 2);
+		write(2, ": ", 2);
+	}
+	if (!is_custom && err_msg && *err_msg)
+	{
+		ft_putstr_fd(err_msg, 2);
 		write(2, ": ", 2);
 	}
 	// if (is_custom)

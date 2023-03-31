@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 16:57:21 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 17:12:02 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,20 +73,20 @@ int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 	return (-1);
 }
 
-int	do_redirection(int type, char *val, int fd_std[], int *fd)
+int	do_redirection(int type, char *val, int *fd)
 {
 	int	ret;
 
 	if (type == RD_IN)
-		ret = do_redirection_in(val, fd, 0, fd_std);
+		ret = do_redirection_in(val, fd, 0);
 	if (type == RD_HEREDOC)
-		ret = do_redirection_in(val, fd, 1, fd_std);
+		ret = do_redirection_in(val, fd, 1);
 	if (type == RD_OUT)
 		ret = do_redirection_out(val, fd, 0);
 	if (type == RD_APPEND)
 		ret = do_redirection_out(val, fd, 1);
-	if (*fd > 0)
-		close(*fd);
+	// if (*fd > 0)
+	// 	close(*fd);
 	if (ret < 0)
 		return (ERROR);
 	return (0);
@@ -118,7 +118,7 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 	return (0);
 }
 
-int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[], int heredoc_fd)
+int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd)
 {
 	char			*path;
 	t_list			*rd_p;
@@ -135,7 +135,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[], int heredoc_fd)
 		if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
 			fd = heredoc_fd;
 		if (do_redirection(((t_redirection *)rd_p->content)->type,
-				((t_redirection *)rd_p->content)->val, fd_std, &fd) < 0)
+				((t_redirection *)rd_p->content)->val, &fd) < 0)
 			return (ERROR);
 		rd_p = rd_p->next;
 	}
@@ -173,20 +173,17 @@ void	parent_process(int cmd_i, int pipes[][2])
 
 int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 {
-	int		status;
+	int	status;
 
 	while (child_cnt--)
 	{
 		wait_pid = waitpid(-1, &status, 0);
 		if (wait_pid < 0)
 			perror_n_exit("wait child process", 0, status);
-		if (WIFSIGNALED(status))
-		{
-			if (WTERMSIG(status) == 2)
-				ft_putstr_fd("\n", 2);
-			else if (WTERMSIG(status) == 3)
-				ft_putstr_fd("Quit: 3\n", 2);
-		}
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 2)
+			ft_putstr_fd("\n", 2);
+		if (WIFSIGNALED(status) && WTERMSIG(status) == 3)
+			ft_putstr_fd("Quit: 3\n", 2);
 		if (wait_pid == last_pid)
 		{
 			g_exit_status = WEXITSTATUS(status);
@@ -235,9 +232,9 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
-		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
+		// signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
 		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
-						fds[STD], &heredoc_fd);
+				fds[STD], &heredoc_fd);
 		if (is_heredoc < 0)
 			return (ERROR);
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
@@ -248,7 +245,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 		else if (!pid) // child process
 		{
 			child_process(cmd_i, cmd_cnt, fds, is_heredoc);
-			if (exe_a_cmd(cmd_p->content, env, fds[STD], heredoc_fd) < 0)
+			if (exe_a_cmd(cmd_p->content, env, heredoc_fd) < 0)
 				exit(EXIT_FAILURE);
 			exit(EXIT_SUCCESS);
 		}
@@ -275,7 +272,7 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 	{
 		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
 						fds[STD], &heredoc_fd);
-		if (exe_a_cmd(cmd_p->content, env, fds[STD], heredoc_fd) < 0)
+		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) < 0)
 			g_exit_status = EXIT_FAILURE;
 		else
 			g_exit_status = EXIT_SUCCESS;

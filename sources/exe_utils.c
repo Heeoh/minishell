@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 16:35:09 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 17:09:43 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,7 @@ int	wait_heredoc_input(int fd[], pid_t child_pid)
 {
 	int	status;
 
+	signal(SIGINT, SIG_IGN);
 	close(fd[W_FD]);
 	if (waitpid(child_pid, &status, 0) < 0)
 		perror_n_return("waitpid", 0, 0, EXIT_FAILURE);
@@ -111,7 +112,6 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	pid_t	pid;
 	char	*line;
 
-	// signal(SIGINT, SIG_IGN);
 	fd[R_FD] = -1;
 	fd[W_FD] = -1;
 	line = 0;
@@ -135,21 +135,14 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	return (0);
 }
 
-int	do_redirection_in(char *val, int *fd, char is_heredoc, int fd_std[])
+int	do_redirection_in(char *val, int *fd, char	is_heredoc)
 {
-	if (is_heredoc)
-	{
-		if (*fd < 0 && do_heredoc(val, fd, fd_std) < 0)
-			return (ERROR);
-	}
-	else
-	{
+	if (!is_heredoc)
 		*fd = open(val, O_RDONLY, 0644);
-		if (*fd < 0)
-			return (perror_n_return(val, 0, 0, EXIT_FAILURE));
-	}
+	if (*fd < 0)
+		return (perror_n_return(val, 0, 0, EXIT_FAILURE));
 	if (dup2(*fd, STDIN_FILENO) < 0)
-		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
+		return (perror_n_return("dup2kkkk", 0, 0, EXIT_FAILURE));
 	return (0);
 }
 
