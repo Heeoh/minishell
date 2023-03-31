@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 16:34:20 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 16:57:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -171,35 +171,33 @@ void	parent_process(int cmd_i, int pipes[][2])
 		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
-int	wait_processes(int child_cnt, int last_pid)
+int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 {
 	int		status;
-	pid_t	wait_pid;
 
 	while (child_cnt--)
 	{
 		wait_pid = waitpid(-1, &status, 0);
 		if (wait_pid < 0)
 			perror_n_exit("wait child process", 0, status);
-		if (WIFEXITED(status))
-		{
-			if (wait_pid == last_pid)
-				g_exit_status = WEXITSTATUS(status);
-		}
-		else if (WIFSIGNALED(status))
+		if (WIFSIGNALED(status))
 		{
 			if (WTERMSIG(status) == 2)
-			{
 				ft_putstr_fd("\n", 2);
-				g_exit_status = 130;
-			}
 			else if (WTERMSIG(status) == 3)
-			{
 				ft_putstr_fd("Quit: 3\n", 2);
-				g_exit_status = 131;
-			}
-			else
+		}
+		if (wait_pid == last_pid)
+		{
+			g_exit_status = WEXITSTATUS(status);
+			if (WIFSIGNALED(status))
+			{
 				g_exit_status = WTERMSIG(status);
+				if (WTERMSIG(status) == 2)
+					g_exit_status = 130;
+				else if (WTERMSIG(status) == 3)
+					g_exit_status = 131;
+			}
 		}
 	}
 	return (0);
@@ -258,7 +256,7 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 			parent_process(cmd_i, fds);
 		cmd_p = cmd_p->next;
 	}
-	return (wait_processes(cmd_cnt, pid));
+	return (wait_processes(cmd_cnt, pid, pid));
 }
 
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
