@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 19:28:22 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 18:41:55 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ int	ft_exit(t_cmd *cmd)
 		else if (cmd->ac > 2)
 		{
 			printf("exit\n");
-			perror_n_return("exit", "too many arguments", 1, 1);
-			return (EXIT_FAILURE);
+			return (perror_n_return("exit", "too many arguments", 1, 1));
 		}
 	}
 	printf("exit\n");

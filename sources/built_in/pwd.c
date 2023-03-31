@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 20:58:15 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 17:52:13 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 20:05:54 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,14 +24,11 @@ int	ft_pwd(t_cmd *cmd)
 		ret = getcwd(NULL, 0);
 		if (ret)
 			ft_putendl_fd(ret, STDOUT_FILENO);
-		// else //perror
-		// 	return (EXIT_FAILURE);
+		else
+			return (perror_n_return("pwd", 0, 0, EXIT_FAILURE));
 	}
 	else
-	{
-		perror_n_return("pwd", "too many arguments", 1, 1);
-		return (EXIT_FAILURE);
-	}
+		return (perror_n_return("pwd", "too many arguments", 1, 1));
 	return (EXIT_SUCCESS);
 }
 
