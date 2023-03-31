@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 21:03:57 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 22:18:58 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,6 +112,7 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 		*path = find_path(cmd, env);
 	if (access(*path, F_OK) != 0)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
+	// stat
 	if (access(*path, X_OK) != 0)
 		return (perror_n_return(cmd, 0, 0, 126));
 	return (0);
