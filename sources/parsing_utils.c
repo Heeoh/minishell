@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:12:54 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 19:34:03 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:27:24 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,14 +50,4 @@ int	is_redirection(char *arg)
 		|| ft_strncmp(arg, ">>", 5) == 0)
 		return (1);
 	return (0);
-}
-
-void	cus_ft_lstadd_back(t_list **lst, void *content)
-{
-	t_list	*new;
-
-	new = ft_lstnew(content);
-	if (!new)
-		exit(1);
-	ft_lstadd_back(lst, new);
 }

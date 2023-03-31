@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 20:44:37 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:55:59 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,40 +66,34 @@ V <<end cat && ctrl + C -> minishell 한 줄 더 나옴
 
 int	g_exit_status = 0;
 
-void leaks(void) {
-	system("leaks minishell");
-}
+// void leaks(void) {
+// 	system("leaks minishell");
+// }
 
-void	test_parsing_cmd(t_list *cmd_lst)
-{
-	for (t_list *p = cmd_lst; p; p=p->next) {
-		// printf("%d\n", ((t_cmd *)p->content)->ac);
-		for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
-			printf("%s, ", ((t_cmd *)p->content)->av[i]);
-		}
-		printf("\n");
-		for (t_list *rd_p = ((t_cmd *)p->content)->rd; rd_p; rd_p = rd_p->next) {
-			printf("(%d %s) ", ((t_redirection *)rd_p->content)->type,  ((t_redirection *)rd_p->content)->val);
-		}
-		printf("\n");
-		// printf("in: %s, out: %s, heredoc: %s, append: %s\n", ((t_cmd *)p->content)->rd_in, ((t_cmd *)p->content)->rd_out, ((t_cmd *)p->content)->rd_heredoc, ((t_cmd *)p->content)->rd_append);
-	}
-}
+// void	test_parsing_cmd(t_list *cmd_lst) {
+// 	for (t_list *p = cmd_lst; p; p=p->next) {
+// 		for (int i=0; i<((t_cmd *)p->content)->ac; i++) {
+// 			printf("%s, ", ((t_cmd *)p->content)->av[i]);
+// 		}
+// 		printf("\n");
+// 		for (t_list *rd_p = ((t_cmd *)p->content)->rd; rd_p; rd_p = rd_p->next) {
+// 			printf("(%d %s) ", ((t_redirection *)rd_p->content)->type,  ((t_redirection *)rd_p->content)->val);
+// 		}
+// 		printf("\n");
+// 	}
+// }
 
-void	init_mini_main(int ac, char *av[])
+void	init_mini_main(int ac, char *av[], char *env[], t_list **env_lst)
 {
 	ac = 0;
 	av = 0;
-	setting_signal();
-	set_termios(0);
+	set_ctrl(0, sigint_handler, SIG_IGN);
+	*env_lst = init_env_lst(env);
 }
 
-void	utils_mini_main(int cmd_cnt, t_list *cmd_lst,
-		t_list *env_lst, char *line)
+void	reset(t_list *cmd_lst, char *line)
 {
-	execute(cmd_cnt, cmd_lst, env_lst);
-	set_termios(0);
-	setting_signal();
+	
 	ft_lstclear(&cmd_lst, free_cmd_struct);
 	ft_free_str(&line);
 }
@@ -112,7 +106,7 @@ int	ctrl_d_minishell(void)
 	return (1);
 }
 
-void	utils_mini_main_1(t_list *env_lst)
+void	clear(t_list *env_lst)
 {
 	clear_history();
 	ft_lstclear(&env_lst, free_env_var);
@@ -125,24 +119,18 @@ int	main(int ac, char *av[], char *env[])
 	int				cmd_cnt;
 	t_list			*env_lst;
 
-	env_lst = init_env_lst(env);
-	init_mini_main(ac, av); //using_history()
+	init_mini_main(ac, av, env, &env_lst); //using_history()
 	while (1)
 	{
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL && ctrl_d_minishell())
 			break ;
-		if (!ft_strncmp(line, "", 10))
-		{
-			free(line);
-			continue ;
-		}
 		add_history(line);
 		cmd_cnt = parsing(line, &cmd_lst, env_lst);
-		if (cmd_cnt < 0)
-			continue ;
-		utils_mini_main(cmd_cnt, cmd_lst, env_lst, line);
+		if (cmd_cnt >= 0)
+			execute(cmd_cnt, cmd_lst, env_lst);
+		reset(cmd_lst, line);
 	}
-	utils_mini_main_1(env_lst);
+	clear(env_lst);
 }

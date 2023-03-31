@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_parsing.h                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:13:55 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 21:22:02 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:27:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,5 @@ int	set_cmd_redirection(char *type, char *val, t_list **rd_lst);
 int			is_quote(char q, int quote);
 int			is_token_separator(char c);
 int			is_redirection(char *arg);
-void		cus_ft_lstadd_back(t_list **lst, void *content);
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 14:02:44 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/30 18:07:44 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:50:57 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,11 @@ typedef struct s_cmd {
 
 
 // signal
-void	init_rl_catch_signals(void);
+// void	init_rl_catch_signals(void);
 void	sigint_handler(int sig);
 void	setting_signal(void);
-void	setting_signal_exe(void);
+void	set_ctrl(int termios_flag, void (*sigint)(int), void (*sigquit)(int));
+
 
 //mini_utils
 int	per_n_ret(char *pos, char *msg1, char *msg2, int exit_status);

@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 17:50:36 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:27:22 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,16 @@ char	*ft_strndup(const char *str, size_t size)
 		ret[i++] = *strp++;
 	ret[i] = '\0';
 	return (ret);
+}
+
+void	cus_ft_lstadd_back(t_list **lst, void *content)
+{
+	t_list	*new;
+
+	new = ft_lstnew(content);
+	if (!new)
+		exit(1);
+	ft_lstadd_back(lst, new);
 }
 
 int	compare_strs(char *str1, char *str2)

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 20:49:46 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:30:45 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,15 +17,11 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 	t_tokenizer	*tokenizer;
 
 	tokenizer = init_tokenizer(line);
-	// tokenizer malloc error
 	while (1)
 	{
 		tokenizer->quote = is_quote(*tokenizer->line, tokenizer->quote);
 		if (tokenizer->quote == 0)
 		{
-			// if (*tokenizer->line == ';' || *tokenizer->line == '\\')
-			// 	return (perror_n_return(0,
-			//			"syntax error : invlaid character", 1, 258));
 			if (is_token_separator(*tokenizer->line))
 			{
 				push_token_back(env_lst, tk_lst, tokenizer);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 13:59:24 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:28:49 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,6 @@ char	*ft_getenv(t_list *env_lst, char *key)
 int	ft_putenv(t_list *env_lst, char *arg)
 {
 	t_env_var	*new_env;
-	t_list		*new_node;
 	t_list		*p;
 
 	new_env = create_env_var(arg);
@@ -75,15 +74,9 @@ int	ft_putenv(t_list *env_lst, char *arg)
 			p->content = new_env;
 			return (0);
 		}
-		// if (p->next && !p->next->next)
-		// 	break ;
 		p = p->next;
 	}
-	new_node = ft_lstnew(new_env);
-	if (!new_node)
-		exit(1);
-	ft_lstadd_back(&env_lst, new_node);
-	// p->next = new_node;
+	cus_ft_lstadd_back(&env_lst, new_env);
 	return (0);
 }
 
