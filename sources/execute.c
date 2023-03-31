@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:05:33 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 20:13:15 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,6 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 	}
 	else
 		*path = find_path(cmd, env);
-	ft_putendl_fd(cmd, 2);
 	if (access(*path, F_OK) != 0)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
 	if (access(*path, X_OK) != 0)
