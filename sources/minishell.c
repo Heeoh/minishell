@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/31 19:55:59 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 22:00:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,7 +93,7 @@ void	init_mini_main(int ac, char *av[], char *env[], t_list **env_lst)
 
 void	reset(t_list *cmd_lst, char *line)
 {
-	
+	set_ctrl(0, sigint_handler, SIG_IGN);
 	ft_lstclear(&cmd_lst, free_cmd_struct);
 	ft_free_str(&line);
 }
