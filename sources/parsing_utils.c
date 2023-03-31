@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:12:54 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:27:24 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 21:45:38 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,8 @@ int	is_quote(char q, int quote)
 
 int	is_token_separator(char c)
 {
+	if (9 <= c && c <= 13)
+		return (1);
 	if (c == ' ' || c == '|' || c == '<' || c == '>' || c == '\0')
 		return (1);
 	return (0);

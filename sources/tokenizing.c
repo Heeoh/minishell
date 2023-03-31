@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:30:45 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 21:51:53 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,7 +97,7 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 	if (!*ep)
 		return ;
 	tokenizer->tk_size = 1;
-	if (*ep != ' ')
+	if (!(*ep == ' ' || (9 <= *ep && *ep <= 13)))
 	{
 		if ((*ep == '<' || *ep == '>') && *ep == *(ep + 1))
 			tokenizer->tk_size++;
