@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 18:05:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 14:16:23 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,14 @@ int	get_heredoc_input(int fd[], int fd_std[], char *limiter)
 int	wait_heredoc_input(int fd[], int child_pid)
 {
 	int	status;
+	int	wait_pid;
 
 	close(fd[W_FD]);
-	if (waitpid(child_pid, &status, 0) < 0)
-		return (perror_n_return("waitpid", 0, 0, EXIT_FAILURE));
+	wait_pid = waitpid(child_pid, &status, 0);
+	if (wait_pid < 0)
+		perror_n_return("waitpid", 0, 0, EXIT_FAILURE);
+	if (WIFEXITED(status) && wait_pid == child_pid)
+		return (fd[R_FD]);
 	if (WIFSIGNALED(status))
 	{
 		if (WTERMSIG(status) == 2)
@@ -92,8 +96,6 @@ int	wait_heredoc_input(int fd[], int child_pid)
 			return (ERROR);
 		}
 	}
-	else if (WIFEXITED(status))
-		return (fd[R_FD]);
 	return (ERROR);
 }
 
@@ -113,7 +115,11 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	if (pid == -1)
 		return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
 	else if (!pid)
-		exit(get_heredoc_input(fd, fd_std, limiter));
+	{
+		if (get_heredoc_input(fd, fd_std, limiter) < 0)
+			exit(EXIT_FAILURE);
+		exit(EXIT_SUCCESS);
+	}
 	else if (pid)
 	{
 		*input_fd = wait_heredoc_input(fd, pid);

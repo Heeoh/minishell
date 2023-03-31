@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 22:08:38 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 14:07:51 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,8 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 	char	*dir;
 	char	*cwd;
 
+	if (!cmd || !*cmd)
+		return (0);
 	if (ft_strncmp(cmd, "./minishell", 100) == 0)
 	{
 		cwd = getcwd(NULL, 0);
@@ -104,10 +106,10 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 		if (access(*path, F_OK) == 0)
 			return (0);
 	}
-	path = find_path(cmd, env);
-	if (access(path, F_OK) != 0)
+	*path = find_path(cmd, env);
+	if (access(*path, F_OK) != 0)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
-	if (access(path, X_OK) != 0)
+	if (access(*path, X_OK) != 0)
 		return (perror_n_return(cmd, 0, 0, 126));
 	return (0);
 }
@@ -201,11 +203,32 @@ int	wait_processes(int child_cnt, int last_pid)
 	return (0);
 }
 
+int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
+{
+	int	is_heredoc;
+
+	is_heredoc = 0;
+	while (rd_p)
+	{
+		if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
+		{
+			if (*fd > 0)
+				close(*fd);
+			*fd = -1;
+			is_heredoc = 1;
+			if (do_redirection_in(((t_redirection *)rd_p->content)->val,
+					fd, 1, fd_std) < 0)
+				return (ERROR);
+		}
+		rd_p = rd_p->next;
+	}
+	return (is_heredoc);
+}
+
 int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 {
 	int		cmd_i;
 	int		pid;
-	t_list	*rd_p;
 	int		heredoc_fd;
 	int		is_heredoc;
 
@@ -213,22 +236,10 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	while (++cmd_i < cmd_cnt)
 	{
 		signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
-		is_heredoc = 0;
-		rd_p = ((t_cmd *)cmd_p->content)->rd;
-		while (rd_p)
-		{
-			if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
-			{
-				if (heredoc_fd > 0)
-					close(heredoc_fd);
-				heredoc_fd = -1;
-				is_heredoc = 1;
-				if (do_redirection_in(((t_redirection *)rd_p->content)->val,
-						&heredoc_fd, 1, fds[STD]) < 0)
-					return (ERROR);
-			}
-			rd_p = rd_p->next;
-		}
+		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
+						fds[STD], &heredoc_fd);
+		if (is_heredoc < 0)
+			return (ERROR);
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
 			return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
 		pid = fork();
