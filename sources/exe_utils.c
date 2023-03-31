@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 17:09:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:18:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,23 @@ void	ft_free_2d_arr(char **arr)
 	free(arr);
 }
 
-char	*find_path(char *cmd, t_list *env)
+char	*get_full_path(char *path_group, char *cmd)
 {
 	char	*dir;
+	char	*path;
+
+	dir = ft_strjoin(path_group, "/");
+	if (!dir)
+		exit(1);
+	path = ft_strjoin(dir, cmd);
+	if (!path)
+		exit(1);
+	free(dir);
+	return (path);
+}
+
+char	*find_path(char *cmd, t_list *env)
+{
 	char	*path;
 	char	**path_group;
 	int		i;
@@ -44,18 +58,11 @@ char	*find_path(char *cmd, t_list *env)
 	i = -1;
 	while (path_group[++i])
 	{
-		dir = ft_strjoin(path_group[i], "/");
-		if (!dir)
-			exit(1);
-		path = ft_strjoin(dir, cmd);
-		if (!path)
-			exit(1);
-		free(dir);
+		path = get_full_path(path_group[i], cmd);
 		if (access(path, F_OK) == 0)
 			break ;
 		free(path);
 	}
-	i = -1;
 	ft_free_2d_arr(path_group);
 	return (path);
 }
@@ -116,10 +123,10 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	fd[W_FD] = -1;
 	line = 0;
 	if (pipe(fd) == -1)
-		return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
+		perror_n_exit("pipe", 0, EXIT_FAILURE);
 	pid = fork();
 	if (pid == -1)
-		return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
+		perror_n_exit("fork", 0, EXIT_FAILURE);
 	else if (!pid)
 	{
 		if (get_heredoc_input(fd, fd_std, limiter) < 0)
@@ -135,7 +142,7 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 	return (0);
 }
 
-int	do_redirection_in(char *val, int *fd, char	is_heredoc)
+int	do_redirection_in(char *val, int *fd, char is_heredoc)
 {
 	if (!is_heredoc)
 		*fd = open(val, O_RDONLY, 0644);

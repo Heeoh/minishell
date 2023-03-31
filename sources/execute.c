@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 17:12:02 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 19:05:33 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,8 +85,8 @@ int	do_redirection(int type, char *val, int *fd)
 		ret = do_redirection_out(val, fd, 0);
 	if (type == RD_APPEND)
 		ret = do_redirection_out(val, fd, 1);
-	// if (*fd > 0)
-	// 	close(*fd);
+	if (*fd > 0 && type != RD_HEREDOC)
+		close(*fd);
 	if (ret < 0)
 		return (ERROR);
 	return (0);
@@ -106,11 +106,11 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 		free(cwd);
 		if (!dir)
 			exit(1);
-		*path = strjoin_n_free(dir, cmd);
-		if (access(*path, F_OK) == 0)
-			return (0);
+		*path = strjoin_n_free(dir, ft_strndup(cmd, ft_strlen(cmd)));
 	}
-	*path = find_path(cmd, env);
+	else
+		*path = find_path(cmd, env);
+	ft_putendl_fd(cmd, 2);
 	if (access(*path, F_OK) != 0)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
 	if (access(*path, X_OK) != 0)
@@ -141,7 +141,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd)
 	}
 	set_ctrl(1, SIG_DFL, SIG_DFL);
 	if (!(cmd->av) || !*(cmd->av))
-		return (ERROR);
+		return (0);
 	if (is_builtin >= 0)
 		return (exe_built_in(cmd, env, is_builtin));
 	return (execve(path, cmd->av, envlst_2_arr(env)));
@@ -205,6 +205,7 @@ int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
 	int	is_heredoc;
 
 	is_heredoc = 0;
+	*fd = -1;
 	while (rd_p)
 	{
 		if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
@@ -222,32 +223,34 @@ int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
 	return (is_heredoc);
 }
 
-int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
+void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd)
+{
+	if (exe_a_cmd(cmd, env, heredoc_fd) < 0)
+		exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
+}
+
+int	exe_multiple_cmds(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 {
 	int		cmd_i;
-	int		pid;
+	pid_t	pid;
 	int		heredoc_fd;
-	int		is_heredoc;
 
 	cmd_i = -1;
 	while (++cmd_i < cmd_cnt)
 	{
-		// signal(SIGINT, SIG_IGN); // ... 이거 없으면 안됨
-		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
-				fds[STD], &heredoc_fd);
-		if (is_heredoc < 0)
+		if (check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
+				fds[STD], &heredoc_fd) < 0)
 			return (ERROR);
 		if (pipe(fds[cmd_i % PIPE_N]) == -1)
-			return (perror_n_return("pipe", 0, 0, EXIT_FAILURE));
+			perror_n_exit("pipe", 0, EXIT_FAILURE);
 		pid = fork();
 		if (pid == -1)
-			return (perror_n_return("fork", 0, 0, EXIT_FAILURE));
+			perror_n_exit("fork", 0, EXIT_FAILURE);
 		else if (!pid) // child process
 		{
-			child_process(cmd_i, cmd_cnt, fds, is_heredoc);
-			if (exe_a_cmd(cmd_p->content, env, heredoc_fd) < 0)
-				exit(EXIT_FAILURE);
-			exit(EXIT_SUCCESS);
+			child_process(cmd_i, cmd_cnt, fds, heredoc_fd >= 0);
+			exe_n_exit(cmd_p->content, env, heredoc_fd);
 		}
 		else if (pid) // parent process
 			parent_process(cmd_i, fds);
@@ -259,7 +262,6 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	fds[PIPE_N + 1][2];
-	int	is_heredoc;
 	int	heredoc_fd;
 
 	fds[0][R_FD] = -1;
@@ -270,15 +272,16 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 	fds[STD][W_FD] = dup(STDOUT_FILENO);
 	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
 	{
-		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
-						fds[STD], &heredoc_fd);
+		if (check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
+				fds[STD], &heredoc_fd) < 0)
+			return ;
 		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) < 0)
 			g_exit_status = EXIT_FAILURE;
 		else
 			g_exit_status = EXIT_SUCCESS;
 	}
 	else
-		multiple_pipes(cmd_cnt, cmd_p, env, fds);
+		exe_multiple_cmds(cmd_cnt, cmd_p, env, fds);
 	dup2(fds[STD][R_FD], STDIN_FILENO);
 	dup2(fds[STD][W_FD], STDOUT_FILENO);
 }
