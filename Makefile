@@ -3,10 +3,10 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+         #
+#    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/31 13:51:35 by heson            ###   ########.fr        #
+#    Updated: 2023/03/31 15:16:19 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,10 +21,10 @@ GNL_DIR		= library/get_next_line/
 HDRS_DIR	= headers/
 SRCS_DIR	= sources/
 OBJS_DIR	= objects/
-READ_DIR	= /usr/local/opt/readline/lib
-READ_HDRS	= /usr/local/opt/readline/include
-# READ_DIR 	= ${HOME}/.brew/opt/readline/lib
-# READ_HDRS	= ${HOME}/.brew/opt/readline/include
+# READ_DIR	= /usr/local/opt/readline/lib
+# READ_HDRS	= /usr/local/opt/readline/include
+READ_DIR 	= ${HOME}/.brew/opt/readline/lib
+READ_HDRS	= ${HOME}/.brew/opt/readline/include
 
 # ---------------------------------- FILES ----------------------------------- #
 

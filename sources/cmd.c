@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:52:26 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 21:45:44 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/03/31 16:19:37 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,8 +76,6 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 	t_list	*tk_p;
 
 	*cmd = create_cmd_struct();
-	if (!*cmd)
-		return (ERROR);
 	tk_p = *tk_lst;
 	if (ft_strncmp(tk_p->content, "|", 5) == 0)
 		return (perror_n_return("syntax error", "unexpected token", 1, 258));
@@ -90,13 +88,10 @@ int	set_cmd_val(t_list **tk_lst, t_cmd **cmd)
 			if (!tk_p->next || is_redirection((char *)tk_p->next->content))
 				return (perror_n_return("syntax error",
 						"unexpected token", 1, 258));
-			else
-			{
-				if (set_cmd_redirection(tk_p->content,
-						tk_p->next->content, &(*cmd)->rd) < 0)
-					return (ERROR);
-				tk_p = tk_p->next;
-			}
+			if (set_cmd_redirection(tk_p->content,
+					tk_p->next->content, &(*cmd)->rd) < 0)
+				return (ERROR);
+			tk_p = tk_p->next;
 		}
 		else
 			(*cmd)->ac++;

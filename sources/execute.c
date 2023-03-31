@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 14:07:51 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 16:34:20 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,13 +75,19 @@ int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 
 int	do_redirection(int type, char *val, int fd_std[], int *fd)
 {
-	if (type == RD_IN && do_redirection_in(val, fd, 0, fd_std) < 0)
-		return (ERROR);
-	else if (type == RD_HEREDOC && do_redirection_in(val, fd, 1, fd_std) < 0)
-		return (ERROR);
-	else if (type == RD_OUT && do_redirection_out(val, fd, 0) < 0)
-		return (ERROR);
-	else if (type == RD_APPEND && do_redirection_out(val, fd, 1) < 0)
+	int	ret;
+
+	if (type == RD_IN)
+		ret = do_redirection_in(val, fd, 0, fd_std);
+	if (type == RD_HEREDOC)
+		ret = do_redirection_in(val, fd, 1, fd_std);
+	if (type == RD_OUT)
+		ret = do_redirection_out(val, fd, 0);
+	if (type == RD_APPEND)
+		ret = do_redirection_out(val, fd, 1);
+	if (*fd > 0)
+		close(*fd);
+	if (ret < 0)
 		return (ERROR);
 	return (0);
 }
@@ -97,12 +103,10 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 	{
 		cwd = getcwd(NULL, 0);
 		dir = ft_strjoin(cwd, "/");
+		free(cwd);
 		if (!dir)
 			exit(1);
-		*path = ft_strjoin(dir, cmd);
-		if (!*path)
-			exit(1);
-		free(dir);
+		*path = strjoin_n_free(dir, cmd);
 		if (access(*path, F_OK) == 0)
 			return (0);
 	}
@@ -127,8 +131,6 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int fd_std[], int heredoc_fd)
 	rd_p = cmd->rd;
 	while (rd_p)
 	{
-		if (fd > 0)
-			close (fd);
 		fd = -1;
 		if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
 			fd = heredoc_fd;
@@ -176,7 +178,7 @@ int	wait_processes(int child_cnt, int last_pid)
 
 	while (child_cnt--)
 	{
-		wait_pid = waitpid(last_pid, &status, 0);
+		wait_pid = waitpid(-1, &status, 0);
 		if (wait_pid < 0)
 			perror_n_exit("wait child process", 0, status);
 		if (WIFEXITED(status))
@@ -216,8 +218,8 @@ int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
 				close(*fd);
 			*fd = -1;
 			is_heredoc = 1;
-			if (do_redirection_in(((t_redirection *)rd_p->content)->val,
-					fd, 1, fd_std) < 0)
+			if (do_heredoc(((t_redirection *)rd_p->content)->val,
+					fd, fd_std) < 0)
 				return (ERROR);
 		}
 		rd_p = rd_p->next;
@@ -262,6 +264,8 @@ int	multiple_pipes(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	fds[PIPE_N + 1][2];
+	int	is_heredoc;
+	int	heredoc_fd;
 
 	fds[0][R_FD] = -1;
 	fds[0][W_FD] = -1;
@@ -269,14 +273,16 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 	fds[1][W_FD] = -1;
 	fds[STD][R_FD] = dup(STDIN_FILENO);
 	fds[STD][W_FD] = dup(STDOUT_FILENO);
-	// if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
-	// {
-	// 	if (exe_a_cmd(cmd_p->content, env, fds[STD]) < 0)
-	// 		g_exit_status = EXIT_FAILURE;
-	// 	else
-	// 		g_exit_status = EXIT_SUCCESS;
-	// }
-	// else
+	if (cmd_cnt == 1 && is_built_in(((t_cmd *)cmd_p->content)->av[0]) >= 0)
+	{
+		is_heredoc = check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
+						fds[STD], &heredoc_fd);
+		if (exe_a_cmd(cmd_p->content, env, fds[STD], heredoc_fd) < 0)
+			g_exit_status = EXIT_FAILURE;
+		else
+			g_exit_status = EXIT_SUCCESS;
+	}
+	else
 		multiple_pipes(cmd_cnt, cmd_p, env, fds);
 	dup2(fds[STD][R_FD], STDIN_FILENO);
 	dup2(fds[STD][W_FD], STDOUT_FILENO);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 14:16:23 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 16:35:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,16 +14,27 @@
 #include "mini_utils.h"
 #include <signal.h>
 
+void	ft_free_2d_arr(char **arr)
+{
+	char	**p;
+
+	p = arr;
+	while (p && *p)
+	{
+		free(*p);
+		p++;
+	}
+	free(arr);
+}
+
 char	*find_path(char *cmd, t_list *env)
 {
 	char	*dir;
-	char	*ret;
+	char	*path;
 	char	**path_group;
 	int		i;
 	char	*path_env;
 
-	ret = 0;
-	path_env = 0;
 	path_env = ft_getenv(env, "PATH");
 	if (!path_env)
 		return (NULL);
@@ -36,19 +47,17 @@ char	*find_path(char *cmd, t_list *env)
 		dir = ft_strjoin(path_group[i], "/");
 		if (!dir)
 			exit(1);
-		ret = ft_strjoin(dir, cmd);
-		if (!ret)
+		path = ft_strjoin(dir, cmd);
+		if (!path)
 			exit(1);
 		free(dir);
-		if (access(ret, F_OK) == 0)
+		if (access(path, F_OK) == 0)
 			break ;
-		free(ret);
+		free(path);
 	}
 	i = -1;
-	while (path_group[++i])
-		free(path_group[i]);
-	free(path_group);
-	return (ret);
+	ft_free_2d_arr(path_group);
+	return (path);
 }
 
 int	get_heredoc_input(int fd[], int fd_std[], char *limiter)
@@ -76,16 +85,14 @@ int	get_heredoc_input(int fd[], int fd_std[], char *limiter)
 	return (0);
 }
 
-int	wait_heredoc_input(int fd[], int child_pid)
+int	wait_heredoc_input(int fd[], pid_t child_pid)
 {
 	int	status;
-	int	wait_pid;
 
 	close(fd[W_FD]);
-	wait_pid = waitpid(child_pid, &status, 0);
-	if (wait_pid < 0)
+	if (waitpid(child_pid, &status, 0) < 0)
 		perror_n_return("waitpid", 0, 0, EXIT_FAILURE);
-	if (WIFEXITED(status) && wait_pid == child_pid)
+	if (WIFEXITED(status))
 		return (fd[R_FD]);
 	if (WIFSIGNALED(status))
 	{
@@ -93,7 +100,6 @@ int	wait_heredoc_input(int fd[], int child_pid)
 		{
 			ft_putstr_fd("\n", 2);
 			g_exit_status = 1;
-			return (ERROR);
 		}
 	}
 	return (ERROR);
@@ -102,7 +108,7 @@ int	wait_heredoc_input(int fd[], int child_pid)
 int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 {
 	int		fd[2];
-	int		pid;
+	pid_t	pid;
 	char	*line;
 
 	// signal(SIGINT, SIG_IGN);
