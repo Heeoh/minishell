@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/31 22:00:08 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 04:58:36 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,10 +126,13 @@ int	main(int ac, char *av[], char *env[])
 		line = readline("minishell> ");
 		if (line == NULL && ctrl_d_minishell())
 			break ;
-		add_history(line);
-		cmd_cnt = parsing(line, &cmd_lst, env_lst);
-		if (cmd_cnt >= 0)
-			execute(cmd_cnt, cmd_lst, env_lst);
+		if (ft_strncmp(line, "", 10) != 0)
+		{
+			add_history(line);
+			cmd_cnt = parsing(line, &cmd_lst, env_lst);
+			if (cmd_cnt >= 0)
+				execute(cmd_cnt, cmd_lst, env_lst);
+		}
 		reset(cmd_lst, line);
 	}
 	clear(env_lst);

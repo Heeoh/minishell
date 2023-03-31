@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 22:18:58 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 04:53:42 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,16 +174,24 @@ void	parent_process(int cmd_i, int pipes[][2])
 int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 {
 	int	status;
+	int	signal_exit;
 
+	signal_exit = 0;
 	while (child_cnt--)
 	{
 		wait_pid = waitpid(-1, &status, 0);
 		if (wait_pid < 0)
 			perror_n_exit("wait child process", 0, status);
 		if (WIFSIGNALED(status) && WTERMSIG(status) == 2)
+		{
+			signal_exit = 1;
 			ft_putstr_fd("\n", 2);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == 3)
+		}
+		if (!signal_exit && WIFSIGNALED(status) && WTERMSIG(status) == 3)
+		{
+			signal_exit = 1;
 			ft_putstr_fd("Quit: 3\n", 2);
+		}
 		if (wait_pid == last_pid)
 		{
 			g_exit_status = WEXITSTATUS(status);
@@ -195,6 +203,7 @@ int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 				else if (WTERMSIG(status) == 3)
 					g_exit_status = 131;
 			}
+			// printf("%d\n", g_exit_status);
 		}
 	}
 	return (0);
