@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 20:24:47 by heson            ###   ########.fr       */
+/*   Updated: 2023/03/31 21:03:57 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 	if (cmd_type == BI_EXPORT)
 		return (ft_export(cmd_p, env_lst));
 	if (cmd_type == BI_PWD)
-		return (ft_pwd(cmd_p));
+		return (ft_pwd());
 	if (cmd_type == BI_UNSET)
 		return (ft_unset(cmd_p, &env_lst));
 	return (-1);
