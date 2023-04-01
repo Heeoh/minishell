@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 18:00:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:07:07 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
-int	ft_strcmp(char *s1, char *s2)
+static	int	ft_strcmp(char *s1, char *s2)
 {
 	while (*s1 || *s2)
 	{
@@ -26,7 +26,7 @@ int	ft_strcmp(char *s1, char *s2)
 	return (0);
 }
 
-int	is_range(int minus, char *str)
+static	int	is_range(int minus, char *str)
 {
 	if (minus)
 	{
@@ -41,7 +41,7 @@ int	is_range(int minus, char *str)
 	return (1);
 }
 
-int	is_num(char *str)
+static	int	is_num(char *str)
 {
 	int	i;
 	int	minus;
@@ -65,7 +65,7 @@ int	is_num(char *str)
 	return (1);
 }
 
-void	exit_argm(char *argm)
+static	void	exit_argm(char *argm)
 {
 	ft_putendl_fd("exit", STDOUT_FILENO);
 	per_n_ret("exit", argm, "numeric argument required", 1);

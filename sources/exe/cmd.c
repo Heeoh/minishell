@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:23:52 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:34:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:18:10 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,23 +53,19 @@ int	is_built_in(char *cmd)
 	return (-1);
 }
 
-int	find_cmd_path(char *cmd, t_list *env, char **path)
+static char	*get_full_path(char *path_group, char *cmd)
 {
-	struct stat	st;
+	char	*dir;
+	char	*path;
 
-	if (!cmd || !*cmd)
-		return (0);
-	*path = find_path(cmd, env);
-	if (!*path)
-		*path = ft_strndup(cmd, ft_strlen(cmd));
-	if (access(*path, F_OK) != 0)
-		return (perror_n_return(cmd, "Command not found", 1, 127));
-	stat(*path, &st);
-	if (S_ISDIR(st.st_mode))
-		return (perror_n_return(cmd, "Is a directory", 0, 126));
-	if (access(*path, X_OK) != 0)
-		return (perror_n_return(cmd, 0, 0, 126));
-	return (0);
+	dir = ft_strjoin(path_group, "/");
+	if (!dir)
+		exit(1);
+	path = ft_strjoin(dir, cmd);
+	if (!path)
+		exit(1);
+	free(dir);
+	return (path);
 }
 
 static char	*find_path(char *cmd, t_list *env)
@@ -97,17 +93,21 @@ static char	*find_path(char *cmd, t_list *env)
 	return (path);
 }
 
-static char	*get_full_path(char *path_group, char *cmd)
+int	find_cmd_path(char *cmd, t_list *env, char **path)
 {
-	char	*dir;
-	char	*path;
+	struct stat	st;
 
-	dir = ft_strjoin(path_group, "/");
-	if (!dir)
-		exit(1);
-	path = ft_strjoin(dir, cmd);
-	if (!path)
-		exit(1);
-	free(dir);
-	return (path);
+	if (!cmd || !*cmd)
+		return (0);
+	*path = find_path(cmd, env);
+	if (!*path)
+		*path = ft_strndup(cmd, ft_strlen(cmd));
+	if (access(*path, F_OK) != 0)
+		return (perror_n_return(cmd, "Command not found", 1, 127));
+	stat(*path, &st);
+	if (S_ISDIR(st.st_mode))
+		return (perror_n_return(cmd, "Is a directory", 0, 126));
+	if (access(*path, X_OK) != 0)
+		return (perror_n_return(cmd, 0, 0, 126));
+	return (0);
 }

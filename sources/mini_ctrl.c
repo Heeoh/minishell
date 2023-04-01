@@ -1,21 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_signal.c                                      :+:      :+:    :+:   */
+/*   mini_ctrl.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/23 14:11:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 19:31:46 by jkim3            ###   ########.fr       */
+/*   Created: 2023/04/01 18:56:12 by jkim3             #+#    #+#             */
+/*   Updated: 2023/04/01 19:10:07 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../library/libft/libft.h"
-#include <signal.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <readline/readline.h>
-#include <termios.h>
+#include "../headers/minishell.h"
 
 void	sigint_handler(int sig)
 {

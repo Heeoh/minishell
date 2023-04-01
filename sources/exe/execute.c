@@ -3,17 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:39:36 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:17:04 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
-#include "../headers/built_in.h"
-
-extern void	set_ctrl(int term_flag, void (*sigint)(int), void (*sigquit)(int));
+#include "minishell.h"
+#include "mini_exe.h"
+#include "built_in.h"
 
 static int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 {
