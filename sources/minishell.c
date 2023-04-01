@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 22:23:37 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 04:47:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,6 @@ int	main(int ac, char *av[], char *env[])
 	init_mini_main(ac, av, env, &env_lst);
 	while (1)
 	{
-		system("leaks minishell");
 		cmd_lst = NULL;
 		line = readline("minishell> ");
 		if (line == NULL && ctrl_d_minishell())

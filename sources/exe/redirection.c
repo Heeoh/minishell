@@ -3,31 +3,41 @@
 /*                                                        :::      ::::::::   */
 /*   redirection.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:21:09 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:39:50 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 05:11:29 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	do_redirection(int type, char *val, int *fd)
+int	do_redirection(t_list *rd_p, int heredoc_fd)
 {
-	int	ret;
+	int				ret;
+	int				fd;
+	t_redirection	*rd;
 
-	if (type == RD_IN)
-		ret = do_redirection_in(val, fd, 0);
-	if (type == RD_HEREDOC)
-		ret = do_redirection_in(val, fd, 1);
-	if (type == RD_OUT)
-		ret = do_redirection_out(val, fd, 0);
-	if (type == RD_APPEND)
-		ret = do_redirection_out(val, fd, 1);
-	if (*fd > 0 && type != RD_HEREDOC)
-		close(*fd);
-	if (ret < 0)
-		return (ERROR);
+	while (rd_p)
+	{
+		fd = -1;
+		rd = (t_redirection *)rd_p->content;
+		if (rd->type == RD_HEREDOC)
+			fd = heredoc_fd;
+		if (rd->type == RD_IN)
+			ret = do_redirection_in(rd->val, &fd, 0);
+		if (rd->type == RD_HEREDOC)
+			ret = do_redirection_in(rd->val, &fd, 1);
+		if (rd->type == RD_OUT)
+			ret = do_redirection_out(rd->val, &fd, 0);
+		if (rd->type == RD_APPEND)
+			ret = do_redirection_out(rd->val, &fd, 1);
+		if (fd > 0 && rd->type != RD_HEREDOC)
+			close(fd);
+		if (ret < 0)
+			return (ERROR);
+		rd_p = rd_p->next;
+	}
 	return (0);
 }
 

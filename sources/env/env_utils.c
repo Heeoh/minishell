@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:42:45 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:49:36 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 04:54:58 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,13 @@ int	is_valid_key(char *key)
 		return (1);
 	}
 	return (0);
+}
+
+int	free_env_n_return(t_env_var *env_var, int ret)
+{
+	if (env_var)
+		free_env_var(env_var);
+	return (ret);
 }
 
 void	split_lst(t_list *source, t_list **front, t_list **back)

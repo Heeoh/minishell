@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 22:23:03 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 05:10:56 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,32 +36,21 @@ static int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 {
 	char			*path;
-	t_list			*rd_p;
 	int				is_builtin;
-	int				fd;
 	int				ret;
 
 	is_builtin = is_built_in(cmd->av[0]);
 	if (is_builtin < 0 && find_cmd_path(cmd->av[0], env, &path) < 0)
 		return (ERROR);
-	rd_p = cmd->rd;
-	while (rd_p)
-	{
-		fd = -1;
-		if (((t_redirection *)rd_p->content)->type == RD_HEREDOC)
-			fd = heredoc_fd;
-		if (do_redirection(((t_redirection *)rd_p->content)->type,
-				((t_redirection *)rd_p->content)->val, &fd) < 0)
-			return (ERROR);
-		rd_p = rd_p->next;
-	}
+	if (do_redirection(cmd->rd, heredoc_fd) < 0)
+		return (ERROR);
 	set_child_exe(fd_std, heredoc_fd);
+	ret = 0;
 	if (!(cmd->av) || !*(cmd->av))
 		return (0);
 	if (is_builtin >= 0)
-		ret = exe_built_in(cmd, env, is_builtin);
-	else
-		ret = execve(path, cmd->av, envlst_2_arr(env));
+		return (exe_built_in(cmd, env, is_builtin));
+	ret = execve(path, cmd->av, envlst_2_arr(env));
 	free(path);
 	return (ret);
 }

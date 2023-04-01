@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_exe.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:01:23 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:52:01 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 05:08:24 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	set_child_exe(int fd_std[], int heredoc_fd);
 void	close_fds(int fds[][2]);
 
 // redirection
-int		do_redirection(int type, char *val, int *fd);
+int		do_redirection(t_list *rd_p, int heredoc_fd);
 int		do_redirection_in(char *val, int *fd, char is_heredoc);
 int		do_redirection_out(char *filename, int *fd, char is_append);
 int		check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd);

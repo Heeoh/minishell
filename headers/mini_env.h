@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_env.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:40:06 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:51:43 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 05:00:27 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,9 @@ char		**envlst_2_arr(t_list *env_lst);
 // env_utils
 int			is_var_char(char ch);
 int			is_valid_key(char *key);
+int			free_env_n_return(t_env_var *env_var, int ret);
 void		split_lst(t_list *source, t_list **front, t_list **back);
 t_list		*merge(t_list *a, t_list *b);
-
+char		*split_by_dollar(char *data, char **front, char **back,
+				t_list *env_lst);
 #endif

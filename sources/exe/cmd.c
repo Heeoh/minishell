@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:23:52 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 20:39:15 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 01:55:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ int	is_built_in(char *cmd)
 		ret = BI_UNSET;
 	if (ft_strncmp("export", cmd, 10) == 0)
 		ret = BI_EXPORT;
-	free(lower_cmd);
+	ft_free_str(&lower_cmd);
 	return (ret);
 }
 

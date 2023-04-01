@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:53:21 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/02 01:45:22 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,13 +25,15 @@ char	*strjoin_n_free(char *s1, char *s2)
 		ret = ft_strjoin(s1, s2);
 		if (!ret)
 			exit(1);
-		ft_free_str(&s1);
-		ft_free_str(&s2);
 	}
 	else if (!s1)
 		ret = ft_strndup(s2, ft_strlen(s2));
 	else if (!s2)
 		ret = ft_strndup(s1, ft_strlen(s1));
+	if (s1)
+		ft_free_str(&s1);
+	if (s2)
+		ft_free_str(&s2);
 	return (ret);
 }
 
