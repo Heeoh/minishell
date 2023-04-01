@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_env_lst.c                                     :+:      :+:    :+:   */
+/*   env_lst.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 14:35:43 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 17:48:27 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:45:09 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/mini_env.h"
+#include "mini_env.h"
 
 t_list	*init_env_lst(char *org_env[])
 {
@@ -52,63 +52,6 @@ void	print_env_lst(t_list *env_lst, int env_flag)
 		}
 		p = p->next;
 	}
-}
-
-void	split_lst(t_list *source, t_list **front, t_list **back)
-{
-	t_list	*fast;
-	t_list	*slow;
-
-	if (source == NULL || source->next == NULL)
-	{
-		*front = source;
-		*back = NULL;
-	}
-	else
-	{
-		slow = source;
-		fast = source->next;
-		while (fast != NULL)
-		{
-			fast = fast->next;
-			if (fast != NULL)
-			{
-				slow = slow->next;
-				fast = fast->next;
-			}
-		}
-		*front = source;
-		*back = slow->next;
-		slow->next = NULL;
-	}
-}
-
-t_list	*merge(t_list *a, t_list *b)
-{
-	t_list		*ret;
-	int			cmp;
-	t_env_var	*a_var;
-	t_env_var	*b_var;
-
-	ret = NULL;
-	if (a == NULL)
-		return (b);
-	else if (b == NULL)
-		return (a);
-	a_var = (t_env_var *)a->content;
-	b_var = (t_env_var *)b->content;
-	cmp = ft_strncmp(a_var->key, b_var->key, 1000);
-	if (cmp <= 0)
-	{
-		ret = a;
-		ret->next = merge(a->next, b);
-	}
-	else
-	{
-		ret = b;
-		ret->next = merge(a, b->next);
-	}
-	return (ret);
 }
 
 void	sort_env_lst(t_list **env_lst)

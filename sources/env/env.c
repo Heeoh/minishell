@@ -1,43 +1,19 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mini_env.c                                         :+:      :+:    :+:   */
+/*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:28:49 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:52:50 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/mini_env.h"
+#include "mini_env.h"
 #include "mini_utils.h"
 
-int	is_var_char(char ch)
-{
-	if (!ft_isalnum(ch) && ch != '_')
-		return (0);
-	return (1);
-}
-
-int	is_valid_key(char *key)
-{
-	char	*p;
-
-	p = key;
-	if (ft_isdigit(*p))
-		return (0);
-	else if (is_var_char(*p))
-	{
-		while (++p && *p)
-		{
-			if (!is_var_char(*p))
-				return (0);
-		}
-		return (1);
-	}
-	return (0);
-}
+extern int	g_exit_status;
 
 char	*ft_getenv(t_list *env_lst, char *key)
 {
@@ -80,7 +56,7 @@ int	ft_putenv(t_list *env_lst, char *arg)
 	return (0);
 }
 
-int	get_env_key(char *sp, char **env_key)
+static int	get_env_key(char *sp, char **env_key)
 {
 	char	*ep;
 	int		key_len;
@@ -106,7 +82,8 @@ int	get_env_key(char *sp, char **env_key)
 	return (key_len);
 }
 
-char	*split_by_dollar(char *data, char **front, char **back, t_list *env_lst)
+static char	*split_by_dollar(char *data, char **front, char **back,
+								t_list *env_lst)
 {
 	char		*dollar_pos;
 	int			env_sp;
@@ -154,26 +131,3 @@ char	*replace_env(t_list *env_lst, char *data)
 	}
 	return (NULL);
 }
-
-/*
-int main(int ac, char *av[], char *env[]){
-
-	t_list	*mini_env;
-	char	**env_arr;
-	// t_list	*sorted;
-
-	mini_env = init_env_lst(env);
-	env_arr = envlst_2_arr(mini_env);
-	for (char **p = env_arr; p && *p; p++) {
-		printf("%s\n", *p);
-	}
-	ft_putenv(mini_env, "1=kkkk");
-	// sorted = ft_lstmap(mini_env, copy_env_var, free_env_var);
-	// sort_env_lst(&sorted);
-	// print_env_lst(sorted, 1);
-	// print_env_lst(mini_env);
-	// printf("%s\n", getenv("water"));
-	// ft_export("water=삼다수");
-	// printf("%s\n", getenv("water"));
-}
-*/
