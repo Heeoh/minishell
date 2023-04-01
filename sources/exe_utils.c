@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:18:14 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 15:50:23 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ char	*find_path(char *cmd, t_list *env)
 		path = get_full_path(path_group[i], cmd);
 		if (access(path, F_OK) == 0)
 			break ;
-		free(path);
+		ft_free_str(&path);
 	}
 	ft_free_2d_arr(path_group);
 	return (path);

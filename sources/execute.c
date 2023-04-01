@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 04:53:42 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 16:02:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,22 +94,11 @@ int	do_redirection(int type, char *val, int *fd)
 
 int	find_cmd_path(char *cmd, t_list *env, char **path)
 {
-	char	*dir;
-	char	*cwd;
-
 	if (!cmd || !*cmd)
 		return (0);
-	if (ft_strncmp(cmd, "./minishell", 100) == 0)
-	{
-		cwd = getcwd(NULL, 0);
-		dir = ft_strjoin(cwd, "/");
-		free(cwd);
-		if (!dir)
-			exit(1);
-		*path = strjoin_n_free(dir, ft_strndup(cmd, ft_strlen(cmd)));
-	}
-	else
-		*path = find_path(cmd, env);
+	*path = find_path(cmd, env);
+	if (!*path)
+		*path = ft_strndup(cmd, ft_strlen(cmd));
 	if (access(*path, F_OK) != 0)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
 	// stat
@@ -182,7 +171,7 @@ int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 		wait_pid = waitpid(-1, &status, 0);
 		if (wait_pid < 0)
 			perror_n_exit("wait child process", 0, status);
-		if (WIFSIGNALED(status) && WTERMSIG(status) == 2)
+		if (!signal_exit && WIFSIGNALED(status) && WTERMSIG(status) == 2)
 		{
 			signal_exit = 1;
 			ft_putstr_fd("\n", 2);
@@ -203,7 +192,6 @@ int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 				else if (WTERMSIG(status) == 3)
 					g_exit_status = 131;
 			}
-			// printf("%d\n", g_exit_status);
 		}
 	}
 	return (0);
@@ -268,11 +256,21 @@ int	exe_multiple_cmds(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 	return (wait_processes(cmd_cnt, pid, pid));
 }
 
+void	close_fds(int fds[][2])
+{
+	close(fds[0][R_FD]);
+	close(fds[0][W_FD]);
+	close(fds[1][R_FD]);
+	close(fds[1][W_FD]);
+	close(fds[2][R_FD]);
+	close(fds[2][W_FD]);
+}
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	fds[PIPE_N + 1][2];
 	int	heredoc_fd;
 
+	signal(SIGINT, SIG_IGN);
 	fds[0][R_FD] = -1;
 	fds[0][W_FD] = -1;
 	fds[1][R_FD] = -1;
@@ -291,6 +289,7 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 		exe_multiple_cmds(cmd_cnt, cmd_p, env, fds);
 	dup2(fds[STD][R_FD], STDIN_FILENO);
 	dup2(fds[STD][W_FD], STDOUT_FILENO);
+	close_fds(fds);
 }
 
 /*
