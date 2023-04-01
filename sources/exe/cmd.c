@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cmd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:23:52 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 19:18:10 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 20:39:15 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,25 +32,28 @@ static char	*cmd_tolower(char *cmd)
 int	is_built_in(char *cmd)
 {
 	char	*lower_cmd;
+	int		ret;
 
 	if (!cmd || !*cmd)
 		return (-1);
 	lower_cmd = cmd_tolower(cmd);
+	ret = -1;
 	if (ft_strncmp("echo", lower_cmd, 10) == 0)
-		return (BI_ECHO);
+		ret = BI_ECHO;
 	if (ft_strncmp("env", lower_cmd, 10) == 0)
-		return (BI_ENV);
+		ret = BI_ENV;
 	if (ft_strncmp("pwd", lower_cmd, 10) == 0)
-		return (BI_PWD);
+		ret = BI_PWD;
 	if (ft_strncmp("exit", cmd, 10) == 0)
-		return (BI_EXIT);
+		ret = BI_EXIT;
 	if (ft_strncmp("cd", cmd, 10) == 0)
-		return (BI_CD);
+		ret = BI_CD;
 	if (ft_strncmp("unset", cmd, 10) == 0)
-		return (BI_UNSET);
+		ret = BI_UNSET;
 	if (ft_strncmp("export", cmd, 10) == 0)
-		return (BI_EXPORT);
-	return (-1);
+		ret = BI_EXPORT;
+	free(lower_cmd);
+	return (ret);
 }
 
 static char	*get_full_path(char *path_group, char *cmd)

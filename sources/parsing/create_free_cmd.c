@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   create_free_cmd.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:18:37 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 19:26:27 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 20:44:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,16 @@ t_cmd	*create_cmd_struct(void)
 void	free_cmd_struct(void *arg)
 {
 	t_cmd	*target;
-	int		i;
+	char	**p;
 
 	target = (t_cmd *)arg;
-	i = 0;
-	while (i < target->ac)
-		free(target->av[i++]);
+	p = target->av;
+	while (p && *p)
+	{
+		free(*p);
+		p++;
+	}
+	free(target->av);
 	ft_lstclear(&target->rd, free_rd_struct);
+	free(target);
 }

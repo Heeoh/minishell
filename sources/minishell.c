@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/02 13:36:42 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 19:15:21 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 20:45:10 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ static	void	init_mini_main(int ac, char *av[],
 	*env_lst = init_env_lst(env);
 }
 
-static	void	reset(t_list *cmd_lst, char *line)
+static	void	reset(t_list **cmd_lst, char **line)
 {
 	set_ctrl(0, sigint_handler, SIG_IGN);
-	ft_lstclear(&cmd_lst, free_cmd_struct);
-	ft_free_str(&line);
+	ft_lstclear(cmd_lst, free_cmd_struct);
+	ft_free_str(line);
 }
 
 static	int	ctrl_d_minishell(void)
@@ -63,10 +63,10 @@ int	main(int ac, char *av[], char *env[])
 		{
 			add_history(line);
 			cmd_cnt = parsing(line, &cmd_lst, env_lst);
-			if (cmd_cnt >= 0)
+			if (cmd_cnt > 0)
 				execute(cmd_cnt, cmd_lst, env_lst);
 		}
-		reset(cmd_lst, line);
+		reset(&cmd_lst, &line);
 	}
 	clear(env_lst);
 }
