@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 20:07:51 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 16:31:58 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ int	ft_cd(char *path, t_list *env_lst)
 		path = ft_getenv(env_lst, "OLDPWD");
 		if (!path)
 			return (perror_n_return("cd", "OLDPWD not set", 1, 1));
-		printf("%s\n", path);
+		ft_putendl_fd(path, STDOUT_FILENO);
 	}
 	old_pwd = getcwd(NULL, 0);
 	if (!old_pwd && ft_strncmp(path, ".", 5) == 0)

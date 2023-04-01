@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exit.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 17:43:26 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 17:59:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ int	is_num(char *str)
 
 void	exit_argm(char *argm)
 {
-	printf("exit\n");
+	ft_putendl_fd("exit", STDOUT_FILENO);
 	per_n_ret("exit", argm, "numeric argument required", 1);
 	exit(255);
 }
@@ -76,7 +76,7 @@ int	ft_exit(t_cmd *cmd)
 {
 	if (cmd->ac == 1)
 	{
-		printf("exit\n");
+		ft_putendl_fd("exit", STDOUT_FILENO);
 		exit(0);
 	}
 	else
@@ -85,11 +85,11 @@ int	ft_exit(t_cmd *cmd)
 			exit_argm(cmd->av[1]);
 		else if (cmd->ac > 2)
 		{
-			printf("exit\n");
+			ft_putendl_fd("exit", STDOUT_FILENO);
 			return (perror_n_return("exit", "too many arguments", 1, 1));
 		}
 	}
-	printf("exit\n");
+	ft_putendl_fd("exit", STDOUT_FILENO);
 	g_exit_status = ft_atoi(cmd->av[1]);
 	g_exit_status %= 256;
 	if (g_exit_status < 0)

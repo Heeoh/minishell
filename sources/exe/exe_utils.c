@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 15:50:23 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 17:55:24 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,6 +89,8 @@ int	get_heredoc_input(int fd[], int fd_std[], char *limiter)
 		free(line);
 	}
 	close(fd[W_FD]);
+	close(fd_std[R_FD]);
+	close(fd_std[W_FD]);
 	return (0);
 }
 
@@ -144,24 +146,33 @@ int	do_heredoc(char *limiter, int *input_fd, int fd_std[])
 
 int	do_redirection_in(char *val, int *fd, char is_heredoc)
 {
+	int	ret;
+
 	if (!is_heredoc)
 		*fd = open(val, O_RDONLY, 0644);
 	if (*fd < 0)
 		return (perror_n_return(val, 0, 0, EXIT_FAILURE));
-	if (dup2(*fd, STDIN_FILENO) < 0)
-		return (perror_n_return("dup2kkkk", 0, 0, EXIT_FAILURE));
+	ret = dup2(*fd, STDIN_FILENO);
+	if (!is_heredoc)
+		close (*fd);
+	if (ret < 0)
+		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
 	return (0);
 }
 
 int	do_redirection_out(char *filename, int *fd, char is_append)
 {
+	int	ret;
+
 	if (is_append)
 		*fd = open(filename, O_WRONLY | O_CREAT | O_APPEND, 0644);
 	else
 		*fd = open(filename, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 	if (*fd < 0)
 		return (perror_n_return(filename, 0, 0, EXIT_FAILURE));
-	if (dup2(*fd, STDOUT_FILENO) < 0)
+	ret = dup2(*fd, STDOUT_FILENO);
+	close(*fd);
+	if (ret < 0)
 		return (perror_n_return("dup2", 0, 0, EXIT_FAILURE));
 	return (0);
 }

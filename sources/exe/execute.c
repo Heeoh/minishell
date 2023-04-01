@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 16:02:47 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 17:56:08 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,7 +107,16 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 	return (0);
 }
 
-int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd)
+void	set_child_exe(int fd_std[], int heredoc_fd)
+{
+	close(fd_std[R_FD]);
+	close(fd_std[W_FD]);
+	if (heredoc_fd >= 0)
+		close(heredoc_fd);
+	set_ctrl(1, SIG_DFL, SIG_DFL);
+}
+
+int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 {
 	char			*path;
 	t_list			*rd_p;
@@ -128,7 +137,7 @@ int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd)
 			return (ERROR);
 		rd_p = rd_p->next;
 	}
-	set_ctrl(1, SIG_DFL, SIG_DFL);
+	set_child_exe(fd_std, heredoc_fd);
 	if (!(cmd->av) || !*(cmd->av))
 		return (0);
 	if (is_builtin >= 0)
@@ -160,6 +169,19 @@ void	parent_process(int cmd_i, int pipes[][2])
 		close(pipes[(cmd_i + 1) % PIPE_N][R_FD]);
 }
 
+void	set_exit_status(int status)
+{
+	g_exit_status = WEXITSTATUS(status);
+	if (WIFSIGNALED(status))
+	{
+		g_exit_status = WTERMSIG(status);
+		if (WTERMSIG(status) == 2)
+			g_exit_status = 130;
+		else if (WTERMSIG(status) == 3)
+			g_exit_status = 131;
+	}
+}
+
 int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 {
 	int	status;
@@ -182,17 +204,7 @@ int	wait_processes(int child_cnt, pid_t last_pid, pid_t wait_pid)
 			ft_putstr_fd("Quit: 3\n", 2);
 		}
 		if (wait_pid == last_pid)
-		{
-			g_exit_status = WEXITSTATUS(status);
-			if (WIFSIGNALED(status))
-			{
-				g_exit_status = WTERMSIG(status);
-				if (WTERMSIG(status) == 2)
-					g_exit_status = 130;
-				else if (WTERMSIG(status) == 3)
-					g_exit_status = 131;
-			}
-		}
+			set_exit_status(status);
 	}
 	return (0);
 }
@@ -220,9 +232,14 @@ int	check_n_do_heredoc(t_list *rd_p, int fd_std[], int *fd)
 	return (is_heredoc);
 }
 
-void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd)
+void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 {
-	if (exe_a_cmd(cmd, env, heredoc_fd) < 0)
+	int	ret;
+
+	ret = exe_a_cmd(cmd, env, heredoc_fd, fd_std);
+	if (heredoc_fd > 0)
+		close(heredoc_fd);
+	if (ret < 0)
 		exit(g_exit_status);
 	exit(EXIT_SUCCESS);
 }
@@ -247,7 +264,7 @@ int	exe_multiple_cmds(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 		else if (!pid) // child process
 		{
 			child_process(cmd_i, cmd_cnt, fds, heredoc_fd >= 0);
-			exe_n_exit(cmd_p->content, env, heredoc_fd);
+			exe_n_exit(cmd_p->content, env, heredoc_fd, fds[STD]);
 		}
 		else if (pid) // parent process
 			parent_process(cmd_i, fds);
@@ -258,13 +275,20 @@ int	exe_multiple_cmds(int cmd_cnt, t_list *cmd_p, t_list *env, int fds[][2])
 
 void	close_fds(int fds[][2])
 {
-	close(fds[0][R_FD]);
-	close(fds[0][W_FD]);
-	close(fds[1][R_FD]);
-	close(fds[1][W_FD]);
-	close(fds[2][R_FD]);
-	close(fds[2][W_FD]);
+	if (fds[0][R_FD] > 0)
+		close(fds[0][R_FD]);
+	if (fds[0][W_FD] > 0)
+		close(fds[0][W_FD]);
+	if (fds[1][R_FD] > 0)
+		close(fds[1][R_FD]);
+	if (fds[1][W_FD] > 0)
+		close(fds[1][W_FD]);
+	if (fds[STD][R_FD] > 0)
+		close(fds[STD][R_FD]);
+	if (fds[STD][W_FD] > 0)
+		close(fds[STD][W_FD]);
 }
+
 void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 {
 	int	fds[PIPE_N + 1][2];
@@ -282,14 +306,13 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 		if (check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
 				fds[STD], &heredoc_fd) < 0)
 			return ;
-		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) != ERROR)
+		if (exe_a_cmd(cmd_p->content, env, heredoc_fd, fds[STD]) != ERROR)
 			g_exit_status = EXIT_SUCCESS;
 	}
 	else
 		exe_multiple_cmds(cmd_cnt, cmd_p, env, fds);
 	dup2(fds[STD][R_FD], STDIN_FILENO);
 	dup2(fds[STD][W_FD], STDOUT_FILENO);
-	close_fds(fds);
 }
 
 /*
