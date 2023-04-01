@@ -6,7 +6,7 @@
 #    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/03/31 15:16:19 by heson            ###   ########.fr        #
+#    Updated: 2023/04/01 18:09:09 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,6 +32,9 @@ LIBS = $(LIBFT_DIR)libft.a $(GNL_DIR)libgnl.a
 INCLUDE = -I $(HDRS_DIR) -I $(LIBFT_DIR) -I $(GNL_DIR) -I ${READ_HDRS}
 SRCS = $(wildcard $(SRCS_DIR)*.c)
 SRCS += $(wildcard $(SRCS_DIR)built_in/*.c)
+SRCS += $(wildcard $(SRCS_DIR)env/*.c)
+SRCS += $(wildcard $(SRCS_DIR)exe/*.c)
+SRCS += $(wildcard $(SRCS_DIR)parsing/*.c)
 OBJS += $(subst $(SRCS_DIR), $(OBJS_DIR), $(SRCS:.c=.o))
 
 # -------------------------------- COMPILATE --------------------------------- #
