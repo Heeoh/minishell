@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:18:37 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/01 20:44:21 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 21:38:51 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ void	free_cmd_struct(void *arg)
 	p = target->av;
 	while (p && *p)
 	{
-		free(*p);
+		ft_free_str(p);
 		p++;
 	}
 	free(target->av);

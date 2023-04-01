@@ -6,7 +6,7 @@
 #    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/04/01 19:50:33 by heson            ###   ########.fr        #
+#    Updated: 2023/04/01 21:49:56 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,7 +47,7 @@ MD		= mkdir -p
 
 $(OBJS_DIR)%.o : $(SRCS_DIR)%.c
 	$(MD) $(dir $@)
-	$(CC) $(CFLAGS) $(INCLUDE) -g -c $< -o $@
+	gcc $(CFLAGS) $(INCLUDE) -g -c $< -o $@
 
 all :	
 		make bonus -C $(LIBFT_DIR)
@@ -56,7 +56,7 @@ all :
 		
 
 $(NAME) :	$(OBJS)
-			$(CC) $(CFLAGS) $(RLFLAGS) $(OBJS) $(LIBS) -g -o $(NAME) 
+			gcc $(CFLAGS) $(RLFLAGS) $(OBJS) $(LIBS) -g -o $(NAME) 
 			
 clean   :	
 			make clean -C $(LIBFT_DIR)

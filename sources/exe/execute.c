@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 19:49:16 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 22:23:03 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,8 +62,7 @@ static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 		ret = exe_built_in(cmd, env, is_builtin);
 	else
 		ret = execve(path, cmd->av, envlst_2_arr(env));
-	if (ret < 0)
-		free(path);
+	free(path);
 	return (ret);
 }
 
