@@ -6,19 +6,56 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 14:46:05 by jkim3             #+#    #+#             */
-/*   Updated: 2023/03/31 18:41:55 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 17:43:26 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 
+int	ft_strcmp(char *s1, char *s2)
+{
+	while (*s1 || *s2)
+	{
+		if (*s1 != *s2)
+		{
+			return (*s1 - *s2);
+		}
+		s1++;
+		s2++;
+	}
+	return (0);
+}
+
+int	is_range(int minus, char *str)
+{
+	if (minus)
+	{
+		if (ft_strcmp("9223372036854775808", str) < 0)
+			return (0);
+	}
+	else
+	{
+		if (ft_strcmp("9223372036854775807", str) < 0)
+			return (0);
+	}
+	return (1);
+}
+
 int	is_num(char *str)
 {
 	int	i;
+	int	minus;
 
 	i = 0;
+	minus = 0;
+	if (*str == '-')
+		minus++;
 	if (*str == '-' || *str == '+')
 		str++;
+	if (ft_strlen(str) > 19)
+		return (0);
+	else if (ft_strlen(str) == 19 && !is_range(minus, str))
+		return (0);
 	while (str[i])
 	{
 		if (!ft_isdigit(str[i]))
