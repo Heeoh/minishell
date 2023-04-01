@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:11:11 by heson             #+#    #+#             */
-/*   Updated: 2023/03/29 16:09:26 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:39:19 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "built_in.h"
 
-int	check_option_n(int ac, char **av, int *idx)
+static	int	check_option_n(int ac, char **av, int *idx)
 {
 	char	*p;
 	int		option_n;
@@ -55,8 +55,3 @@ int	ft_echo(t_cmd *cmd)
 		ft_putchar_fd('\n', STDOUT_FILENO);
 	return (EXIT_SUCCESS);
 }
-
-// int main()
-// {
-//     ft_echo("hello", 1);
-// }

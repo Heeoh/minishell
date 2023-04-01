@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:24:20 by heson             #+#    #+#             */
-/*   Updated: 2023/03/28 16:56:35 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:39:13 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,10 +17,3 @@ int	ft_env(t_list *env)
 	print_env_lst(env, 1);
 	return (EXIT_SUCCESS);
 }
-
-// int main(int ac, char *av[], char *env[])
-// {
-//     ac = 0;
-//     av = 0;
-//     ft_env(env);
-// }

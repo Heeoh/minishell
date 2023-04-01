@@ -3,19 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/15 13:05:31 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 16:31:58 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:39:27 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../headers/minishell.h"
 #include "../../headers/built_in.h"
-#include <unistd.h>
-#include <stdio.h> // perror
 
-void	set_env_pwd(char *old_pwd, t_list *env_lst)
+static	void	set_env_pwd(char *old_pwd, t_list *env_lst)
 {
 	char	*str;
 	char	*new_pwd;

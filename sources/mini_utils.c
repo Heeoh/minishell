@@ -3,23 +3,15 @@
 /*                                                        :::      ::::::::   */
 /*   mini_utils.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:48:39 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 19:27:22 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:53:21 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/minishell.h"
 #include "built_in.h"
-#include <errno.h>
-
-void	ft_free_str(char **arg)
-{
-	if (arg && *arg)
-		free(*arg);
-	*arg = NULL;
-}
 
 char	*strjoin_n_free(char *s1, char *s2)
 {
@@ -107,37 +99,4 @@ int	per_n_ret(char *pos, char *msg1, char *msg2, int exit_status)
 	if (msg2)
 		ft_putendl_fd(msg2, 2);
 	return (EXIT_FAILURE);
-}
-
-int	perror_n_return(char *err_pos, char *err_msg,
-					int is_custom, int exit_status)
-{
-	extern int	g_exit_status;
-
-	g_exit_status = exit_status;
-	ft_putstr_fd("minishell: ", 2);
-	if (err_pos)
-	{
-		ft_putstr_fd(err_pos, 2);
-		write(2, ": ", 2);
-	}
-	if (!is_custom && err_msg && *err_msg)
-	{
-		ft_putstr_fd(err_msg, 2);
-		write(2, ": ", 2);
-	}
-	// if (is_custom)
-	// 	printf("%s\n", err_msg);
-	// else
-	if (is_custom)
-		ft_putendl_fd(err_msg, 2);
-	else
-		perror("");
-	return (-1);
-}
-
-void	perror_n_exit(char *err_msg, int is_custom, int exit_status)
-{
-	perror_n_return(0, err_msg, is_custom, exit_status);
-	exit(g_exit_status);
 }

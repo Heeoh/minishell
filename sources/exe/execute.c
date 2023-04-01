@@ -6,14 +6,13 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:39:36 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:49:16 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../headers/minishell.h"
-#include "../headers/built_in.h"
-
-extern void	set_ctrl(int term_flag, void (*sigint)(int), void (*sigquit)(int));
+#include "minishell.h"
+#include "mini_exe.h"
+#include "built_in.h"
 
 static int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 {
@@ -40,6 +39,7 @@ static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 	t_list			*rd_p;
 	int				is_builtin;
 	int				fd;
+	int				ret;
 
 	is_builtin = is_built_in(cmd->av[0]);
 	if (is_builtin < 0 && find_cmd_path(cmd->av[0], env, &path) < 0)
@@ -59,8 +59,12 @@ static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 	if (!(cmd->av) || !*(cmd->av))
 		return (0);
 	if (is_builtin >= 0)
-		return (exe_built_in(cmd, env, is_builtin));
-	return (execve(path, cmd->av, envlst_2_arr(env)));
+		ret = exe_built_in(cmd, env, is_builtin);
+	else
+		ret = execve(path, cmd->av, envlst_2_arr(env));
+	if (ret < 0)
+		free(path);
+	return (ret);
 }
 
 static void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])

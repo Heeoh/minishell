@@ -6,7 +6,7 @@
 #    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/04/01 18:09:09 by heson            ###   ########.fr        #
+#    Updated: 2023/04/01 19:50:33 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,8 +21,6 @@ GNL_DIR		= library/get_next_line/
 HDRS_DIR	= headers/
 SRCS_DIR	= sources/
 OBJS_DIR	= objects/
-# READ_DIR	= /usr/local/opt/readline/lib
-# READ_HDRS	= /usr/local/opt/readline/include
 READ_DIR 	= ${HOME}/.brew/opt/readline/lib
 READ_HDRS	= ${HOME}/.brew/opt/readline/include
 
@@ -39,11 +37,11 @@ OBJS += $(subst $(SRCS_DIR), $(OBJS_DIR), $(SRCS:.c=.o))
 
 # -------------------------------- COMPILATE --------------------------------- #
 
-CFLAGS = -Wall -Wextra -Werror -g -fsanitize=address
+CFLAGS = -Wall -Wextra -Werror 
+# -g -fsanitize=address
 RLFLAGS = -lreadline -lhistory -L${READ_DIR}
 RM		= rm -rf
 MD		= mkdir -p 
-#AR		= ar -rcs
 
 # --------------------------------- RULES ------------------------------------ #
 

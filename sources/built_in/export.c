@@ -6,7 +6,7 @@
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/13 21:19:42 by heson             #+#    #+#             */
-/*   Updated: 2023/03/30 19:10:46 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:38:54 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,25 +36,3 @@ int	ft_export(t_cmd *cmd, t_list *env_lst)
 	}
 	return (EXIT_SUCCESS);
 }
-
-// int main(int ac, char *av[], char *env[]){
-
-// 	t_list	*mini_env;
-// 	t_cmd	*cmd;
-
-// 	cmd = create_cmd_struct();
-// 	cmd->ac = 3;
-// 	cmd->av = (char **)malloc(sizeof(char *) * (cmd->ac + 1));
-// 	cmd->av[0] = ft_strdup("export");
-// 	cmd->av[1] = ft_strdup("water=jj");
-// 	cmd->av[2] = ft_strdup("water=삼다수");
-// 	cmd->av[cmd->ac] = 0;
-// 	mini_env = init_env_lst(env);
-// 	ft_export(cmd, mini_env);
-// 	cmd->ac = 1;
-// 	ft_export(cmd, mini_env);
-// 	// print_env_lst(mini_env);
-// 	// printf("%s\n", getenv("water"));
-// 	// ft_export("water=삼다수");
-// 	// printf("%s\n", getenv("water"));
-// }

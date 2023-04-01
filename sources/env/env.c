@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/16 14:42:20 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:52:50 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 19:57:19 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,10 @@ int	ft_putenv(t_list *env_lst, char *arg)
 		if (compare_strs(new_env->key, ((t_env_var *)p->content)->key) == 0)
 		{
 			if (ft_strncmp(new_env->value, "", 10) == 0)
+			{
+				free_env_var(new_env);
 				return (0);
+			}
 			free_env_var(p->content);
 			p->content = new_env;
 			return (0);

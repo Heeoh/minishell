@@ -1,25 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   built_in.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/03/13 20:58:15 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:38:46 by jkim3            ###   ########.fr       */
+/*   Created: 2023/03/24 19:46:35 by heson             #+#    #+#             */
+/*   Updated: 2023/04/01 18:59:44 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../../headers/minishell.h"
+#ifndef BUILT_IN_H
+# define BUILT_IN_H
 
-int	ft_pwd(void)
-{
-	char	*ret;
+# include "minishell.h"
 
-	ret = getcwd(NULL, 0);
-	if (ret)
-		ft_putendl_fd(ret, STDOUT_FILENO);
-	else
-		return (perror_n_return("pwd", 0, 0, EXIT_FAILURE));
-	return (EXIT_SUCCESS);
-}
+enum e_builtin_ft {
+	BI_CD = 0,
+	BI_ECHO,
+	BI_ENV,
+	BI_EXIT,
+	BI_EXPORT,
+	BI_PWD,
+	BI_UNSET,
+	BI_CNT
+};
+
+int	ft_export(t_cmd *cmd, t_list *env);
+int	ft_pwd(void);
+int	ft_exit(t_cmd *cmd);
+int	ft_env(t_list *env);
+int	ft_echo(t_cmd *cmd);
+int	ft_cd(char *path, t_list *env);
+int	ft_unset(t_cmd *cmd, t_list **env_lst);
+
+#endif

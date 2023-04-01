@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/03/31 21:51:53 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/01 18:40:29 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,6 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 
 	tk_p = *tokenizer;
 	tk_p->tk_content = get_token(env_lst, tk_p, 0);
-	//null
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
 	while (1)
@@ -73,7 +72,6 @@ int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
 		tk_p->line++;
 	}
 	tk_p->tk_content = get_token(env_lst, tk_p, tk_p->quote);
-	//null
 	tk_p->tk_size = ft_strlen(tk_p->tk_content) + 1;
 	tk_p->line++;
 	tk_p->sp = tk_p->line;
@@ -91,7 +89,6 @@ void	push_token_back(t_list *env_lst, t_list **tk_lst,
 	if (tokenizer->tk_size || tokenizer->sp < ep)
 	{
 		tokenizer->tk_content = get_token(env_lst, tokenizer, 0);
-		//null
 		cus_ft_lstadd_back(tk_lst, tokenizer->tk_content);
 	}
 	if (!*ep)
