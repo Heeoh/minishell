@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils2.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/02 04:59:06 by heson             #+#    #+#             */
-/*   Updated: 2023/04/02 05:01:26 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 15:39:04 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,11 +50,14 @@ static char	*get_env_val(char *key, t_list *env_lst)
 	env_val = 0;
 	if (ft_strncmp(key, "?", 5) == 0)
 		env_val = ft_itoa(g_exit_status);
-	env_val = ft_getenv(env_lst, key);
-	if (env_val)
-		env_val = ft_strdup(ft_getenv(env_lst, key));
 	else
-		env_val = ft_strndup("", 0);
+	{
+		env_val = ft_getenv(env_lst, key);
+		if (env_val)
+			env_val = ft_strdup(ft_getenv(env_lst, key));
+		else
+			env_val = ft_strndup("", 0);
+	}
 	free(key);
 	return (env_val);
 }
