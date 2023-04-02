@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/14 15:45:17 by jkim3             #+#    #+#             */
-/*   Updated: 2023/04/02 04:47:05 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 16:04:54 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,10 @@ int	parsing(char *line, t_list **cmd, t_list *env_lst)
 
 	tk_lst = NULL;
 	if (tokenizing(&tk_lst, line, env_lst) < 0)
+	{
+		ft_lstclear(&tk_lst, free);
 		return (ERROR);
+	}
 	cmd_cnt = init_cmd_lst(cmd, tk_lst);
 	ft_lstclear(&tk_lst, free);
 	return (cmd_cnt);

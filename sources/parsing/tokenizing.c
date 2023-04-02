@@ -3,14 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   tokenizing.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:40:29 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/02 16:20:21 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/mini_parsing.h"
+
+void	free_tokenizer(t_tokenizer *tk)
+{
+	if (tk->tk_content)
+		free(tk->tk_content);
+	free(tk);
+}
 
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {
@@ -32,10 +39,12 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 				tokenizer->line++;
 		}
 		else if (tokenizing_quote(env_lst, &tokenizer) == ERROR)
+		{
+			free_tokenizer(tokenizer);
 			return (ERROR);
+		}
 	}
-	if (tokenizer)
-		free(tokenizer);
+	free(tokenizer);
 	return (0);
 }
 
