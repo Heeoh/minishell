@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exe_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:06:24 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:34:50 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 15:15:43 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,10 +38,8 @@ void	set_exit_status(int status)
 	}
 }
 
-void	set_child_exe(int fd_std[], int heredoc_fd)
+void	set_child_exe(int heredoc_fd)
 {
-	close(fd_std[R_FD]);
-	close(fd_std[W_FD]);
 	if (heredoc_fd >= 0)
 		close(heredoc_fd);
 	set_ctrl(1, SIG_DFL, SIG_DFL);

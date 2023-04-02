@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   execute.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/06 14:26:11 by heson             #+#    #+#             */
-/*   Updated: 2023/04/02 05:10:56 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 15:16:49 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static int	exe_built_in(t_cmd *cmd_p, t_list *env_lst, int cmd_type)
 	return (-1);
 }
 
-static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
+static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd)
 {
 	char			*path;
 	int				is_builtin;
@@ -44,7 +44,7 @@ static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 		return (ERROR);
 	if (do_redirection(cmd->rd, heredoc_fd) < 0)
 		return (ERROR);
-	set_child_exe(fd_std, heredoc_fd);
+	set_child_exe(heredoc_fd);
 	ret = 0;
 	if (!(cmd->av) || !*(cmd->av))
 		return (0);
@@ -55,11 +55,11 @@ static int	exe_a_cmd(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
 	return (ret);
 }
 
-static void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd, int fd_std[])
+static void	exe_n_exit(t_cmd *cmd, t_list *env, int heredoc_fd)
 {
 	int	ret;
 
-	ret = exe_a_cmd(cmd, env, heredoc_fd, fd_std);
+	ret = exe_a_cmd(cmd, env, heredoc_fd);
 	if (heredoc_fd > 0)
 		close(heredoc_fd);
 	if (ret < 0)
@@ -88,7 +88,7 @@ static int	exe_multiple_cmds(int cmd_cnt, t_list *cmd_p,
 		else if (!pid)
 		{
 			child_process(cmd_i, cmd_cnt, fds, heredoc_fd >= 0);
-			exe_n_exit(cmd_p->content, env, heredoc_fd, fds[STD]);
+			exe_n_exit(cmd_p->content, env, heredoc_fd);
 		}
 		else if (pid)
 			parent_process(cmd_i, fds);
@@ -114,7 +114,7 @@ void	execute(int cmd_cnt, t_list *cmd_p, t_list *env)
 		if (check_n_do_heredoc(((t_cmd *)cmd_p->content)->rd,
 				fds[STD], &heredoc_fd) < 0)
 			return ;
-		if (exe_a_cmd(cmd_p->content, env, heredoc_fd, fds[STD]) != ERROR)
+		if (exe_a_cmd(cmd_p->content, env, heredoc_fd) != ERROR)
 			g_exit_status = EXIT_SUCCESS;
 	}
 	else

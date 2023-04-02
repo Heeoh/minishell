@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   mini_exe.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: heson <heson@student.42seoul.kr>           +#+  +:+       +#+        */
+/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/22 17:01:23 by heson             #+#    #+#             */
-/*   Updated: 2023/04/02 05:08:24 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 15:16:10 by jkim3            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int		is_built_in(char *cmd);
 // exe_utils
 void	ft_free_2d_arr(char **arr);
 void	set_exit_status(int status);
-void	set_child_exe(int fd_std[], int heredoc_fd);
+void	set_child_exe(int heredoc_fd);
 void	close_fds(int fds[][2]);
 
 // redirection
