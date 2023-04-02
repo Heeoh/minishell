@@ -6,7 +6,7 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/01 18:23:52 by heson             #+#    #+#             */
-/*   Updated: 2023/04/02 16:32:57 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 17:57:14 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,7 +109,7 @@ int	find_cmd_path(char *cmd, t_list *env, char **path)
 		return (perror_n_return(cmd, "Command not found", 1, 127));
 	stat(*path, &st);
 	if (S_ISDIR(st.st_mode))
-		return (perror_n_return(cmd, "Is a directory", 0, 126));
+		return (perror_n_return(cmd, "Is a directory", 1, 126));
 	if (access(*path, X_OK) != 0)
 		return (perror_n_return(cmd, 0, 0, 126));
 	return (0);
