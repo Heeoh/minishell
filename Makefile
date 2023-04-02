@@ -6,7 +6,7 @@
 #    By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/03/02 13:36:04 by jkim3             #+#    #+#              #
-#    Updated: 2023/04/01 21:49:56 by heson            ###   ########.fr        #
+#    Updated: 2023/04/02 18:05:39 by heson            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -38,7 +38,6 @@ OBJS += $(subst $(SRCS_DIR), $(OBJS_DIR), $(SRCS:.c=.o))
 # -------------------------------- COMPILATE --------------------------------- #
 
 CFLAGS = -Wall -Wextra -Werror 
-# -g -fsanitize=address
 RLFLAGS = -lreadline -lhistory -L${READ_DIR}
 RM		= rm -rf
 MD		= mkdir -p 
