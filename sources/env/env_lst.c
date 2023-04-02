@@ -23,7 +23,8 @@ t_list	*init_env_lst(char *org_env[])
 		new_env_node = ft_lstnew((void *)create_env_var(*org_env++));
 		if (!new_env_node)
 			exit(1);
-		if (ft_strncmp(((t_env_var *)new_env_node->content)->key, "OLDPWD", 10) == 0)
+		if (ft_strncmp(((t_env_var *)new_env_node->content)->key,
+				"OLDPWD", 10) == 0)
 		{
 			ft_free_str(&((t_env_var *)new_env_node->content)->value);
 			((t_env_var *)new_env_node->content)->value = ft_strndup("", 0);

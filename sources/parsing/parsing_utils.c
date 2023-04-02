@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing_utils.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jkim3 <jkim3@student.42.fr>                +#+  +:+       +#+        */
+/*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/23 01:12:54 by heson             #+#    #+#             */
-/*   Updated: 2023/04/01 18:40:08 by jkim3            ###   ########.fr       */
+/*   Updated: 2023/04/02 18:02:55 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,26 @@ int	is_redirection(char *arg)
 		|| ft_strncmp(arg, ">>", 5) == 0)
 		return (1);
 	return (0);
+}
+
+t_tokenizer	*init_tokenizer(char *line)
+{
+	t_tokenizer	*tokenizer;
+
+	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
+	if (!tokenizer)
+		exit(1);
+	tokenizer->line = line;
+	tokenizer->sp = line;
+	tokenizer->quote = 0;
+	tokenizer->tk_content = NULL;
+	tokenizer->tk_size = 0;
+	return (tokenizer);
+}
+
+void	free_tokenizer(t_tokenizer *tk)
+{
+	if (tk->tk_content)
+		free(tk->tk_content);
+	free(tk);
 }

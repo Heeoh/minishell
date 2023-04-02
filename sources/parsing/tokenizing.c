@@ -6,18 +6,11 @@
 /*   By: heson <heson@Student.42seoul.kr>           +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/18 17:36:09 by heson             #+#    #+#             */
-/*   Updated: 2023/04/02 16:20:21 by heson            ###   ########.fr       */
+/*   Updated: 2023/04/02 18:02:47 by heson            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../headers/mini_parsing.h"
-
-void	free_tokenizer(t_tokenizer *tk)
-{
-	if (tk->tk_content)
-		free(tk->tk_content);
-	free(tk);
-}
 
 int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 {
@@ -46,21 +39,6 @@ int	tokenizing(t_list **tk_lst, char *line, t_list *env_lst)
 	}
 	free(tokenizer);
 	return (0);
-}
-
-t_tokenizer	*init_tokenizer(char *line)
-{
-	t_tokenizer	*tokenizer;
-
-	tokenizer = (t_tokenizer *)malloc(sizeof(t_tokenizer));
-	if (!tokenizer)
-		exit(1);
-	tokenizer->line = line;
-	tokenizer->sp = line;
-	tokenizer->quote = 0;
-	tokenizer->tk_content = NULL;
-	tokenizer->tk_size = 0;
-	return (tokenizer);
 }
 
 int	tokenizing_quote(t_list *env_lst, t_tokenizer **tokenizer)
